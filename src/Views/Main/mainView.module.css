@@ -1,0 +1,120 @@
+.main_view {
+    position: relative;
+    display: flex;
+    flex-flow: column;
+    width: 100%;
+    height: 100%;
+    color: snow;
+    transform: translateY(100%) scale(0);
+    transform: translateY(0%) scale(1);
+    transition: transform 0.3s ease-in;
+}
+.slideUp {    
+    transform: translateY(0%) scale(1);
+}
+
+.title {
+    position: relative;
+    font-weight: 900;
+    text-align: center;
+}
+
+.sections_wrapper {
+    height: 100%;
+    width: 100%;
+    background: #2e394b;
+    overflow: hidden;
+    position: relative;
+}
+
+.menu_panel {
+  position: absolute;
+  display: flex;
+  flex-flow: column;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px 10px 10px 10px;
+  background: rgba(0,0,0, .3);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: rgb(0 0 0 / 17%) 0px -1px 30px 0px inset, rgb(0 0 0 / 15%) 0px -1px 30px 0px inset, rgb(0 0 0 / 10%) 0px -1px 30px 0px inset, rgb(0 0 0 / 6%) 0px 1px 1px, rgb(0 0 0 / 9%) 0px 4px 2px, rgb(0 0 0 / 9%) 0px 8px 4px, rgb(0 0 0 / 9%) 0px 16px 8px, rgb(0 0 0 / 9%) 0px 32px 16px;
+  transition: transform 0.3s;
+}
+
+.section_view {
+    position: relative;
+    flex: 1;
+    width: 100%;
+}
+
+.title_h2 {
+    margin: 0;
+    font-family: 'Righteous', cursive;
+    font-size: 2rem;
+    color: red;
+}
+
+.section_h1 {
+    color: white;
+    font-weight: 500;
+    font-size: 2rem;
+    text-align: center;
+    margin: 0;
+    font-family: 'Righteous', cursive;
+    line-height: 70px;
+    user-select: none;
+}
+
+.one {
+  background-color: #f75b5b;
+  transition-delay: 0s;
+}
+
+.two {
+  background-color: #E04E56;
+  transition-delay: 0s;
+}
+.three {
+    /* background: #26094A; */
+    background: #C84051;
+    transition-delay: 0.1s;
+}
+.four {
+    /* background: #1E124A; */
+    background: #8C3A5A;
+    transition-delay: 0.15s;
+}
+.five {
+    /* background: #171B4A; */
+    background: #6E375E;
+    transition-delay: 0.2s;
+}
+
+
+section.menu_panel.after {
+    transform: translateY(100%);
+}
+
+.menu_open .one {
+    transform: translateY(70px);
+    transition-delay: 0.15s;
+}
+
+.menu_open .two {
+    transform: translateY(140px);
+    transition-delay: 0.1s;
+}
+.menu_open .three {
+    transform: translateY(210px);
+    transition-delay: 0.05s;
+}
+.menu_open .four {
+    transform: translateY(280px);
+    transition-delay: 0s;
+}
+.menu_open .five {
+    transform: translateY(350px);
+    transition-delay: 0s;
+}

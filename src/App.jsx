@@ -1,0 +1,70 @@
+import MainView from "./Views/Main/MainView"
+
+import './App.css';
+import LoginView from "./Views/Login/LoginView";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { createBrowserRouter, Outlet, RouterProvider } from "react-router";
+import { LoaderModal } from "./Components/Loader/LoaderModal";
+import HomeView from "./Views/Home/HomeView";
+import AuthProvider, { AuthActionsProvider } from "./hooks/useAuth";
+import { ApiClient, ApiClientProvider, getApiEndpoint } from "./Api/Api";
+import ProtectedRoute from "./Views/ProtectedRoute";
+import ItemReportsView from "./Views/ItemReports/ItemReportsView";
+import { AppContextProvider } from "./Contexts/AppContext";
+// import Api, { ApiClient, ApiClientProvider, getApiEndpoint } from "./Api/Api";
+
+// login username password
+// register username password accessCode
+// users post 
+
+const queryClient = new QueryClient();
+const apiClient = new ApiClient(getApiEndpoint(false));
+
+const App = () => {
+
+  const router = createBrowserRouter([
+    {
+      path:"/",
+      element:<ProtectedRoute><div><Outlet /></div></ProtectedRoute>,
+      children: [
+        {
+          index: true,
+          element: <HomeView />
+        },
+        {
+          path: "/reports/item",
+          element: <ItemReportsView />
+        }
+      ]
+    },
+    {
+      path:"login",
+      element:<LoginView />
+    }
+  ])
+
+  return (
+    <>
+      <AppContextProvider>
+        <ApiClientProvider client={apiClient}>
+          <AuthProvider>
+            <AuthActionsProvider>          
+                <QueryClientProvider client={queryClient}>
+                  <div className="App">
+                    <div className='app__main__view'>
+                      <RouterProvider router={router} />
+                      <LoaderModal />
+                      {/* <LoginView /> */}
+                      {/* <MainView /> */}
+                    </div>      
+                  </div>
+                </QueryClientProvider>
+            </AuthActionsProvider>
+          </AuthProvider>
+        </ApiClientProvider>
+      </AppContextProvider>
+    </>
+  )
+}
+
+export default App

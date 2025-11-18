@@ -1,0 +1,68 @@
+.align_right {
+  text-align: right;
+}
+
+
+
+.flex_1 {
+  flex: .25;
+}
+.flex_2 {
+  flex: .5;
+}
+.flex_3 {
+  flex: .75;
+}
+.flex_4 {
+  flex: 1;
+}
+
+
+
+.g_1 {
+  gap: .25rem;
+}
+
+.g_2 {
+  gap: .5rem;
+}
+
+.g_3 {
+  gap: .75rem;
+}
+
+.g_4 {
+  gap: 1rem;
+}
+
+.lg {
+  font-size: 1.75rem;
+}
+
+.md {
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.sm {
+  font-size: 1rem;
+  /* font-weight: 500; */
+}
+
+.panel_bg {
+  background: rgba(255, 255, 255, 0.19);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);  
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 0 2px 1px rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.lite {
+  color: snow;
+}

@@ -1,0 +1,39 @@
+.top_right_svg {
+  transform: rotate(-339deg);
+  opacity: .1;
+  position: absolute;
+  top: -21%;
+  left: 52%;
+  width: 500px;
+  height: 500px;
+}
+
+.bottom_right_svg {
+    transform: rotate(-30deg);
+    opacity: .1;
+    position: absolute;
+    bottom: -1%;
+    width: 200px;
+    height: 200px;
+    right: -6%;
+}
+
+.top_left_svg {
+    transform: rotate(-35deg);
+    opacity: .1;
+    position: absolute;
+    top: -1%;
+    width: 250px;
+    height: 250px;
+    left: -30%;
+}
+
+.middle_left_svg {
+  transform: rotate(-28deg);
+  opacity: .1;
+  position: absolute;
+  top: 58%;
+  width: 500px;
+  height: 500px;
+  left: -51%;
+}
