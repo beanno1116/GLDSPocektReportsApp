@@ -21,7 +21,7 @@ const LoginPanel = ({ when,navigation }) => {
 
   const onLoginButtonClick = async ({data,isValid}) => {
     loader.loading();
-    
+    debugger;
     if (!isValid) {
       loader.loaded();
       return;

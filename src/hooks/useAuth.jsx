@@ -77,14 +77,21 @@ export const AuthActionsProvider = ({children}) => {
 
     const loginResponse = await api.post("login",formData,api.headers.applicationJson);
     
+  
     if (loginResponse.success){
       let token = loginResponse.token;
-      let authUser = loginResponse.data.user;
+      let authUser = {
+        firstName:loginResponse.data.first,
+        lastName:loginResponse.data.last,
+        email:loginResponse.data.email,
+        sAdmin:loginResponse.data.isAdmin,
+        username:loginResponse.data.username,
+        id:loginResponse.data.id
+      };
       auth.setToken(token);      
       auth.setAuthUser(authUser);
       let userId = authUser.id;
       const loginDataResponse = await api.get("organizations",{params:{userId,token}});
-    debugger;
       if (loginDataResponse.success){
         const appData = loginDataResponse.data;
         dispatch({action:"all",payload:{organization: appData.orgId,stores: appData.stores}})
