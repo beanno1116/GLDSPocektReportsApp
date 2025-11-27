@@ -2,6 +2,8 @@ import { useContext,createContext, useState, useCallback, useEffect, useRef } fr
 import { useApiClient } from "../Api/Api";
 import { loader } from "../Components/Loader/LoaderModal";
 import { AppContext } from "../Contexts/AppContext";
+import useLocalStorage from "./useLocalStorage";
+import { useNavigate } from "react-router";
 
 
 
@@ -73,7 +75,7 @@ export const AuthActionsProvider = ({children}) => {
   const {state,dispatch} = useContext(AppContext)
 
   const login = useCallback(async (formData,navigate) => {
-
+    loader.loaded;
 
     const loginResponse = await api.post("login",formData,api.headers.applicationJson);
     
@@ -84,40 +86,39 @@ export const AuthActionsProvider = ({children}) => {
         firstName:loginResponse.data.first,
         lastName:loginResponse.data.last,
         email:loginResponse.data.email,
-        sAdmin:loginResponse.data.isAdmin,
+        isAdmin:loginResponse.data.isAdmin,
         username:loginResponse.data.username,
         id:loginResponse.data.id
       };
       auth.setToken(token);      
       auth.setAuthUser(authUser);
-      let userId = authUser.id;
-      const loginDataResponse = await api.get("organizations",{params:{userId,token}});
-      if (loginDataResponse.success){
-        const appData = loginDataResponse.data;
-        dispatch({action:"all",payload:{organization: appData.orgId,stores: appData.stores}})
-        navigate("/");
-      }
-      return;
+      let userId = authUser.id;      
+      loader.loaded;
+      return true;
     }
-    loader.loaded();    
+    return false;
       
   },[api,auth])
 
-  const logout = useCallback((uid,navigate) => {
-    
-    const handleLogoutActionResponse = (response) => {
-      try {
-        if (response.success){
-          return;
-        }        
-        return;
-      } catch (error) {
-        console.error(error.message);
-      } finally {
-        
-      }
-    }
+  const logout = useCallback(async (uid,navigate) => {
+    debugger;
+    auth.setToken("");
+    auth.setAuthUser({
+      "firstName": "",
+      "lastName": "",
+      "email": "",
+      "isAdmin": false,
+      "username": "",
+      "id": ""
+    });
 
+    localStorage.removeItem("authUser");
+    localStorage.removeItem("b");
+    // navigateTo("/login");
+
+    return true;
+
+    // const loginResponse = await api.post("login",formData,api.headers.applicationJson);
     // request.post("logout",formData,headers,handleLogoutActionResponse);
 
   },[])
@@ -145,7 +146,6 @@ export const AuthActionsProvider = ({children}) => {
       password: data.password,
       accessCode: data.registrationCode
     }
-    debugger;
     const registrationResponse = await api.post("register",fd,api.headers.applicationJson);
     if (registrationResponse.success){
       let token = registrationResponse.token;
@@ -169,6 +169,7 @@ export const AuthActionsProvider = ({children}) => {
 }
 
 const AuthProvider = ({children}) => {
+  const localStorage = useLocalStorage();
   const [user,setUser] = useState({});
   const [token,setAuthToken] = useState(tokenStore.getToken());
   const [isAuthenticating,setIsAuthenticating] = useState(false);
@@ -176,10 +177,27 @@ const AuthProvider = ({children}) => {
 
   const setToken = (token) => {
     setAuthToken(token);
+    tokenStore.setToken(token);
+  }
+  const getToken = () => {
+    if (token){
+      return token;
+    }
+    return tokenStore.getToken();
   }
 
   const setAuthUser = (user) => {
     setUser(user);
+    localStorage.set("authUser",JSON.stringify(user));
+  }
+
+  const getAuthUser = () => {
+    let authUser = localStorage.get("authUser")
+    if (authUser){
+      authUser = JSON.parse(authUser);
+      return authUser;
+    }
+    return user;
   }
 
   
@@ -191,7 +209,9 @@ const AuthProvider = ({children}) => {
               user,
               isAuthenticating,
               isAuthenticated,
+              getToken,
               setToken,
+              getAuthUser,
               setAuthUser
             }}>
             {children}

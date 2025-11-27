@@ -9,10 +9,17 @@ import PasswordTextField from '../../../Components/Inputs/PasswordTextField';
 import { useNavigate } from 'react-router';
 import useWEForm from '../../../hooks/useWEForm';
 import { useApiClient } from '../../../Api/Api';
-import { useAuthActions } from '../../../hooks/useAuth';
+import { useAuth, useAuthActions } from '../../../hooks/useAuth';
+import { useContext } from 'react';
+import { AppContext } from '../../../Contexts/AppContext';
+import useLocalStorage from '../../../hooks/useLocalStorage';
 
 const LoginPanel = ({ when,navigation }) => {
   const authAction = useAuthActions();  
+  const api = useApiClient();
+  const auth = useAuth();
+  const localStorage = useLocalStorage();
+  const {state,dispatch} = useContext(AppContext);
   const {registerFormInput,resetForm,onSubmit} = useWEForm({
     userName: "",
     password: ""
@@ -21,7 +28,6 @@ const LoginPanel = ({ when,navigation }) => {
 
   const onLoginButtonClick = async ({data,isValid}) => {
     loader.loading();
-    debugger;
     if (!isValid) {
       loader.loaded();
       return;
@@ -32,7 +38,33 @@ const LoginPanel = ({ when,navigation }) => {
       userName: data.userName,
       password: data.password,    
     }
-    authAction.login(fd,navigate);
+    const loginResponse = await authAction.login(fd,navigate);   
+    if (loginResponse){      
+      const loginDataResponse = await api.get("organizations",{params:{userId:auth.getAuthUser().id,token:auth.token}});
+      if (loginDataResponse.success){
+        const {id,stores,users} = loginDataResponse.data;        
+        const payloadData = {
+          organization: id,
+          stores:stores,
+          users: users,
+          agentString: "",
+          activeStore: 0,
+          didInit: true
+        }
+        debugger;
+        
+        localStorage.set("org",JSON.stringify(payloadData));
+        dispatch({action:"all",payload:payloadData});
+        if (payloadData.stores.length > 1){
+          navigate("/stores/selector");
+          
+          // navigate("/");
+        }else{
+          // navigate("/");
+        }
+      }
+      loader.loaded();      
+    }
   }
 
   const onBackButtonClick = (e) => {

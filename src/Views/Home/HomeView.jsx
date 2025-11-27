@@ -8,90 +8,50 @@ import QuickView from './Components/QuickView/QuickView';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import FlexColumn from '../../Components/FlexComponents/FlexColumn';
 import Heading from '../../Components/Labels/Heading';
-import { loader } from '../../Components/Loader/LoaderModal';
 import HomeViewManager from '../../Components/HomeViewManager/HomeViewManager';
 import { subscribe, unsubscribe } from '../../events';
 import { STORE_CHANGE_EVENT } from '../../Utilities';
-import { useGetStoresForOrg } from '../../Api/ApiRoutes';
 import { AppContext } from '../../Contexts/AppContext';
-import { useApiClient } from '../../Api/Api';
+import { Store } from '../../Models/Store';
 
 
-const isLastAdmin = (users,userId) => {
-  try {
-    const doesAdminExist = users.filter(user => user.id !== userId).some(user => user.isAdmin === true);
-    if (doesAdminExist) {
-      return true;
-    }
-    return false;
-  } catch (error) {
-    console.error(`[ERROR] [HomeView] [isLastAdmin] - ${error.message}`);
-  }
-}
-
-const storeData = [
-  {
-    id: 1,
-    name: "Freddies",
-    city: "Atlanta",
-    state: "Mi"
-  },
-  {
-    id: 2,
-    name: "Eli's Market",
-    city: "Lewiston",
-    state: "Mi"
-  },
-]
 
 const ACCOUNT_USER_COUNT = 4;
 
 
 let renderCount = 0;
 
-let activeStoreCache = 0;
+
 
 
 const HomeView = ({ ...props }) => {
   console.log("HomeView rendered " + renderCount++);
-  const api = useApiClient();
   const {state,dispatch} = useContext(AppContext);
-  // const {status,stores} = useGetStoresForOrg();
-  const [showModal,setShowModal] = useState(false);
-  const [currentView,setCurrentView] = useState("");
-  const [activeStore,setActiveStore] = useState(activeStoreCache);
-  debugger;
-  
+
   
 
-  // let storeContext = storeData.filter(store => parseInt(store.id) === parseInt(activeStore))[0];
+  const [showModal,setShowModal] = useState(false);
+  const [currentView,setCurrentView] = useState("");
+  
+
+
 
 
   useEffect(() => {
+
     const storeChangeEventHandler = (e) => {
-      debugger;
-      let details = e.detail;
       setShowModal(false);
-      setActiveStore(parseInt(details.id));
-      const selectedStore = state.stores.filter(store => parseInt(store.id) === parseInt(details.id));
-      if (selectedStore.length > 0){
-        let storeAgentString = selectedStore[0].agentString;
-        api.updateAgentString(storeAgentString);        
-      }
-      activeStoreCache = parseInt(details.id);
       setCurrentView("home");
     }
 
     subscribe(STORE_CHANGE_EVENT,storeChangeEventHandler);
-    return () => {
-      activeStoreCache = activeStore;
+    return () => {      
       unsubscribe(STORE_CHANGE_EVENT,storeChangeEventHandler);
     }
   })
 
-  
-
-  const onNavBarClick = useCallback((e,action) => {
+  const onNavBarClick = useCallback((action) => {
+    
     if (action === "home"){
       setShowModal(false);
       return;
@@ -105,11 +65,20 @@ const HomeView = ({ ...props }) => {
 
   },[])
 
-  // if (status.isLoading){
-  //   return null;
-  // }
+
+
+  const getStoreContext = (org) => {    
+    let context = Store;
+    if (org?.stores.length > 0){
+      context = org.stores.filter(store => parseInt(store.id) === parseInt(state.activeStore))[0];
+    }
+    return context;
+  }
   
-  loader.loaded();
+
+  let storeContext = getStoreContext(state);
+
+
 
 
   return (
@@ -117,8 +86,8 @@ const HomeView = ({ ...props }) => {
 
       <FlexColumn width='100%' height='100%'>
 
-        <Heading size='lg'>Store Name</Heading>        
-        {/* <Heading size='lg'>{storeContext ? storeContext.name : "Store Name"}</Heading>         */}
+        {/* <Heading size='lg'>Store Name</Heading>         */}
+        <Heading size='lg'>{storeContext ? storeContext.name : "Store Name"}</Heading>        
 
         <QuickView />
 
@@ -126,7 +95,7 @@ const HomeView = ({ ...props }) => {
 
         <HomeViewManager 
           nextView={currentView}
-          activeStore={activeStore}
+          activeStore={state.activeStore}
           stores={state.stores}
           when={showModal}
           />

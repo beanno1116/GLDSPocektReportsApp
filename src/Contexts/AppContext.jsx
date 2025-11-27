@@ -3,10 +3,30 @@ import { appContextReducer } from "./AppContextReducer";
 
 export const AppContext = createContext();
 
-const initialState = {
-  organization: "",
-  stores: []
+let initialState = {};
+let localData = localStorage.getItem("org");
+if (localData){
+  localData = JSON.parse(localData);
+  initialState = {
+    organization: localData.organization,
+    stores: localData.stores,
+    users: localData.users,
+    activeStore: localData.activeStore,
+    agentString: localData.agentString,
+    didInit: true
+  }
+}else{
+  initialState = {
+    organization: "",
+    stores: [],
+    users: [],
+    activeStore: 0,
+    agentString: "",
+    didInit: false
+  }
 }
+
+
 
 export const AppContextProvider = ({children}) => {
   const [state,dispatch] = useReducer(appContextReducer,initialState);

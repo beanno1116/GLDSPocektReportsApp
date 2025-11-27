@@ -2,24 +2,36 @@
 import Heading from '../../Components/Labels/Heading';
 import styles from './storeSelectorView.module.css';
 import StoreButtonNav from './Components/StoreButtonNav';
+import { publish } from '../../events';
+import { NAVBAR_BUTTON_ACTIVE_EVENT, STORE_CHANGE_EVENT } from '../../Utilities';
 import { useContext } from 'react';
 import { AppContext } from '../../Contexts/AppContext';
 import { useApiClient } from '../../Api/Api';
-import { useNavigate } from 'react-router';
+import { useGetOrgData } from '../../Api/ApiRoutes';
 
 
 
+const storeData = [
+  {
+    id: 1,
+    name: "Freddies",
+    city: "Atlanta",
+    state: "Mi"
+  },
+  {
+    id: 2,
+    name: "Eli's Market",
+    city: "Lewiston",
+    state: "Mi"
+  },
+]
 
-const StoreSelectorView = () => {
+const StoreSelectorPanel = ({ currentStore }) => {
   const {state,dispatch} = useContext(AppContext);
-  const navigate = useNavigate();
     
   const api = useApiClient();
 
-  
-
-  const onUserRowClick = (e) => {  
-
+  const onUserRowClick = (e) => {    
     let button = e.currentTarget;  
     let id = button.dataset.value;
     let store = state.stores.filter(s => parseInt(s.id) === parseInt(id))[0];  
@@ -31,18 +43,18 @@ const StoreSelectorView = () => {
       localData = {...localData,activeStore:store.id,agentString};
       localStorage.setItem("org",JSON.stringify(localData));
     }
-    
-    dispatch({action:"all",payload:{...state,agentString,activeStore:store.id}});    
-    navigate("/")
-
+    dispatch({action:"all",payload:{...state,agentString,activeStore:store.id}});
+    publish(STORE_CHANGE_EVENT,{event:e,id:id,store,agentString});
+    publish(NAVBAR_BUTTON_ACTIVE_EVENT,{event:e,menu:"home"});
   }
 
 
 
 
   return (
-    <div className={styles.store_selector_panel}>
-       <Heading size='lg'>Choose a Store</Heading>       
+    <div className={styles.manage_user}>
+       <Heading size='lg'>Select A Store</Heading>
+       <Heading size='md'>Current: {currentStore?.name}</Heading>
 
        <div className={styles.store_selector_menu}>
 
@@ -60,4 +72,4 @@ const StoreSelectorView = () => {
   );
 }
 
-export default StoreSelectorView;
+export default StoreSelectorPanel;

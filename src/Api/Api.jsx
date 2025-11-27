@@ -71,9 +71,11 @@ export class ApiClient {
   }
 
   async post(endPoint,data,headers){
+    // debugger;
     return new Promise((resolve,reject) => {
       try {
         this.client.post(endPoint,data,{headers}).then((data) => {
+          debugger;
           if (data.status !== 200 && data.statusText !== "OK") throw new Error("Error with request");
           resolve(data.data) 
         })        

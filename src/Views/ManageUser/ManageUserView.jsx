@@ -7,7 +7,7 @@ import UserIcon from '../../assets/icons/UserIcon';
 import FlexColumn from '../../Components/FlexComponents/FlexColumn';
 import NavButton from '../../Components/Buttons/NavButton';
 import TextField from '../../Components/Inputs/TextField';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import UserRow from './Components/UserRow';
 import { loader } from '../../Components/Loader/LoaderModal';
 import { useNavigate } from 'react-router';
@@ -18,6 +18,9 @@ import AccountDetailsPanel from './Components/AccountDetailsPanel';
 import CurrentUserDetailPanel from './Components/CurrentUserDetailPanel';
 import IconButton from '../../Components/Buttons/IconButton';
 import TrashIcon from '../../assets/icons/TrashIcon';
+import { AppContext } from '../../Contexts/AppContext';
+import AddUserFormPanel from './Components/AddUserFormPanel';
+import PlainUserIcon from '../../assets/icons/PlainUserIcon';
 
 const account = {
   numberOfUsers: 3
@@ -139,7 +142,8 @@ const isLastAdmin = (users,userId) => {
 
 const ManageUserView = ({ stores }) => {
   // const [users,setUsers] = useState([]);
-  const {status,users} = useGetOrgUsers();
+  const {state} = useContext(AppContext);
+  const {status,users} = useGetOrgUsers(state.organization);
   const [showModal,setShowModal] = useState(false);
   const [isDropdownShowing,setIsDropdownSowing] = useState(false);
   const [isUserSettingsShowing,setIsUserSettingsShowing] = useState(false);
@@ -225,7 +229,15 @@ const ManageUserView = ({ stores }) => {
 
         <FlexColumn flex='1' g='1rem'>
           <Heading size='lg'>User Settings</Heading>
-          
+
+          <FlexRow hAlign='space-between' p='1rem' >
+            <PlainUserIcon size={80} />
+            <FlexColumn vAlign='flex-end'>
+              <label style={{color:"snow",fontSize:"1.75rem",fontWeight:"800"}}>devuser</label>
+              <label style={{color:"snow",fontSize:"1.5rem"}}>Administrator</label>
+            </FlexColumn>
+          </FlexRow>
+
           <FlexRow>
             <TextField placeholder="First name"/>
           </FlexRow>
@@ -234,6 +246,9 @@ const ManageUserView = ({ stores }) => {
           </FlexRow>
           <FlexRow>
             <TextField placeholder="Email address"/>
+          </FlexRow>
+          <FlexRow>
+            <TextField placeholder="Phone"/>
           </FlexRow>
         </FlexColumn>
 
@@ -246,6 +261,8 @@ const ManageUserView = ({ stores }) => {
 
 
       </div> 
+      
+      <AddUserFormPanel when={isDropdownShowing} close={setIsDropdownSowing} />
 
       <ManageUserPanel when={isManageUserShowing} onChange={(e) => setIsManageUserShowing(false)} user={users.filter(user => user.id === currentUser)[0]} stores={stores} />
 
@@ -253,7 +270,7 @@ const ManageUserView = ({ stores }) => {
       {/* <h1>Manage Users</h1> */}
 
       {/* Account user count details */}
-      <AccountDetailsPanel account={{...account,activeUsers:userData}} />      
+      <AccountDetailsPanel account={{...account,activeUsers:users}} />      
 
       {/* Logged in user details, logout, and reset password buttons */}
       <CurrentUserDetailPanel onToggleUserPanel={onUserEditIconClick} />
@@ -266,28 +283,12 @@ const ManageUserView = ({ stores }) => {
 
         <div className={`${styles.panel_section} ${siteStyles.flex_4}`}>
 
-          <div className={styles.manage_user_button_section}>
-
-            <NavButton disabled={users.length >= 4 ? true : false}  size='md' active={true} onClick={onAddUserButtonClick}>Add</NavButton>   
-
-            <div className={`${styles.dropdown_panel} ${isDropdownShowing ? styles.showing : ""}`}>
-              <TextField value={userRegistrationEmail} placeholder="New User Email" />
-              <TextField value={userRegistrationCode} placeholder="xxxx-xxxx-xx" />
-              <FlexRow g='1rem'>
-                <NavButton active={true} size='md' theme={"dark"} onClick={onCreateUseCodeButtonClick}>{userRegistrationCode === "" ? "Create Code" : "Submit"}</NavButton>
-                <IconButton action="close" onClick={onCreateUseCodeButtonClick}>
-                  <span style={{color:"red",fontWeight:"800",fontSize:".8rem"}}>X</span>
-                </IconButton>                
-              </FlexRow>
-            </div>      
-
-          </div>
+          
 
           <div style={{position:"relative",flex:"1",width:"100%"}}>
 
             <div style={{position:"absolute",display:"flex",flexDirection:"column",gap:"1rem",top:"0",left:"0",width:"100%",height:"100%",overflowY:"scroll"}}>
               {users.map(user => {
-                debugger;
                   const doesAdminExist = isLastAdmin(users,user.id);
                   return (
                     <UserRow 
@@ -304,7 +305,13 @@ const ManageUserView = ({ stores }) => {
 
           </div>
           
-          
+          <div className={styles.manage_user_button_section}>
+
+            <NavButton disabled={users.length >= 4 ? true : false}  size='md' active={true} onClick={onAddUserButtonClick}>Add</NavButton>   
+
+                
+
+          </div>
 
         </div>
       </div>          

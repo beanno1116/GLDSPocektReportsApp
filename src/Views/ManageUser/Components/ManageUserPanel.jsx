@@ -10,7 +10,6 @@ import StoreRow from './StoreRow';
 const ManageUserPanel = ({ stores,user,when,onChange }) => {
 
   const onStoreRowClick = (e,value) => {
-    debugger;
     let tmpStores = stores;
     let temp = stores.filter(store => parseInt(store.customer) === parseInt(value));
     e.currentTarget.classList.add(styles.active);
@@ -44,7 +43,6 @@ const ManageUserPanel = ({ stores,user,when,onChange }) => {
         <FlexColumn width='100%'>
           <FlexColumn width='100%' g='1rem'>
             {stores.map(store => {
-              debugger;
               if (!user){
                 return (
                   <StoreRow key={store.id} name={store.name} city={store.city} state={store.state} onClick={(e) => onStoreRowClick(e,store.id)}/>    

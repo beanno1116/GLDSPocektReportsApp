@@ -45,7 +45,6 @@ const RegistrationPanel = ({ when,navigation }) => {
       password: data.password,
       accessCode: data.registrationCode
     }
-    debugger;
     authAction.register(fd,navigate);
     // const registrationResponse = await api.post("register",fd,api.headers.applicationJson);
     // if (registrationResponse.success){

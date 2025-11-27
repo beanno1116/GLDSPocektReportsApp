@@ -16,7 +16,6 @@ const uuid = (prefix) => {
 const validate = function(inputs){
   return {
     required(){
-      // debugger;
       let errorCount = 0;
       for (const input in inputs) {
         if (Object.prototype.hasOwnProperty.call(inputs, input)) {

@@ -20,13 +20,13 @@ const pages = [
 const QuickView = ({ ...props }) => {
   const api = useApiClient();
   const auth = useAuth();
-  const { isLoading, isError,isSuccess,isIdle, data,error } = useQuery({
-      queryKey: ["CurrentVsLastWeek"],
-      queryFn: ({signal}) => api.dataFetch(signal,auth.token,"CurrentVsLastWeek"),
-      refetchOnWindowFocus: false,
-      staleTime: Infinity,
-      keepPreviousData: true
-    })
+  // const { isLoading, isError,isSuccess,isIdle, data,error } = useQuery({
+  //     queryKey: ["CurrentVsLastWeek"],
+  //     queryFn: ({signal}) => api.dataFetch(signal,auth.token,"CurrentVsLastWeek"),
+  //     refetchOnWindowFocus: false,
+  //     staleTime: Infinity,
+  //     keepPreviousData: true
+  //   })
   const [currentPage,setCurrentPage] = useState(0);
 
 

@@ -11,6 +11,7 @@ import { ApiClient, ApiClientProvider, getApiEndpoint } from "./Api/Api";
 import ProtectedRoute from "./Views/ProtectedRoute";
 import ItemReportsView from "./Views/ItemReports/ItemReportsView";
 import { AppContextProvider } from "./Contexts/AppContext";
+import StoreSelectorView from "./Views/StoreSelector/StoreSelectorView";
 // import Api, { ApiClient, ApiClientProvider, getApiEndpoint } from "./Api/Api";
 
 // login username password
@@ -20,16 +21,28 @@ import { AppContextProvider } from "./Contexts/AppContext";
 const queryClient = new QueryClient();
 const apiClient = new ApiClient(getApiEndpoint(false));
 
+const AppViewOutlet = ({children}) => {
+  return (
+    <div>
+      {children}
+    </div>
+  )
+}
+
 const App = () => {
 
   const router = createBrowserRouter([
     {
       path:"/",
-      element:<ProtectedRoute><div><Outlet /></div></ProtectedRoute>,
+      element:<ProtectedRoute><AppViewOutlet><Outlet /></AppViewOutlet></ProtectedRoute>,
       children: [
         {
-          index: true,
+          path: "/",
           element: <HomeView />
+        },
+        {
+          path:"/stores/selector",
+          element: <StoreSelectorView />
         },
         {
           path: "/reports/item",
