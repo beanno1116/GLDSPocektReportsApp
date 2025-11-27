@@ -21,6 +21,7 @@ import TrashIcon from '../../assets/icons/TrashIcon';
 import { AppContext } from '../../Contexts/AppContext';
 import AddUserFormPanel from './Components/AddUserFormPanel';
 import PlainUserIcon from '../../assets/icons/PlainUserIcon';
+import EditUserDetailsPanel from './Components/EditUserDetailsPanel';
 
 const account = {
   numberOfUsers: 3
@@ -170,31 +171,7 @@ const ManageUserView = ({ stores }) => {
     setIsDropdownSowing(true);
   }
 
-  const onCreateUseCodeButtonClick = (e) => {
 
-    if (e.currentTarget.dataset.action === "close"){
-      setIsDropdownSowing(false);
-      setUserRegistrationCode("");
-      return;
-    }
-
-    if (e.currentTarget.innerText === "Submit"){
-      if (userRegistrationEmail === "") return;
-      setIsDropdownSowing(false);
-      loader.loading();      
-      const intv = setTimeout(() => {
-        setUsers([...users,{id:7,userName:userRegistrationCode,activatedDate:"Pending",isAdmin:false}])
-        setUserRegistrationCode("");
-        loader.loaded();
-        clearTimeout(intv);
-      },3000)
-      return;
-    }
-    const intTo = setTimeout(() => {
-      setUserRegistrationCode("BR19-7R29-X1");
-      clearTimeout(intTo);
-    },3000)
-  }
 
   const onUserRowClick = (e,action) => {
      console.log(`User ${action} row clicked`);
@@ -206,13 +183,6 @@ const ManageUserView = ({ stores }) => {
     setIsUserSettingsShowing(true);
   }
 
-  const onSaveButtonClick = (e) => {
-    if (e.currentTarget.dataset.action === "close"){
-      setIsUserSettingsShowing(false);
-      return;
-    }
-    setIsUserSettingsShowing(false);
-  }
 
   const onGrantStoreButtonClick = (e) => {
 
@@ -225,42 +195,8 @@ const ManageUserView = ({ stores }) => {
   return (
     <div className={styles.manage_user}>
 
-      <div className={`${styles.user_settings_panel} ${isUserSettingsShowing ? styles.showing : ""}`}>
 
-        <FlexColumn flex='1' g='1rem'>
-          <Heading size='lg'>User Settings</Heading>
-
-          <FlexRow hAlign='space-between' p='1rem' >
-            <PlainUserIcon size={80} />
-            <FlexColumn vAlign='flex-end'>
-              <label style={{color:"snow",fontSize:"1.75rem",fontWeight:"800"}}>devuser</label>
-              <label style={{color:"snow",fontSize:"1.5rem"}}>Administrator</label>
-            </FlexColumn>
-          </FlexRow>
-
-          <FlexRow>
-            <TextField placeholder="First name"/>
-          </FlexRow>
-          <FlexRow>
-            <TextField placeholder="Last name"/>
-          </FlexRow>
-          <FlexRow>
-            <TextField placeholder="Email address"/>
-          </FlexRow>
-          <FlexRow>
-            <TextField placeholder="Phone"/>
-          </FlexRow>
-        </FlexColumn>
-
-        <FlexRow g='1rem'>
-          <NavButton active={true} size='md' theme='dark' onClick={onSaveButtonClick}>Save</NavButton>
-          <IconButton action="close" onClick={onSaveButtonClick}>
-            <span style={{color:"red",fontWeight:"800",fontSize:".8rem"}}>X</span>
-          </IconButton>
-        </FlexRow>
-
-
-      </div> 
+      <EditUserDetailsPanel when={isUserSettingsShowing} close={setIsUserSettingsShowing} />
       
       <AddUserFormPanel when={isDropdownShowing} close={setIsDropdownSowing} />
 

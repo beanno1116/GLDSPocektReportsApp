@@ -32,6 +32,16 @@ const AddUserFormPanel = ({ when,close }) => {
 
     if (e.currentTarget.innerText === "Submit"){
       if (formData.userRegistrationEmail === "") return;
+      // if (userRegistrationEmail === "") return;
+      // setIsDropdownSowing(false);
+      // loader.loading();      
+      // const intv = setTimeout(() => {
+      //   setUsers([...users,{id:7,userName:userRegistrationCode,activatedDate:"Pending",isAdmin:false}])
+      //   setUserRegistrationCode("");
+      //   loader.loaded();
+      //   clearTimeout(intv);
+      // },3000)
+      // return;
       close();      
       const intv = setTimeout(() => {
         
