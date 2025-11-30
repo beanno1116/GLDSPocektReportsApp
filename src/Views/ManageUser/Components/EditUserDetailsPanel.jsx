@@ -11,6 +11,7 @@ import { useApiClient } from '../../../Api/Api';
 import PlainUserIcon from '../../../assets/icons/PlainUserIcon';
 import { useAuth } from '../../../hooks/useAuth';
 import { loader } from '../../../Components/Loader/LoaderModal';
+import User from '../../../Models/User';
 
 const EditUserDetailsPanel = ({ when,close }) => {
   const api = useApiClient();
@@ -28,40 +29,31 @@ const EditUserDetailsPanel = ({ when,close }) => {
     setFormData({...formData,[name]:e.target.value});
   }
 
+  const onCloseButtonClick = (e) => {
+     close();
+  }
+
   const onSaveButtonClick = async (e) => {
-    if (e.target.dataset.action === "close"){
-      close();
-      // setFormData({
-      //   userId: "",
-      //   firstName: "",
-      //   lastName: "",
-      //   email: "",
-      //   // phoneNumber: ""
-      // })
-      return;
-    }
+    
     loader.loading();
+
     let saveResponse = await api.post("user/update",formData,api.headers.applicationJson);
 
     if (saveResponse.success){
-      console.log("");
+
+      const {data} = saveResponse;
+      const updatedUser = new User(data);
+      auth.setAuthUser(updatedUser);      
       close();
-      loader.loaded();
-      // setFormData({
-      //   userId: "",
-      //   firstName: "",
-      //   lastName: "",
-      //   email: "",
-      //   // phoneNumber: ""
-      // })
     }
+    loader.loaded();    
   }
 
   return (
     <div className={`${styles.user_settings_panel} ${when ? styles.showing : ""}`}>
 
         <FlexColumn flex='1' g='1rem'>
-          <Heading size='lg'>User Settings</Heading>
+          <Heading size='lg'>User Details</Heading>
 
           <FlexRow hAlign='space-between' p='1rem' >
             <PlainUserIcon size={80} />
@@ -87,7 +79,7 @@ const EditUserDetailsPanel = ({ when,close }) => {
 
         <FlexRow g='1rem'>
           <NavButton active={true} size='md' theme='dark' onClick={onSaveButtonClick}>Save</NavButton>
-          <IconButton action="close" onClick={onSaveButtonClick}>
+          <IconButton action="close" onClick={onCloseButtonClick}>
             <span style={{color:"red",fontWeight:"800",fontSize:".8rem"}}>X</span>
           </IconButton>
         </FlexRow>

@@ -6,6 +6,9 @@ import { useContext } from 'react';
 import { AppContext } from '../../Contexts/AppContext';
 import { useApiClient } from '../../Api/Api';
 import { useNavigate } from 'react-router';
+import Filter from '../../Utils/Filter';
+
+
 
 
 
@@ -22,10 +25,14 @@ const StoreSelectorView = () => {
 
     let button = e.currentTarget;  
     let id = button.dataset.value;
-    let store = state.stores.filter(s => parseInt(s.id) === parseInt(id))[0];  
+
+    let store = Filter.storeById(state.stores,id);
+
     let agentString = store.agentString;
     api.updateAgentString(agentString);
+
     let localData = localStorage.getItem("org");
+
     if (localData){
       localData = JSON.parse(localStorage.getItem("org"));
       localData = {...localData,activeStore:store.id,agentString};
@@ -42,7 +49,8 @@ const StoreSelectorView = () => {
 
   return (
     <div className={styles.store_selector_panel}>
-       <Heading size='lg'>Choose a Store</Heading>       
+
+       <Heading size='lg' mode='lite'>Choose a Store</Heading>       
 
        <div className={styles.store_selector_menu}>
 
@@ -54,7 +62,7 @@ const StoreSelectorView = () => {
             })}
           </div>
 
-        </div>
+      </div>
 
     </div>
   );

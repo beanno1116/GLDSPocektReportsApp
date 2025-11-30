@@ -1,7 +1,7 @@
 import styles from './loginView.module.css';
 import logo from '../../assets/images/pocketReportLogo.png';
 import buttonStyles from '../../Components/Buttons/button.module.css';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import FlexColumn from '../../Components/FlexComponents/FlexColumn';
 import TextField from '../../Components/Inputs/TextField';
 import PasswordTextField from '../../Components/Inputs/PasswordTextField';
@@ -16,30 +16,35 @@ import StartLoginPanel from './Components/StartLoginPanel';
 import LoginPanel from './Components/LoginPanel';
 import RegistrationPanel from './Components/RegistrationPanel';
 
-const LoginView = ({ ...props }) => {
+
+const useLoginView = () => {
   const [isStartPanelHidden,setIsStartPanelHidden] = useState(false);
   const [viewName,setViewName] = useState("");
-  const navigate = useNavigate();
 
-  const onStartPanelButtonClick = (e,action) => {
+  const onStartPanelButtonClick = useCallback((e,action) => {
     setIsStartPanelHidden(true);
     setViewName(action);
-  }
+  },[])
 
 
-  const onBackButtonClick = (e) => {
+  const onBackButtonClick = useCallback((e) => {
     setIsStartPanelHidden(false);
     setViewName("");
-  }
+  },[])
 
-  const onLoginButtonClick = (e) => {
-    loader.loading();
-    const intv = setTimeout(() => {
-      navigate("/");
-      clearTimeout(intv);
-      loader.loaded();
-    },2000)
+  return {
+    isStartPanelHidden,
+    onBackButtonClick,
+    onStartPanelButtonClick,
+    viewName,
   }
+}
+
+
+
+const LoginView = () => {
+  const {isStartPanelHidden,onBackButtonClick,onStartPanelButtonClick,viewName} = useLoginView();
+
 
   return (
     <div className={styles.login_view}>

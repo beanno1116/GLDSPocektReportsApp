@@ -82,7 +82,7 @@ const useGetStoresForOrg = () => {
 }
 
 const getOrgUsers = async ({api,signal,token,orgId}) => {
-  const response = await api.get("organizations/users",{params:{token,orgId},signal}); 
+  const response = await api.get("organizations/users",{params:{token,orgId},signal});   
   return response.data;
 }
 const useGetOrgUsers = (orgId) => {
@@ -112,8 +112,7 @@ const useGetOrgUsers = (orgId) => {
 }
 
 const getReportData = async (api,params,signal) => {
-  const response = await api.post("data",params,{...api.headers.applicationJson,signal});
-  debugger;
+  const response = await api.post("data",params,{...api.headers.applicationJson,signal});  
   if (response.success){
     return response.data;
   }  

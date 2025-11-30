@@ -20,13 +20,7 @@ const pages = [
 const QuickView = ({ ...props }) => {
   const api = useApiClient();
   const auth = useAuth();
-  // const { isLoading, isError,isSuccess,isIdle, data,error } = useQuery({
-  //     queryKey: ["CurrentVsLastWeek"],
-  //     queryFn: ({signal}) => api.dataFetch(signal,auth.token,"CurrentVsLastWeek"),
-  //     refetchOnWindowFocus: false,
-  //     staleTime: Infinity,
-  //     keepPreviousData: true
-  //   })
+
   const [currentPage,setCurrentPage] = useState(0);
 
 
@@ -87,14 +81,20 @@ const QuickView = ({ ...props }) => {
 
   return (
     <div className={styles.quick_view} onTouchStart={onTouchStartEvent} onTouchEnd={onTouchEndEvent}>
+
       {pages[currentPage]}
-       {/* <ThisWeekVsLast title={"This Week vs Last Week"}/> */}
-       {/* <TopSubDepartments title={"Top Sub Departments"}/> */}
+
        <div style={{display:"flex",gap:".5rem"}} onClick={onPageDotClick}>
-        <span ref={pageDotRefCallback} data-page={0} className={`${styles.page_dot} ${styles.active}`}></span>
-        <span ref={pageDotRefCallback} data-page={1} className={styles.page_dot}></span>
-        <span ref={pageDotRefCallback} data-page={2} className={styles.page_dot}></span>
-        <span ref={pageDotRefCallback} data-page={3} className={styles.page_dot}></span>
+        {pages.map((_,index) => {
+          if (index === 0){
+            return (
+              <span key={index} ref={pageDotRefCallback} data-page={index} className={`${styles.page_dot} ${styles.active}`}></span>
+            )
+          }
+          return (
+            <span key={index} ref={pageDotRefCallback} data-page={index} className={styles.page_dot}></span>
+          )
+        })}
       </div>
     </div>
   );

@@ -8,6 +8,7 @@ let localData = localStorage.getItem("org");
 if (localData){
   localData = JSON.parse(localData);
   initialState = {
+    seats: localData.seats,
     organization: localData.organization,
     stores: localData.stores,
     users: localData.users,
@@ -20,6 +21,7 @@ if (localData){
     organization: "",
     stores: [],
     users: [],
+    seats: 0,
     activeStore: 0,
     agentString: "",
     didInit: false

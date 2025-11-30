@@ -22,6 +22,8 @@ import { AppContext } from '../../Contexts/AppContext';
 import AddUserFormPanel from './Components/AddUserFormPanel';
 import PlainUserIcon from '../../assets/icons/PlainUserIcon';
 import EditUserDetailsPanel from './Components/EditUserDetailsPanel';
+import AccountUsersPanel from './Components/AccountUsersPanel';
+import Filter from '../../Utils/Filter';
 
 const account = {
   numberOfUsers: 3
@@ -154,6 +156,10 @@ const ManageUserView = ({ stores }) => {
   const [currentUser, setCurrentUser] = useState(0);
   const navigate = useNavigate();
 
+
+  
+
+
   const onLogoutButtonClick = (e) => {
      loader.loading();
     const intv = setTimeout(() => {
@@ -173,7 +179,7 @@ const ManageUserView = ({ stores }) => {
 
 
 
-  const onUserRowClick = (e,action) => {
+  const onUserRowClick = (action) => {
      console.log(`User ${action} row clicked`);
     setIsManageUserShowing(true);
     setCurrentUser(action);
@@ -196,61 +202,28 @@ const ManageUserView = ({ stores }) => {
     <div className={styles.manage_user}>
 
 
+      {/* Panel auxillary views */}
       <EditUserDetailsPanel when={isUserSettingsShowing} close={setIsUserSettingsShowing} />
       
       <AddUserFormPanel when={isDropdownShowing} close={setIsDropdownSowing} />
 
-      <ManageUserPanel when={isManageUserShowing} onChange={(e) => setIsManageUserShowing(false)} user={users.filter(user => user.id === currentUser)[0]} stores={stores} />
+      <ManageUserPanel 
+        when={isManageUserShowing} 
+        onChange={(e) => setIsManageUserShowing(false)} 
+        user={Filter.userById(users,currentUser)} 
+        stores={stores} />
 
-      <Heading size='lg'>Manage Users</Heading>
-      {/* <h1>Manage Users</h1> */}
+      <Heading size='lg' mode='lite'>Manage Users</Heading>
 
       {/* Account user count details */}
-      <AccountDetailsPanel account={{...account,activeUsers:users}} />      
+      <AccountDetailsPanel userCount={users.length} seatCount={state.seats} />      
 
       {/* Logged in user details, logout, and reset password buttons */}
       <CurrentUserDetailPanel onToggleUserPanel={onUserEditIconClick} />
       
 
       {/* Users for the current account */}
-      <div className={`${styles.manage_user_section} ${siteStyles.flex_4}`}>
-        
-        <label className={styles.label}>Active users</label>
-
-        <div className={`${styles.panel_section} ${siteStyles.flex_4}`}>
-
-          
-
-          <div style={{position:"relative",flex:"1",width:"100%"}}>
-
-            <div style={{position:"absolute",display:"flex",flexDirection:"column",gap:"1rem",top:"0",left:"0",width:"100%",height:"100%",overflowY:"scroll"}}>
-              {users.map(user => {
-                  const doesAdminExist = isLastAdmin(users,user.id);
-                  return (
-                    <UserRow 
-                      key={user.id} 
-                      id={user.id} 
-                      isAdmin={user.isAdmin} 
-                      isLastAdmin={doesAdminExist} 
-                      userName={user.username} 
-                      activationDate={user.activatedDate} 
-                      onClick={onUserRowClick} />
-                  )
-                })}
-            </div>
-
-          </div>
-          
-          <div className={styles.manage_user_button_section}>
-
-            <NavButton disabled={users.length >= 4 ? true : false}  size='md' active={true} onClick={onAddUserButtonClick}>Add</NavButton>   
-
-                
-
-          </div>
-
-        </div>
-      </div>          
+      <AccountUsersPanel users={users} onClick={onUserRowClick} toggle={onAddUserButtonClick} />
 
     </div>
   );

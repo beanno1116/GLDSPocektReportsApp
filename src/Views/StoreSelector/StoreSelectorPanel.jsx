@@ -53,8 +53,8 @@ const StoreSelectorPanel = ({ currentStore }) => {
 
   return (
     <div className={styles.manage_user}>
-       <Heading size='lg'>Select A Store</Heading>
-       <Heading size='md'>Current: {currentStore?.name}</Heading>
+       <Heading size='lg' mode='lite'>Select A Store</Heading>
+       <Heading size='md' mode='lite'>Current: {currentStore?.name}</Heading>
 
        <div className={styles.store_selector_menu}>
 

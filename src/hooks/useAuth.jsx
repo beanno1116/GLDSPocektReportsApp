@@ -62,7 +62,22 @@ const tokenStore = {
 }
 
 
-
+const parseUserFromLoginResponse = (response) => {
+  try {
+    if (!response) throw new TypeError("Cannot parse response. arguement undefined as null");
+    const {first,last,email,isAdmin,username,id} = response.data;
+    return {
+      firstName: first,
+      lastName: last,
+      email: email,
+      isAdmin: isAdmin,
+      username: username,
+      id: id
+    };
+  } catch (error) {
+    console.error(error.message);
+  }
+}
 
 
 const AuthContext = createContext();
@@ -72,27 +87,17 @@ const AuthActionsContext = createContext();
 export const AuthActionsProvider = ({children}) => {
   const auth = useAuth();
   const api = useApiClient();
-  const {state,dispatch} = useContext(AppContext)
 
-  const login = useCallback(async (formData,navigate) => {
+  const login = useCallback(async (formData) => {
     loader.loaded;
 
     const loginResponse = await api.post("login",formData,api.headers.applicationJson);
     
-  
     if (loginResponse.success){
       let token = loginResponse.token;
-      let authUser = {
-        firstName:loginResponse.data.first,
-        lastName:loginResponse.data.last,
-        email:loginResponse.data.email,
-        isAdmin:loginResponse.data.isAdmin,
-        username:loginResponse.data.username,
-        id:loginResponse.data.id
-      };
+      let authUser = parseUserFromLoginResponse(loginResponse);
       auth.setToken(token);      
       auth.setAuthUser(authUser);
-      let userId = authUser.id;      
       loader.loaded;
       return true;
     }
@@ -121,7 +126,7 @@ export const AuthActionsProvider = ({children}) => {
     // const loginResponse = await api.post("login",formData,api.headers.applicationJson);
     // request.post("logout",formData,headers,handleLogoutActionResponse);
 
-  },[])
+  },[auth])
 
   const verify = useCallback((navigate) => {
 
@@ -155,7 +160,7 @@ export const AuthActionsProvider = ({children}) => {
       navigate("/");
       return;
     }
-  },[])
+  },[api,auth])
 
   return <AuthActionsContext.Provider
           value={{

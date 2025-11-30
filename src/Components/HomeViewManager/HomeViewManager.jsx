@@ -15,10 +15,7 @@ const HomeViewManager = ({ nextView,activeStore,stores,when }) => {
   
 
   const renderHomeView = (view) => {
-    debugger;
-    // if (activeStore === 0 && stores.length > 1){
-    //   view = "selector";
-    // }
+
     switch (view) {
       case NAVBAR_MANAGER_USER_ACTION:
         return <ManageUserView stores={stores} />

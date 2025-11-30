@@ -25,9 +25,32 @@ const useLocalStorage = () => {
     }
   }
 
+  const updateValue = (key,value) => {
+    try {
+      if (localStorage.has(key)) {
+        const currentValue = localStorage.getItem(key);
+        const valueObj = JSON.parse(currentValue);
+        if (typeof valueObj === "object"){
+          const updatedObj = {...valueObj,...value};
+          localStorage.setItem(key,JSON.stringify(updatedObj));
+          return true;
+        }
+        localStorage.setItem(key,JSON.stringify(value));        
+      }
+      setValue(key,value);
+      return true;
+    } catch (error) {
+      if (error.name === "SyntaxError"){
+        console.error(`${key} property's value is invalid JSON value`);
+      }
+      return false;
+    }
+  }
+
   return {
     get: getValue,
-    set: setValue
+    set: setValue,
+    update: updateValue
   }
 }
 

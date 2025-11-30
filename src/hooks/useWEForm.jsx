@@ -87,7 +87,9 @@ const useWEForm = (initialData) => {
   }
 
   const resetForm = (e) => {
-    e && e.preventDefault();
+    if (e){
+      e && e.preventDefault();
+    }
     try {
       setFormData(initialData);
       const inputsObj = inputsRef.current;

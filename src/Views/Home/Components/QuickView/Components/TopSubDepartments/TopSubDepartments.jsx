@@ -5,6 +5,7 @@ import siteStyles from '../../../../../../site.module.css';
 import { useContext } from 'react';
 import { AppContext } from '../../../../../../Contexts/AppContext';
 import { useFetchReportData } from '../../../../../../Api/ApiRoutes';
+import Loader from '../../../../../../Components/Loader/Loader';
 
   const tdata = [
       {name: 'Produce', thisWeekSales: 657.54,lastWeekSales: 2634},
@@ -21,17 +22,10 @@ const TopSubDepartments = ({ title }) => {
   
 
 
-
-  if (status.isLoading){
-    return (
-      <div>
-        <h1>Loading report...</h1>
-      </div>
-    )
-  }
-
   return (
     <div className={`${siteStyles.panel_bg} ${styles.quick_view_report}`}>
+
+      {status.isLoading && <Loader text="Loading Report..."></Loader>}
       
        <h2>{title}</h2>
 

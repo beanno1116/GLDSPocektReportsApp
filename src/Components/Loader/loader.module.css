@@ -13,6 +13,27 @@
   transform: scale(0);  
   transform-origin: center;
 }
+.loaderPanel {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.75);  
+  z-index: 999;
+}
+.loader_panel_content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
 
 .myEnter {  
   opacity: 0;

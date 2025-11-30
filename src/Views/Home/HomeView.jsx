@@ -12,7 +12,7 @@ import HomeViewManager from '../../Components/HomeViewManager/HomeViewManager';
 import { subscribe, unsubscribe } from '../../events';
 import { STORE_CHANGE_EVENT } from '../../Utilities';
 import { AppContext } from '../../Contexts/AppContext';
-import { Store } from '../../Models/Store';
+import Store from '../../Models/Store';
 
 
 
@@ -22,20 +22,10 @@ const ACCOUNT_USER_COUNT = 4;
 let renderCount = 0;
 
 
-
-
-const HomeView = ({ ...props }) => {
-  console.log("HomeView rendered " + renderCount++);
-  const {state,dispatch} = useContext(AppContext);
-
-  
-
+const useHomeView = () => {
+  const {state} = useContext(AppContext);
   const [showModal,setShowModal] = useState(false);
   const [currentView,setCurrentView] = useState("");
-  
-
-
-
 
   useEffect(() => {
 
@@ -68,7 +58,7 @@ const HomeView = ({ ...props }) => {
 
 
   const getStoreContext = (org) => {    
-    let context = Store;
+    let context = new Store();
     if (org?.stores.length > 0){
       context = org.stores.filter(store => parseInt(store.id) === parseInt(state.activeStore))[0];
     }
@@ -78,16 +68,27 @@ const HomeView = ({ ...props }) => {
 
   let storeContext = getStoreContext(state);
 
+  return {
+    state,
+    showModal,
+    currentView,
+    storeContext,
+    onNavBarClick
+  }
+}
 
 
+
+const HomeView = () => {
+  console.log("HomeView rendered " + renderCount++);
+  const {state,showModal,currentView,storeContext,onNavBarClick} = useHomeView();
 
   return (
     <div className={styles.home_view} style={{display:"flex",flexDirection:"column"}}>
 
       <FlexColumn width='100%' height='100%'>
 
-        {/* <Heading size='lg'>Store Name</Heading>         */}
-        <Heading size='lg'>{storeContext ? storeContext.name : "Store Name"}</Heading>        
+        <Heading size='lg' mode='lite'>{storeContext ? storeContext.name : "Store Name"}</Heading>        
 
         <QuickView />
 
@@ -100,13 +101,9 @@ const HomeView = ({ ...props }) => {
           when={showModal}
           />
 
-        
-
       </FlexColumn>
 
-
       <NavBar onClick={onNavBarClick}/>
-
 
     </div>
   );

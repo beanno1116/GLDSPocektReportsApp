@@ -128,6 +128,9 @@ button {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --input-label-color-l: snow;
+  --input-label-color-d:  var(--d-font-color);
 }
 
 .recharts-surface:focus {

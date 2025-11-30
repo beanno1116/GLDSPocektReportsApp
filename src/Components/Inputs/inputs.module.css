@@ -1,34 +1,51 @@
 .text_field,
-.password_text_field {
+.password_text_field,
+.text_area {
   position: relative;
   border: solid 1px black; 
   border: none;
   width: 100%;	
 }
+.text_area {
+  height: 100%;
+}
+
 
 .label {
   display: block;
   margin: 0 0 .5rem; 
   font-size: 1.5em; 
+  padding-left: .5rem;
   color: #FFF; 
   font-weight: 700; 
   font-family: "Montserrat", sans-serif;
   font-family: "Roboto", sans-serif;
 }
+
 input[type="text"],
+textarea,
 .input[type="password"] {
   background: transparent;  
 }
 .text_field_input,
+.text_area_input,
 .password_text_field_input {
   all: unset;
   display: block; 
   margin: 0; 
-  padding: 1.125em 1.125em 1.25em;
-  background-color: transparent;
-	/* background-color: rgba(255, 255, 255, 0.242);  */
-  border: solid 2px #FFF; 
+  padding: 1.5em .5em;
+  /* background: rgba(255, 255, 255, 0.19); */
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);  
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 0 2px 1px rgba(255, 255, 255, 0.1);  
+  overflow: hidden;
   border-radius: 8px; 
+
   /* -webkit-appearance: none; */
 	box-sizing: border-box;
 	width: 100%; 
@@ -39,17 +56,26 @@ input[type="text"],
   font-family: inherit;
   transition: box-shadow .2s linear, border-color .25s ease-out;  
 }
+.text_area_input {
+  height: 100%;
+  padding: .5rem .5rem;
+  /* background-color: red; */
+  /* padding: 1em; */
+  /* padding-bottom: 0; */
+}
 .text_field_input::placeholder,
+.text_area_input::placeholder,
 .password_text_field_input::placeholder {
   color: rgba(255, 250, 250, 0.707);
 }
 
 input.text_field_input[data-error="true"],
+textarea.text_area_input[data-error="true"],
 input.password_text_field_input[data-error="true"] {
   border: 0;
    /* border: solid 2px #D62246;  */
   border-color: #E3170A;
-  box-shadow: 0px 3px 2px 6px #e3180aac, 0px -3px 2px 6px #e3180a73;
+  box-shadow: 0px 2px 1px 5px #e3180aac, 0px -2px 1px 5px #e3180a73;
   -webkit-animation: shake-horizontal 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) both;
 	        animation: shake-horizontal 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) both;
 }
@@ -59,6 +85,7 @@ input.text_field_input:-webkit-autofill:focus {
 } */
 
 .text_field_input:focus,
+.text_area_input:focus,
 .password_text_field_input:focus {
   outline: none;
   box-shadow: 0px 2px 10px rgba(0,0,0,.2);
@@ -83,6 +110,32 @@ input.text_field_input:-webkit-autofill:focus {
   opacity: 0; 
   transition: opacity .2s linear;
   z-index: 1;
+}
+
+.text_field_input.sm {
+  height: 1.5rem;
+  font-size: 1.25rem;
+}
+.text_field_input.md {
+  height: 1.75rem;
+  font-size: 1.5rem;
+}
+.text_field_input.lg {
+  height: 2rem;
+  font-size: 1.75rem;
+}
+.text_area_input.lg {
+  font-size: 1.75rem;
+}
+
+.label.sm {
+  font-size: 1.2rem;
+}
+.label.md {
+  font-size: 1.45rem;
+}
+.label.lg {
+  font-size: 1.7rem;
 }
 
 @keyframes shake-horizontal {

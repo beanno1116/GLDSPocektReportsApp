@@ -1,9 +1,12 @@
 import styles from './loader.module.css';
 
-const Loader = () => {
+const Loader = ({text=""}) => {
   return (
-    <div id={styles.loader} className={styles.loader}>
-      {/* <div className={styles.spinner}></div> */}
+    <div className={styles.loaderPanel} >
+             
+        <div className={styles.spinner}></div>
+      
+      {text !== "" && <span>{text}</span>}
     </div>
   );
 }

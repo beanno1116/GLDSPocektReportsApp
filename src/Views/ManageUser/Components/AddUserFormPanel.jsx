@@ -8,80 +8,117 @@ import styles from '../manageUserView.module.css';
 import FlexColumn from '../../../Components/FlexComponents/FlexColumn';
 import PlainUserIcon from '../../../assets/icons/PlainUserIcon';
 import { loader } from '../../../Components/Loader/LoaderModal';
+import useWEForm from '../../../hooks/useWEForm';
+import Button from '../../../Components/Buttons/Button';
+import XIcon from '../../../assets/icons/XIcon';
+import InputGroup from '../../../Components/Forms/InputGroup';
+import InputLabel from '../../../Components/Labels/InputLabel';
+import TextArea from '../../../Components/Inputs/TextArea';
+import { useApiClient } from '../../../Api/Api';
+import { useAuth } from '../../../hooks/useAuth';
+import DropdownPanel from '../../../Components/DropdownPanel/DropdownPanel';
+import useAppContext from '../../../hooks/useAppContext';
 
-const AddUserFormPanel = ({ when,close }) => {
-
-  const [formData,setFormData] = useState({
-    userRegistrationEmail: "",
-    userRegistrationCode: "",
-  })
-
-  const onTextFieldChange = (e,name) => {
-    setFormData({...formData,[name]:e.target.value});
+const initialFormData = {
+    email: "",        
+    message: ""
   }
 
-  const onCreateUseCodeButtonClick = (e) => {
-    if (e.target.dataset.action === "close"){
+const AddUserFormPanel = ({ when,close }) => {
+  const api = useApiClient();
+  const auth = useAuth();
+  const {state} = useAppContext();
+  const {formData,registerFormInput,resetForm,onSubmit} = useWEForm(initialFormData);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [newAccessCode,setNewAccessCode] = useState("");
+
+
+
+
+
+  const onCloseButtonClick = (e) => {
       close();
-      setFormData({
-        userRegistrationEmail: "",
-        userRegistrationCode: "",
-      })
+      resetForm(e);
+  }
+
+  const onSendInviteButtonClick = async ({data,isValid}) => {
+    loader.loading();
+    if (!isValid){
       return;
     }
 
-    if (e.currentTarget.innerText === "Submit"){
-      if (formData.userRegistrationEmail === "") return;
-      // if (userRegistrationEmail === "") return;
-      // setIsDropdownSowing(false);
-      // loader.loading();      
-      // const intv = setTimeout(() => {
-      //   setUsers([...users,{id:7,userName:userRegistrationCode,activatedDate:"Pending",isAdmin:false}])
-      //   setUserRegistrationCode("");
-      //   loader.loaded();
-      //   clearTimeout(intv);
-      // },3000)
-      // return;
-      close();      
-      const intv = setTimeout(() => {
-        
-        
-        
-        clearTimeout(intv);
-      },3000)
+
+    const postData = {
+      ...data,
+      token: auth.getToken(),
+      orgId: state.organization,
+      userId: auth.getAuthUser().id
+    }
+   
+    let response = await api.post("users",postData,api.headers.applicationJson);
+    debugger;
+
+    if (response.success){
+      setShowSuccessModal(true);
+      setNewAccessCode(response.data);
+      loader.loaded();
       return;
     }
-    loader.loading();
-    const intTo = setTimeout(() => {
-      setFormData({...formData,userRegistrationCode:"BR19-7R29-X1"});
-      loader.loaded();
-      clearTimeout(intTo);
-    },3000)
+    loader.loaded();
   }
 
   return (
-    <div className={`${styles.user_settings_panel} ${when ? styles.showing : ""}`}>
-      <FlexRow hAlign='center' p='1rem'>
+    <DropdownPanel when={when}>
+
+      {showSuccessModal && (
+        <div className={styles.access_code_modal}>        
+        <div className={styles.access_code_modal_container}>
+          <div style={{fontSize:"3.25rem",fontWeight:"800",color:"snow",textAlign:"center",lineHeight:"1.5"}}>Success!</div>
+          <p className={styles.sub_heading_p}>The user was successfully created!</p>
+          <FlexRow p="0 1rem" hAlign='center'>
+          <div className={styles.access_code_display_panel}>
+            <div>Access Code</div>
+            <div>{newAccessCode}</div>
+          </div>
+          </FlexRow>
+          <p style={{textAlign:"center"}}>An email was sent with an access code to {formData.email}. You will be alerted once the user has completed the registration</p>          
+          <FlexRow p='0 1rem 1.5rem 1rem '>
+            <Button onClick={(e) => {
+              close();
+              resetForm(e);
+              setShowSuccessModal(false)}
+              }>Done</Button>
+          </FlexRow>
+        </div>
+
+      </div>
+      )}
+      
+      
+      <FlexRow hAlign='center' p='.5rem 0 0 0'>
         <PlainUserIcon size={100} />
       </FlexRow>
+
+      <FlexRow>
+        <TextField  label={"Invite Email"} size={'lg'}  {...registerFormInput("email",{required:true})} placeholder="newuser@mail.com" />                
+      </FlexRow>
+
       <FlexColumn flex='1' g='1rem'>
-        <TextField value={formData.newUserEmail} onChange={(e) => onTextFieldChange(e,"newUserEmail")} name="newUserEmail" placeholder="New User Email" />
-        <TextField value={formData.userRegistrationCode} placeholder="xxxx-xxxx-xx" />
-        <FlexRow hAlign='space-around'>
-          <label style={{color:"snow"}}>Create as Admin?</label>
-          <input type='checkbox' />
-        </FlexRow>
-        <FlexRow flex='1'>
-          <textarea style={{display:"flex",flex:"1",width:"100%",height:"100%",fontSize:"1.25rem",padding:".5rem"}} value={"You have been invited to StoreName by devuser"}></textarea>
-        </FlexRow>
+        <div style={{position:"relative",width:"100%",height:"100%"}}>
+          <InputGroup height="100%" g={".5rem"}>
+            <InputLabel text={"Invite message"} size='md'/>
+            <TextArea {...registerFormInput("message",{required:"false"})} size="lg" placeholder={"Your invited to register"} />          
+          </InputGroup>
+        </div>
       </FlexColumn>
+
       <FlexRow g='1rem'>
-        <NavButton active={true} size='md' theme={"dark"} onClick={onCreateUseCodeButtonClick}>{formData.userRegistrationCode === "" ? "Create Code" : "Submit"}</NavButton>
-        <IconButton action="close" onClick={onCreateUseCodeButtonClick}>
-          <span style={{color:"red",fontWeight:"800",fontSize:".8rem"}}>X</span>
+        <Button size='lg' onClick={(e) => onSubmit(e,onSendInviteButtonClick)}>Send Invite</Button>
+        <IconButton action="close" onClick={onCloseButtonClick}>
+          <XIcon size={20} />          
         </IconButton>                
       </FlexRow>
-    </div>  
+    </DropdownPanel>    
   );
 }
 
