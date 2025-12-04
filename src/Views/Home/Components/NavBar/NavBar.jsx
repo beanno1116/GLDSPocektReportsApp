@@ -19,7 +19,7 @@ const NavBar = ({ onClick }) => {
   useEffect(() => {
 
     const updateActiveButtonEvent = (e) => {
-      debugger;
+      ;
       let details = e.detail;
       setCurrentMenu(details.menu);
     }

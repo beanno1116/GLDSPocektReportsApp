@@ -1,26 +1,32 @@
 
-import { Area, AreaChart, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Area, AreaChart, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import styles from '../../quickView.module.css';
 import siteStyles from '../../../../../../site.module.css';
+import useChartComponent from '../../../../../../hooks/useChartComponent';
+import Mutate from '../../../../../../Utils/Mutate';
+import Loader from '../../../../../../Components/Loader/Loader';
+
+// const data = [
+//       {name: 'Mon', totalSales: 67.43,totalItems: 8},
+//       {name: 'Tue', totalSales: 49.76,totalItems: 6},
+//       {name: 'Wed', totalSales: 51.32,totalItems: 6},
+//       {name: 'Thu', totalSales: 37.34,totalItems: 5},
+//       {name: 'Fri', totalSales: 63.62,totalItems: 13},
+//       {name: 'Sat', totalSales: 71.45,totalItems: 15},
+//       {name: 'Sun', totalSales: 61.29,totalItems: 10},
+//     ];
 
 const AverageBasketDetails = ({ title }) => {
-  const data = [
-      {name: 'Mon', totalSales: 67.43,totalItems: 8},
-      {name: 'Tue', totalSales: 49.76,totalItems: 6},
-      {name: 'Wed', totalSales: 51.32,totalItems: 6},
-      {name: 'Thu', totalSales: 37.34,totalItems: 5},
-      {name: 'Fri', totalSales: 63.62,totalItems: 13},
-      {name: 'Sat', totalSales: 71.45,totalItems: 15},
-      {name: 'Sun', totalSales: 61.29,totalItems: 10},
-    ];
+  const {status,parseChartData} = useChartComponent("AvgBasketDetails",Mutate.basketDetailsData);
+  
   return (
     <div className={`${siteStyles.panel_bg} ${styles.quick_view_report}`}>
-      
+      {status.isLoading && <Loader text="Loading Report..."></Loader>}
        <h2>{title}</h2>
 
        <ResponsiveContainer width="100%" height="100%">
 
-        <AreaChart data={data} margin={{top:0,right:0,left:-35,bottom:0}}>
+        <AreaChart data={parseChartData()} margin={{top:0,right:0,left:-35,bottom:0}}>
           <defs>
             <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#ff0fef61" stopOpacity={1}/>

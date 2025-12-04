@@ -4,6 +4,7 @@ import { loader } from "../Components/Loader/LoaderModal";
 import { AppContext } from "../Contexts/AppContext";
 import useLocalStorage from "./useLocalStorage";
 import { useNavigate } from "react-router";
+import User from "../Models/User";
 
 
 
@@ -65,15 +66,9 @@ const tokenStore = {
 const parseUserFromLoginResponse = (response) => {
   try {
     if (!response) throw new TypeError("Cannot parse response. arguement undefined as null");
-    const {first,last,email,isAdmin,username,id} = response.data;
-    return {
-      firstName: first,
-      lastName: last,
-      email: email,
-      isAdmin: isAdmin,
-      username: username,
-      id: id
-    };
+    const authUser = new User(response.data);    
+    ;    
+    return authUser;
   } catch (error) {
     console.error(error.message);
   }
@@ -89,24 +84,25 @@ export const AuthActionsProvider = ({children}) => {
   const api = useApiClient();
 
   const login = useCallback(async (formData) => {
-    loader.loaded;
+    loader.loading();
 
     const loginResponse = await api.post("login",formData,api.headers.applicationJson);
-    
+    debugger;
     if (loginResponse.success){
       let token = loginResponse.token;
       let authUser = parseUserFromLoginResponse(loginResponse);
       auth.setToken(token);      
       auth.setAuthUser(authUser);
-      loader.loaded;
+      loader.loaded();
       return true;
     }
+    loader.loaded();
     return false;
       
   },[api,auth])
 
   const logout = useCallback(async (uid,navigate) => {
-    debugger;
+    ;
     auth.setToken("");
     auth.setAuthUser({
       "firstName": "",
@@ -145,21 +141,20 @@ export const AuthActionsProvider = ({children}) => {
     
   },[])
 
-  const register = useCallback(async ({data,navigate}) => {
-    const fd = {
-      username: data.userName,
-      password: data.password,
-      accessCode: data.registrationCode
-    }
-    const registrationResponse = await api.post("register",fd,api.headers.applicationJson);
+  const register = useCallback(async (formData) => {
+    loader.loading();
+    const registrationResponse = await api.post("register",formData,api.headers.applicationJson);
+
     if (registrationResponse.success){
       let token = registrationResponse.token;
-      let authUser = registrationResponse.data;
+      let authUser =parseUserFromLoginResponse(registrationResponse);
       auth.setToken(token);
       auth.setAuthUser(authUser);  
-      navigate("/");
-      return;
+      loader.loaded();
+      return true;
     }
+    loader.loaded();
+    return false;
   },[api,auth])
 
   return <AuthActionsContext.Provider
@@ -193,14 +188,14 @@ const AuthProvider = ({children}) => {
 
   const setAuthUser = (user) => {
     setUser(user);
-    localStorage.set("authUser",JSON.stringify(user));
+    localStorage.set("authUser",user.toString());
   }
 
   const getAuthUser = () => {
-    let authUser = localStorage.get("authUser")
+    let authUser = JSON.parse(localStorage.get("authUser"));    
     if (authUser){
-      authUser = JSON.parse(authUser);
-      return authUser;
+      let tmp = new User(authUser);
+      return new User(authUser);
     }
     return user;
   }

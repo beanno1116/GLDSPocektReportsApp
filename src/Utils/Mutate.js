@@ -1,6 +1,16 @@
 
 
 class MutateObj {
+  #fraudWatchNames;
+
+  constructor(){
+    this.#fraudWatchNames = {
+    "CancelPrevCount": "Cancel Prev",
+    "CanceledOrders": "Cancel Order",
+    "Nosale": "No Sale",
+    "RefundLineCount": "Refund"
+}
+  }
 
   thisWeekVsLastWeekData(data){
     try {
@@ -34,6 +44,53 @@ class MutateObj {
       console.error(error.message);
     }
   }
+
+  fraudWatchData(data){
+    try {      
+      if (!data) return [];
+
+      let fraudWatchData = [];
+      data.forEach(rd => {
+        let fraudCategory = rd[0];
+        let props = Object.keys(fraudCategory)[0];
+        let name = this.#fraudWatchNames[props];
+        let total = fraudCategory[props];
+        let obj = {
+          name,
+          total
+        }
+        fraudWatchData = [...fraudWatchData,obj]
+      })      
+      return fraudWatchData;      
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+
+  basketDetailsData(data){
+    try {      
+      if (!data) return [];
+      const detailDataArr = []
+      data.forEach(record => {
+        let name = record.DayName.substring(0,3);
+        let totalSales = parseFloat(record.TotalSales).toFixed(2);
+        let totalItems = record.TotalItems;
+        const dataObj = {
+          name,
+          totalSales,
+          totalItems
+        }
+        detailDataArr.push(dataObj);
+      });
+      
+      
+      return detailDataArr;
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+
+  
 
 }
 

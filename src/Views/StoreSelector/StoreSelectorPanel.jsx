@@ -7,27 +7,14 @@ import { NAVBAR_BUTTON_ACTIVE_EVENT, STORE_CHANGE_EVENT } from '../../Utilities'
 import { useContext } from 'react';
 import { AppContext } from '../../Contexts/AppContext';
 import { useApiClient } from '../../Api/Api';
-import { useGetOrgData } from '../../Api/ApiRoutes';
+import Filter from '../../Utils/Filter';
 
 
 
-const storeData = [
-  {
-    id: 1,
-    name: "Freddies",
-    city: "Atlanta",
-    state: "Mi"
-  },
-  {
-    id: 2,
-    name: "Eli's Market",
-    city: "Lewiston",
-    state: "Mi"
-  },
-]
-
-const StoreSelectorPanel = ({ currentStore }) => {
+const StoreSelectorPanel = ({ activeStore }) => {
   const {state,dispatch} = useContext(AppContext);
+
+  const currentStore = Filter.storeById(state.stores,activeStore);
     
   const api = useApiClient();
 
@@ -60,6 +47,7 @@ const StoreSelectorPanel = ({ currentStore }) => {
 
           <div className={styles.store_selector_menu_scrollview}>
             {state.stores.map(store => {
+
               return (
                 <StoreButtonNav key={store.id} store={store} onClick={onUserRowClick}/>
               )

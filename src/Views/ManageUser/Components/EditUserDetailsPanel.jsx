@@ -12,22 +12,17 @@ import PlainUserIcon from '../../../assets/icons/PlainUserIcon';
 import { useAuth } from '../../../hooks/useAuth';
 import { loader } from '../../../Components/Loader/LoaderModal';
 import User from '../../../Models/User';
+import DropdownPanel from '../../../Components/DropdownPanel/DropdownPanel';
+import XIcon from '../../../assets/icons/XIcon';
+import EditUserForm from '../../../Forms/EditUser/EditUserForm';
 
 const EditUserDetailsPanel = ({ when,close }) => {
   const api = useApiClient();
   const auth = useAuth();
 
-  const [formData,setFormData] = useState({
-    userId: auth.getAuthUser().id,
-    firstName: auth.getAuthUser().firstName,
-    lastName: auth.getAuthUser().lastName,
-    email: auth.getAuthUser().email,
-    // phoneNumber: ""
-  })
 
-  const onTextFieldChange = (e,name) => {
-    setFormData({...formData,[name]:e.target.value});
-  }
+
+
 
   const onCloseButtonClick = (e) => {
      close();
@@ -50,42 +45,19 @@ const EditUserDetailsPanel = ({ when,close }) => {
   }
 
   return (
-    <div className={`${styles.user_settings_panel} ${when ? styles.showing : ""}`}>
-
-        <FlexColumn flex='1' g='1rem'>
-          <Heading size='lg'>User Details</Heading>
-
-          <FlexRow hAlign='space-between' p='1rem' >
-            <PlainUserIcon size={80} />
-            <FlexColumn vAlign='flex-end'>
-              <label style={{color:"snow",fontSize:"1.75rem",fontWeight:"800"}}>devuser</label>
-              <label style={{color:"snow",fontSize:"1.5rem"}}>Administrator</label>
-            </FlexColumn>
-          </FlexRow>
-
-          <FlexRow>
-            <TextField value={formData.firstName} onChange={(e) => onTextFieldChange(e,"firstName")} name="firstName" placeholder="First name"/>
-          </FlexRow>
-          <FlexRow>
-            <TextField value={formData.lastName} onChange={(e) => onTextFieldChange(e,"lastName")} name="lastName" placeholder="Last name"/>
-          </FlexRow>
-          <FlexRow>
-            <TextField value={formData.email} onChange={(e) => onTextFieldChange(e,"email")} name="email" placeholder="Email address"/>
-          </FlexRow>
-          {/* <FlexRow>
-            <TextField value={formData.phoneNumber} onChange={(e) => onTextFieldChange(e,"phoneNumber")} name="phoneNumber" placeholder="Phone"/>
-          </FlexRow> */}
+    <DropdownPanel when={when}>
+      
+      <Heading mode='lite' size='lg'>User Details</Heading>
+      
+      <FlexRow hAlign='space-between' p='1rem' >
+        <PlainUserIcon size={80} />
+        <FlexColumn vAlign='flex-end' hAlign='center'>
+          <label style={{color:"snow",fontSize:"1.75rem",fontWeight:"800"}}>{auth.getAuthUser().username}</label>
+          <label style={{color:"snow",fontSize:"1.5rem"}}>{auth.getAuthUser().isAdmin ? "Administrator" : "User"}</label>
         </FlexColumn>
-
-        <FlexRow g='1rem'>
-          <NavButton active={true} size='md' theme='dark' onClick={onSaveButtonClick}>Save</NavButton>
-          <IconButton action="close" onClick={onCloseButtonClick}>
-            <span style={{color:"red",fontWeight:"800",fontSize:".8rem"}}>X</span>
-          </IconButton>
-        </FlexRow>
-
-
-      </div> 
+      </FlexRow>
+      <EditUserForm handleSubmit={(e) => close()}/>
+    </DropdownPanel>    
   );
 }
 

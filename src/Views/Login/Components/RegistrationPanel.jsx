@@ -12,57 +12,126 @@ import { useRef, useState } from 'react';
 // import Api, { headers } from '../../../Api/Api';
 import useWEForm from '../../../hooks/useWEForm';
 import { useApiClient } from '../../../Api/Api';
-import { useAuthActions } from '../../../hooks/useAuth';
+import { useAuth, useAuthActions } from '../../../hooks/useAuth';
+import useLocalStorage from '../../../hooks/useLocalStorage';
+import useAppContext from '../../../hooks/useAppContext';
 
-
-
-const RegistrationPanel = ({ when,navigation }) => {
-  const api = useApiClient();
-  const authAction = useAuthActions();
-  const {registerFormInput,resetForm,onSubmit} = useWEForm({
+const initialFormData = {
     userName: "",
     password: "",
     confirmPassword: "",
     registrationCode: ""
-  })
-  
+  }
 
-  const navigate = useNavigate();
-
-
-  const onLoginButtonClick = async ({data,isValid}) => {
-    loader.loading();
-    
-
-    if (!isValid) {
-      loader.loaded(); 
-      return;
-    }
-    
-
-    const fd = {
-      username: data.userName,
+  const createFormData = (data) => {
+  try {
+    if (!data) throw new TypeError("Data undefined or null");
+    return {
+      userName: data.userName,
       password: data.password,
       accessCode: data.registrationCode
     }
-    authAction.register(fd,navigate);
-    // const registrationResponse = await api.post("register",fd,api.headers.applicationJson);
-    // if (registrationResponse.success){
-    //   navigate("/");
-    // }
-    // const api = new Api("https://prapi.gldstools.com/");
-    // const registrationResponse = await api.post("register",fd,headers.applicationJson);
+  } catch (error) {
+    console.error(error.message);
+  }
+}
 
-    // if (registrationResponse.success){
-    //   navigate("/");
-    // }
-    loader.loaded();
+const parseGetOrganizationResponse = (response) => {
+  try {
+    // const organization = new Organization(response.data);
+
+    const {id,stores,users,seats} = response.data;        
+    return {
+      activeStore: 0,
+      agentString: "",
+      didInit: true,
+      organization: id,
+      seats,
+      stores:stores,
+      users: users,
+    }
+  } catch (error) {
+    console.error(error.message);
+  }
+}
+
+
+const useRegistrationPanel = (navigation) => {
+  const authAction = useAuthActions();  
+  const api = useApiClient();
+  const auth = useAuth();
+  const localStorage = useLocalStorage();
+  const {dispatch} = useAppContext();
+  const {registerFormInput,resetForm,onSubmit} = useWEForm(initialFormData);
+  const navigate = useNavigate();
+
+  const handleLoginResponse = async (response) => {
+    if (response){  
+      const authUser = auth.getAuthUser();
+
+      const loginDataResponse = await api.get("organizations",{params:{userId:authUser.id,token:auth.token}});
+
+      if (loginDataResponse.success){
+        
+        const payloadData = parseGetOrganizationResponse(loginDataResponse);
+
+
+        if (authUser.stores.length > 1){
+          navigate("/stores/selector");
+        }else{
+          let store = authUser.stores[0];
+          payloadData.agentString = store.agentString;
+          payloadData.activeStore = store.id;
+          navigate("/");
+        }
+        localStorage.set("org",JSON.stringify(payloadData));
+        
+        dispatch({action:"all",payload:payloadData});
+      }
+      loader.loaded();      
+      return;
+    }
+    throw new TypeError("Invalid response data");
+  }
+
+  const onLoginButtonClick = async ({data,isValid}) => {
+
+    loader.loading();
+
+    if (!isValid) {
+      loader.loaded();
+      return;
+    }
+
+
+    const fd = createFormData(data);
+    debugger;
+    const registerResponse = await authAction.register(fd);
+
+    if (registerResponse){  
+      handleLoginResponse(registerResponse);  
+    }
+
   }
 
   const onBackButtonClick = (e) => {
-    navigation.back && navigation.back();
     resetForm(e);
+    navigation.back && navigation.back();
   }
+
+  return {
+    onBackButtonClick,
+    onLoginButtonClick,
+    onSubmit,
+    registerFormInput
+  }
+}
+
+
+
+
+const RegistrationPanel = ({ when,navigation }) => {
+  const {onBackButtonClick,onLoginButtonClick,onSubmit,registerFormInput} = useRegistrationPanel(navigation);
 
   return (
     <div className={`${styles.login_view_form_panel} ${when ?  "" : styles.hidden}`}>

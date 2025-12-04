@@ -1,9 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQueries, useQuery } from "@tanstack/react-query";
 import { useAuth } from "../hooks/useAuth";
 import { useApiClient } from "./Api";
 import axios from "axios";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AppContext } from "../Contexts/AppContext";
+import User from "../Models/User";
+import { uuid } from "../Utils/Utils";
 
 
 const getOrgData = async ({api,signal,token,userId}) => {  
@@ -83,7 +85,10 @@ const useGetStoresForOrg = () => {
 
 const getOrgUsers = async ({api,signal,token,orgId}) => {
   const response = await api.get("organizations/users",{params:{token,orgId},signal});   
-  return response.data;
+  if (response.success){    
+    return response.data.map(rd => new User(rd));
+  } 
+  return [];
 }
 const useGetOrgUsers = (orgId) => {
   const auth = useAuth();
@@ -111,12 +116,119 @@ const useGetOrgUsers = (orgId) => {
     };
 }
 
-const getReportData = async (api,params,signal) => {
+const getStoreConnectionStatus = async ({api,agentString,signal}) => {
+  const response = await api.get("ping",{params:{agentString},signal})
+  debugger;
+  if (response.success){    
+    return response.data.map(rd => new User(rd));
+  } 
+  return [];
+}
+const useGetStoreConnectionStatus = (agentString) => {
+  const api = useApiClient();  
+  const { isLoading, isError,isSuccess,isIdle, data,error } = useQuery({
+      queryKey: ["ping",agentString],
+      queryFn: ({signal}) => getStoreConnectionStatus({api,signal,agentString}),
+      refetchOnWindowFocus: false,
+      staleTime: Infinity,
+      keepPreviousData: true
+    })
+  
+    const status = {
+      isLoading,
+      isError,
+      isSuccess,
+      isIdle
+    }
+  
+    return {
+      status,
+      users:data,
+      error
+    };
+}
+
+
+
+const getReportData = async (api,params,signal) => {  
   const response = await api.post("data",params,{...api.headers.applicationJson,signal});  
   if (response.success){
     return response.data;
   }  
   return [];
+}
+
+const testQueries = [
+  {
+    action: "HourlySales",
+    id: uuid(),
+    agentString: "812e3930-4845-4273-9013-a84f26e9882b",
+    query: (api,params) => {
+      const controller = new AbortController();
+      const signal = controller.signal();
+      return async () => {
+        const response = await api.post("data",params,{...api.headers.applicationJson,signal});  
+        if (response.success){
+          return response.data;
+        }  
+        throw new Error("Newtwork response was unsuccessfull");
+      }        
+    }
+  },
+  {
+    action: "NetSales",
+    id: uuid(),
+    agentString: "812e3930-4845-4273-9013-a84f26e9882b",
+    query: (api,params) => {
+      const controller = new AbortController();
+      const signal = controller.signal();
+      return async () => {
+        const response = await api.post("data",params,{...api.headers.applicationJson,signal});  
+        if (response.success){
+          return response.data;
+        }  
+        throw new Error("Newtwork response was unsuccessfull");
+      }        
+    }
+  }
+]
+
+export const useFetchAllReportData = ({queries=testQueries}) => {
+  // debugger;
+  const [reportData,setReportData] = useState({});
+  const [isLoading,setIsLoading] = useState(false);
+  const [isError,setIsError] = useState(false);
+  const api = useApiClient();
+  const results = useQueries({
+    queries: queries.map(query => ({
+      queryKey: ['report',query.id],
+      queryFn: query.query(api,{action:query.action,agentString:query.agentString})
+    }))
+  })
+
+  // if (results.some(result => result.isLoading)){
+  //   setIsLoading(true);
+  // }
+
+  if (!results.some(result => result.isLoading)){    
+    let reportObj = {}
+    results.forEach(result => {      
+      let resultObj = result.data[0];
+      reportObj = {...reportObj,...resultObj};      
+    })
+    setReportData({...reportObj})    
+  }
+
+  // if (results.some(result => result.isError)){
+  //   setIsError(true);
+  // }
+
+
+  return {
+    isError,
+    isLoading,
+    reportData
+  }
 }
 
 const useFetchReportData = ({action,agentString="",enabled=true}) => {  
@@ -188,6 +300,7 @@ export {
   fetch,
   useFetchReportData,
   useGetOrgData,
+  useGetStoreConnectionStatus,
   useGetStoresForOrg,
   useGetOrgUsers
 }

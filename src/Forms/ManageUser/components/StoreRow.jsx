@@ -5,7 +5,7 @@ import LockIcon from '../../../assets/icons/LockIcon';
 import FlexColumn from '../../../Components/FlexComponents/FlexColumn';
 import FlexRow from '../../../Components/FlexComponents/FlexRow';
 import siteStyles from '../../../site.module.css';
-import styles from '../manageUserView.module.css';
+import styles from '../manageUserForm.module.css';
 
 const StoreRow = ({id,name,city,state,active=false,onClick}) => {
   ;

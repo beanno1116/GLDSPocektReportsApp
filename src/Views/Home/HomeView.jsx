@@ -96,8 +96,7 @@ const HomeView = () => {
 
         <HomeViewManager 
           nextView={currentView}
-          activeStore={state.activeStore}
-          stores={state.stores}
+          activeStore={state.activeStore}          
           when={showModal}
           />
 

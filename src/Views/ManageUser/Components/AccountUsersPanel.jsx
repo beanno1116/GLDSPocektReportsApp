@@ -3,6 +3,7 @@ import styles from '../manageUserView.module.css';
 import siteStyles from '../../../site.module.css'
 import UserRow from './UserRow';
 import NavButton from '../../../Components/Buttons/NavButton';
+import { useAuth } from '../../../hooks/useAuth';
 
 
 const isLastAdmin = (users,userId) => {
@@ -18,6 +19,7 @@ const isLastAdmin = (users,userId) => {
 }
 
 const AccountUsersPanel = ({ users,onClick,toggle }) => {
+  const auth = useAuth();
   
   const onUserRowClick = (e,action) => {
     onClick && onClick(action);
@@ -25,6 +27,29 @@ const AccountUsersPanel = ({ users,onClick,toggle }) => {
 
   const onAddUserButtonClick = (e) => {
     toggle && toggle();
+  }
+
+  const fillUserList = () => {
+    const authUser = auth.getAuthUser();
+    if (!authUser.isAdmin){
+      return (
+        <UserRow 
+          key={auth.getAuthUser().id} 
+          user={auth.getAuthUser()}
+          isLastAdmin={false}
+          onClick={onUserRowClick} />
+      )
+    }
+    return users.map(user => {
+      const doesAdminExist = isLastAdmin(users,user.id);
+      return (
+        <UserRow 
+          key={user.id} 
+          user={user}
+          isLastAdmin={doesAdminExist}
+          onClick={onUserRowClick} />
+      )
+    })
   }
 
   return (
@@ -39,26 +64,15 @@ const AccountUsersPanel = ({ users,onClick,toggle }) => {
         <div style={{position:"relative",flex:"1",width:"100%"}}>
 
           <div style={{position:"absolute",display:"flex",flexDirection:"column",gap:"1rem",top:"0",left:"0",width:"100%",height:"100%",overflowY:"scroll"}}>
-            {users.map(user => {
-                const doesAdminExist = isLastAdmin(users,user.id);
-                return (
-                  <UserRow 
-                    key={user.id} 
-                    id={user.id} 
-                    isAdmin={user.isAdmin} 
-                    isLastAdmin={doesAdminExist} 
-                    userName={user.username} 
-                    activationDate={user.activatedDate} 
-                    onClick={onUserRowClick} />
-                )
-              })}
+            {fillUserList()}
           </div>
 
         </div>
         
         <div className={styles.manage_user_button_section}>
 
-          <NavButton disabled={users.length >= 4 ? true : false}  size='md' active={true} onClick={onAddUserButtonClick}>Add</NavButton>  
+            {auth.getAuthUser().isAdmin && <NavButton size='md' active={true} onClick={onAddUserButtonClick}>Add</NavButton>}
+            {/* {auth.getAuthUser().isAdmin && <NavButton disabled={users.length >= 4 ? true : false}  size='md' active={true} onClick={onAddUserButtonClick}>Add</NavButton>} */}
 
         </div>
 

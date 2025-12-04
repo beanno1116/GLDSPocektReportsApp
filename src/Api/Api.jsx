@@ -60,7 +60,7 @@ export class ApiClient {
       try {
         agentString = agentString === "" ? this.agentString : agentString;
         this.client.get(DATA_API_ENDPOINT,{params:{token,agentString,action}},signal).then((data) => {
-          debugger;
+          ;
           if (data.status !== 200 && data.statusText !== "OK") throw new Error("Error with request");
           resolve(data.data);
         })
@@ -70,11 +70,24 @@ export class ApiClient {
     })
   }
 
-  async post(endPoint,data,headers){
-    // debugger;
+  async post(endPoint,data,headers,signal){
+    // ;
     return new Promise((resolve,reject) => {
       try {
         this.client.post(endPoint,data,{headers}).then((data) => {
+          if (data.status !== 200 && data.statusText !== "OK") throw new Error("Error with request");
+          resolve(data.data) 
+        })        
+      } catch (error) {
+        reject(error.message)
+      }
+    })
+  }
+
+  async patch(endPoint,data,headers,signal){
+    return new Promise((resolve,reject) => {
+      try {
+        this.client.patch(endPoint,data,{headers,signal}).then((data) => {
           if (data.status !== 200 && data.statusText !== "OK") throw new Error("Error with request");
           resolve(data.data) 
         })        

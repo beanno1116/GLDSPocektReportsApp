@@ -14,6 +14,7 @@ import { useContext } from 'react';
 import { AppContext } from '../../../Contexts/AppContext';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import Organization from '../../../Models/Organization';
+import Filter from '../../../Utils/Filter';
 
 
 const createFormData = (data) => {
@@ -62,22 +63,22 @@ const useLoginPanel = (navigation) => {
   const {registerFormInput,resetForm,onSubmit} = useWEForm(initialFormData);
   const navigate = useNavigate();
 
-  const handleLoginResponse = async (response) => {
+  const handleLoginResponse = async (response) => {    
     if (response){  
-
+      let authUser = auth.getAuthUser();
+      
       const loginDataResponse = await api.get("organizations",{params:{userId:auth.getAuthUser().id,token:auth.token}});
 
       if (loginDataResponse.success){
         
         const payloadData = parseGetOrganizationResponse(loginDataResponse);
 
-
-        if (payloadData.stores.length > 1){
+        debugger;
+        if (authUser.stores.length > 1){
           navigate("/stores/selector");
-          
-          // navigate("/");
         }else{
-          let store = payloadData.stores[0];
+          let storeId = authUser.stores[0];
+          const store = Filter.storeById(payloadData.stores,storeId);
           payloadData.agentString = store.agentString;
           payloadData.activeStore = store.id;
 

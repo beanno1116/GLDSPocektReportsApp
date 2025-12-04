@@ -1,0 +1,12 @@
+.store_row {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  align-items: center;
+  padding: .75rem;
+  border-radius: 8px;
+  width: 100%;
+}
+.store_row.active {
+  box-shadow: 0 4px 12px rgba(0, 166, 255, 0.578), inset 0 4px 12px rgba(0, 166, 255, 0.578);
+}
