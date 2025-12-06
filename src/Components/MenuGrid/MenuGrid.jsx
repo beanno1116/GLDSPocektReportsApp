@@ -14,36 +14,36 @@ import FlexRow from '../FlexComponents/FlexRow';
 const MenuGrid = ({ ...props }) => {
   const navigate = useNavigate();
 
-  const onGridButtonClick = (e) => {
-    navigate("/reports/item",{ viewTransition: true });
+  const onGridButtonClick = (e,view) => {    
+    navigate(`/reports/${view}`,{ viewTransition: true });
   }
 
   return (
     <div className={styles.menu_grid}>
       <FlexRow hAlign='space-evenly' g='.75rem'>
-        <IconButton>
+        <IconButton onClick={(e) => onGridButtonClick(e,"customer")}>
           <PlainUserIcon size={45} />
           <span style={{color:"snow"}}>Customer</span>
         </IconButton>
-        <IconButton>
+        <IconButton onClick={(e) => onGridButtonClick(e,"store")}>
           <StoreIcon size={45} />
           <span style={{color:"snow"}}>Store</span>
         </IconButton>
-        <IconButton onClick={onGridButtonClick}>
+        <IconButton onClick={(e) => onGridButtonClick(e,"item")}>
           <ItemReportIcons size={45} />
           <span style={{color:"snow"}}>Item</span>
         </IconButton>
       </FlexRow>
       <FlexRow hAlign='space-evenly' g='.75rem'>
-        <IconButton>
+        <IconButton onClick={(e) => onGridButtonClick(e,"cashier")}>
           <CashierReportIcon size={45} />
           <span style={{color:"snow"}}>Cashier</span>
         </IconButton>
-        <IconButton>
+        <IconButton onClick={(e) => onGridButtonClick(e,"favorites")}>
           <FavoriteReportsIcon size={45} />
           <span style={{color:"snow"}}>Favorites</span>
         </IconButton>
-        <IconButton>
+        <IconButton onClick={(e) => onGridButtonClick(e,"builder")}>
           <ReportBuilderIcon size={45} />
           <span style={{color:"snow"}}>Builder</span>
         </IconButton>

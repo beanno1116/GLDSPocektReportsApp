@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+
 import IconButton from '../../../Components/Buttons/IconButton';
 import NavButton from '../../../Components/Buttons/NavButton';
 import FlexColumn from '../../../Components/FlexComponents/FlexColumn';
@@ -24,25 +24,25 @@ const EditUserDetailsPanel = ({ when,close }) => {
 
 
 
-  const onCloseButtonClick = (e) => {
-     close();
-  }
+  // const onCloseButtonClick = (e) => {
+  //    close();
+  // }
 
-  const onSaveButtonClick = async (e) => {
+  // const onSaveButtonClick = async (e) => {
     
-    loader.loading();
+  //   loader.loading();
 
-    let saveResponse = await api.post("user/update",formData,api.headers.applicationJson);
+  //   let saveResponse = await api.post("user/update",formData,api.headers.applicationJson);
 
-    if (saveResponse.success){
+  //   if (saveResponse.success){
 
-      const {data} = saveResponse;
-      const updatedUser = new User(data);
-      auth.setAuthUser(updatedUser);      
-      close();
-    }
-    loader.loaded();    
-  }
+  //     const {data} = saveResponse;
+  //     const updatedUser = new User(data);
+  //     auth.setAuthUser(updatedUser);      
+  //     close();
+  //   }
+  //   loader.loaded();    
+  // }
 
   return (
     <DropdownPanel when={when}>

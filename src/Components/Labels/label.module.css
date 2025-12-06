@@ -1,11 +1,12 @@
 .heading_label {
   width: 100%;
   text-align: center;
+  font-family: var(--heading-font-family);  
 }
 
 .input_label {
-  color: var(--input-label-color-l);
-  padding-left: .5rem;
+  color: var(--lite-color);
+  padding-left: .25rem;
 }
 
 .display_label,
@@ -36,6 +37,8 @@
 }
 .display_label_span.label {
   display: flex;
+  flex: 2;
+  justify-content: flex-start;
   gap: .5rem;
   padding: 1rem;
   border-radius: 0 8px 8px 0;
@@ -66,8 +69,8 @@
   font-weight: 700;
 }
 .lite {
-  color: var(--input-label-color-l);
+  color: var(--lite-color);
 }
 .dark {
-  color: var(--input-label-color-d);
+  color: var(--dark-color);
 }

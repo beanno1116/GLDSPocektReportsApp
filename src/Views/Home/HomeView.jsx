@@ -10,6 +10,7 @@ import View from '../Templates/View/View';
 import QuickView from '../../Components/QuickView/QuickView';
 import MenuGrid from '../../Components/MenuGrid/MenuGrid';
 import NavBar from '../../Components/NavBar/NavBar';
+import FlexRow from '../../Components/FlexComponents/FlexRow';
 
 
 
@@ -95,7 +96,11 @@ const HomeView = () => {
 
       </FlexColumn>
 
-      <NavBar onClick={onNavBarClick}/>
+      <FlexRow p='1rem 0 1rem 0'>
+
+        <NavBar onClick={onNavBarClick}/>
+      </FlexRow>
+
     </View>
   );
 }

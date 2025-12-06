@@ -1,0 +1,5 @@
+
+class Report {
+  title;
+  group;
+}

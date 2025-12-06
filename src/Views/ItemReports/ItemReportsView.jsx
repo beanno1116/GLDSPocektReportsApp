@@ -6,29 +6,39 @@ import Heading from '../../Components/Labels/Heading';
 import FlexRow from '../../Components/FlexComponents/FlexRow';
 import View from '../Templates/View/View';
 import HomeIcon from '../../assets/icons/HomeIcon';
+import ReportView from '../Templates/ReportView/ReportView';
+import BottomNav from '../../Components/BottomNav/BottomNav';
 
 const ItemReportsView = ({ ...props }) => {
   const navigate = useNavigate();
 
-  const onHomeButtonClick = (e) => {
-    navigate("/",{ viewTransition: true });
+  const onHomeButtonClick = (action) => {
+    navigate(action,{ viewTransition: true });
   }
   return (
     <View>
       <FlexColumn width='100%' height='100%' g='1rem'>
         {/* <Heading size='lg'>Item reporting</Heading> */}
         {/* <ThisWeekVsLast title={"This Week vs Last Week"} /> */}
-        <div style={{display:"flex",flexDirection:"column",flex:"2",gap:".75rem",padding:".75rem"}}>
-          <div style={{flex:"1",color:"snow"}}>Pinned</div>
-          <div style={{flex:"1",color:"snow"}}>Movement</div>
-          <div style={{flex:"1",color:"snow"}}>Price</div>
-          <div style={{flex:"1",color:"snow"}}>Inventory</div>
-        </div>
+
         
-       <button style={{color:"snow",fontSize:"18px"}} onClick={onHomeButtonClick}>Home</button>
-       <div className={styles.bottom_nav}>
-        <HomeIcon size={35} />
-       </div>
+        <ReportView/>
+
+        <BottomNav onClick={onHomeButtonClick} />
+
+       
+       {/* <div className={styles.bottom_nav}>
+        <button className={styles.nav_icon} onClick={onHomeButtonClick}>
+          <HomeIcon size={40} />
+        </button>
+        <button className={styles.nav_icon}>
+          <HomeIcon size={40} />
+        </button>
+        <button className={styles.nav_icon}>
+          <HomeIcon size={40} />
+        </button>
+        
+       </div> */}
       </FlexColumn>
     </View>
   );
