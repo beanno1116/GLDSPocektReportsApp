@@ -118,7 +118,7 @@ const useGetOrgUsers = (orgId) => {
 
 const getStoreConnectionStatus = async ({api,agentString,signal}) => {
   const response = await api.get("ping",{params:{agentString},signal})
-  debugger;
+  ;
   if (response.success){    
     return response.data.map(rd => new User(rd));
   } 
@@ -194,7 +194,7 @@ const testQueries = [
 ]
 
 export const useFetchAllReportData = ({queries=testQueries}) => {
-  // debugger;
+  // ;
   const [reportData,setReportData] = useState({});
   const [isLoading,setIsLoading] = useState(false);
   const [isError,setIsError] = useState(false);

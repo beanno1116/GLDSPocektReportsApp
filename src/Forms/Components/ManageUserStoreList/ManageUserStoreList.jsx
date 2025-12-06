@@ -24,14 +24,14 @@ const ManageUserStoreList = ({ stores,currentUser,onClick }) => {
 
   return (
     <div className={`${siteStyles.panel_bg} ${styles.user_list_panel}`}>
-      <FlexColumn width='100%' g='1rem'>
-        <div className={`${siteStyles.panel_bg} ${styles.user_list_panel_title}`}>
+      <FlexColumn width='100%' g='0'>
+        <div className={`${styles.user_list_panel_title}`}>
           Manage Store Access
         </div>
-        <FlexColumn width='100%' g='1rem' p='.75rem 1rem'>
+        <FlexColumn width='100%' g='1rem' p='1rem 1rem'>
           {stores.map(store => {                
             if (!currentUser){
-              return (
+              return (                                                                      
                 <StoreRow key={store.id} name={store.name} city={store.city} state={store.state} onClick={(e) => onStoreRowClick(e,store.id)}/>    
               )
             }

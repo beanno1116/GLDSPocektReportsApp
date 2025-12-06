@@ -1,11 +1,9 @@
 
 import { Bar, BarChart, LabelList, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import styles from '../../quickView.module.css';
-import siteStyles from '../../../../../../site.module.css';
-import { useContext } from 'react';
-import { AppContext } from '../../../../../../Contexts/AppContext';
-import { useFetchReportData } from '../../../../../../Api/ApiRoutes';
-import Loader from '../../../../../../Components/Loader/Loader';
+import useAppContext from '../../../../hooks/useAppContext';
+import Mutate from '../../../../Utils/Mutate';
+import { useFetchReportData } from '../../../../Api/ApiRoutes';
+import QVReport from '../Template/QVReport';
 
   const tdata = [
       {name: 'Produce', thisWeekSales: 657.54,lastWeekSales: 2634},
@@ -17,19 +15,15 @@ import Loader from '../../../../../../Components/Loader/Loader';
 
 
 const TopSubDepartments = ({ title }) => {
-  const {state,dispatch} = useContext(AppContext);
+  const {state} = useAppContext();
   const {status,data} = useFetchReportData({action:"TopSubDepartments",agentString:state.agentString});
   
 
 
   return (
-    <div className={`${siteStyles.panel_bg} ${styles.quick_view_report}`}>
-
-      {status.isLoading && <Loader text="Loading Report..."></Loader>}
-      
-       <h2>{title}</h2>
-
-       <ResponsiveContainer width="100%" height="100%">
+    <QVReport status={status}>
+      <QVReport.Title text={title} />
+      <ResponsiveContainer width="100%" height="100%">
 
         <BarChart data={tdata} margin={{top:0,right:0,left:0,bottom:0}}>
           <Bar type="monotone" dataKey="thisWeekSales" stroke="#ff0fef61" fill='#ff0fef61' strokeWidth={4}>
@@ -41,7 +35,7 @@ const TopSubDepartments = ({ title }) => {
         </BarChart>
 
       </ResponsiveContainer>
-    </div>
+    </QVReport>
   );
 }
 

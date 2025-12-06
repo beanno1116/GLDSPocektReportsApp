@@ -12,6 +12,7 @@ import ProtectedRoute from "./Views/ProtectedRoute";
 import ItemReportsView from "./Views/ItemReports/ItemReportsView";
 import { AppContextProvider } from "./Contexts/AppContext";
 import StoreSelectorView from "./Views/StoreSelector/StoreSelectorView";
+import { WEToast } from "../../../../GldsTools/glds-tools-app/src/Components/WEToast/WEToast";
 // import Api, { ApiClient, ApiClientProvider, getApiEndpoint } from "./Api/Api";
 
 // login username password
@@ -67,6 +68,7 @@ const App = () => {
                     <div className='app__main__view'>
                       <RouterProvider router={router} />
                       <LoaderModal />
+                      <WEToast />
                       {/* <LoginView /> */}
                       {/* <MainView /> */}
                     </div>      

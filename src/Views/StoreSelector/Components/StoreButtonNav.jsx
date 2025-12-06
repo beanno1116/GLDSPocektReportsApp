@@ -94,7 +94,7 @@ const StoreButtonNav = ({ store,onClick }) => {
  }
 
  if (isError){
-  debugger;
+  ;
   return (
     <div>Error occurred!</div>
   )
@@ -107,9 +107,10 @@ const StoreButtonNav = ({ store,onClick }) => {
     return retData;    
   }
   const buttonData = getButtonData();
-   debugger;
+   ;
 
-   if (buttonData?.ValidTransactionCount && buttonData.ValidTransactionCount !== "0"){
+   if (true){
+  //  if (buttonData?.ValidTransactionCount && buttonData.ValidTransactionCount !== "0"){
     return (
       <button data-value={store.id} className={`${styles.store_button} ${siteStyles.panel_bg}`} onClick={onClick}>
         <h1>{store.name}</h1>

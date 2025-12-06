@@ -105,7 +105,7 @@ const useRegistrationPanel = (navigation) => {
 
 
     const fd = createFormData(data);
-    debugger;
+    ;
     const registerResponse = await authAction.register(fd);
 
     if (registerResponse){  

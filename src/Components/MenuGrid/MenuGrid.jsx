@@ -1,16 +1,15 @@
 
 import { useNavigate } from 'react-router';
-import CashierReportIcon from '../../../../assets/icons/CashierReportIcon';
-import FavoriteReportsIcon from '../../../../assets/icons/FavoriteReportsIcon';
-import ItemReportIcons from '../../../../assets/icons/ItemReportIcons';
-import ReportBuilderIcon from '../../../../assets/icons/ReportBuilderIcon';
-import ReportsIcons from '../../../../assets/icons/ReportsIcons';
-import StoreIcon from '../../../../assets/icons/StoreIcon';
-import StoreReportIcon from '../../../../assets/icons/StoreReportIcon';
-import IconButton from '../../../../Components/Buttons/IconButton';
-import FlexRow from '../../../../Components/FlexComponents/FlexRow';
+import CashierReportIcon from '../../assets/icons/CashierReportIcon';
+import FavoriteReportsIcon from '../../assets/icons/FavoriteReportsIcon';
+import ItemReportIcons from '../../assets/icons/ItemReportIcons';
+import ReportBuilderIcon from '../../assets/icons/ReportBuilderIcon';
+import StoreIcon from '../../assets/icons/StoreIcon';
 import styles from './menuGrid.module.css';
-import PlainUserIcon from '../../../../assets/icons/PlainUserIcon';
+import PlainUserIcon from '../../assets/icons/PlainUserIcon';
+import IconButton from '../Buttons/IconButton';
+import FlexRow from '../FlexComponents/FlexRow';
+
 
 const MenuGrid = ({ ...props }) => {
   const navigate = useNavigate();

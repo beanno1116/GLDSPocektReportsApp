@@ -29,7 +29,7 @@ const ManageUserForm = ({ user,submitHandler }) => {
 
   useEffect(() => {
     if (user){
-      ;debugger;
+      ;;
       setMakeAdmin(user.isAdmin);
       setCurrentUser(user);
     }
@@ -74,11 +74,11 @@ const ManageUserForm = ({ user,submitHandler }) => {
   return (
     <>
 
-      {auth.getAuthUser()?.isAdmin && (        
-        <div className={`${styles.admin_checkbox}`}>
+      {auth.getAuthUser()?.isAdmin && (     
+        <FlexRow vAlign='center' hAlign='center' g='1rem'>
           <InputLabel text={"Make Admin"} size='md'/>
           <WECheckbox size="md" value={makeAdmin} onChange={onCheckboxChangeEvent} />
-        </div>
+        </FlexRow>     
       )}
 
       <ManageUserStoreList stores={state.stores} currentUser={currentUser} onClick={onStoreRowClick} />

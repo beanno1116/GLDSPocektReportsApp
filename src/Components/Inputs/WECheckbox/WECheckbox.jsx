@@ -2,6 +2,7 @@
 import { forwardRef, useRef } from 'react';
 
 import styles from './weCheckbox.module.css';
+import CheckmarkIcon from '../../../assets/icons/CheckmarkIcon';
 
 
 
@@ -105,9 +106,10 @@ const WECheckbox = forwardRef(({name,label=null,value,onChange,size,...props},re
           <input ref={ref} type="checkbox" id={idRef} name={name} checked={isChecked(value)} onChange={handleOnChangeEvent} />
 
           <span className={`${styles.checkbox_input} ${styles[size]}`} id="checkbox_control">
-            <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' aria-hidden="true" focusable="false">
+            <CheckmarkIcon color='black'/>
+            {/* <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' aria-hidden="true" focusable="false">
               <path fill='none' stroke='currentColor' strokeWidth='3' d='M1.73 12.91l6.37 6.37L22.79 4.59' />
-            </svg>
+            </svg> */}
           </span>
 
         </span>      

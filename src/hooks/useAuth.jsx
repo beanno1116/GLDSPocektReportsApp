@@ -87,7 +87,7 @@ export const AuthActionsProvider = ({children}) => {
     loader.loading();
 
     const loginResponse = await api.post("login",formData,api.headers.applicationJson);
-    debugger;
+    ;
     if (loginResponse.success){
       let token = loginResponse.token;
       let authUser = parseUserFromLoginResponse(loginResponse);

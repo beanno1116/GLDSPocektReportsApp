@@ -1,12 +1,12 @@
 
 import { Bar, BarChart, LabelList,ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import styles from '../../quickView.module.css';
-import siteStyles from '../../../../../../site.module.css';
+import siteStyles from '../../../../site.module.css';
 import { useQueries } from '@tanstack/react-query';
-import { useApiClient } from '../../../../../../Api/Api';
-import Loader from '../../../../../../Components/Loader/Loader';
-import useAppContext from '../../../../../../hooks/useAppContext';
-import Mutate from '../../../../../../Utils/Mutate';
+import Loader from '../../../Loader/Loader';
+import Mutate from '../../../../Utils/Mutate';
+import useAppContext from '../../../../hooks/useAppContext';
+import { useApiClient } from '../../../../Api/Api';
 
 const testQueries = [
   "CancelPrev",
@@ -60,7 +60,7 @@ const FraudDetails = ({ title }) => {
   }
 
   
-    // debugger;
+    // ;
     return (
       <div className={`${siteStyles.panel_bg} ${styles.quick_view_report}`}>
         {isLoading && <Loader text="Loading Report..."></Loader>}

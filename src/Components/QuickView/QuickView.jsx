@@ -5,9 +5,9 @@ import TopSubDepartments from './Components/TopSubDepartments/TopSubDepartments'
 import styles from './quickView.module.css';
 import AverageBasketDetails from './Components/AverageBasketDetails/AverageBasketDetails';
 import FraudDetails from './Components/FraudDetails/FraudDetails';
-import { useQuery } from '@tanstack/react-query';
-import { useApiClient } from '../../../../Api/Api';
-import { useAuth } from '../../../../hooks/useAuth';
+import PageDot from './Components/PageDot';
+
+
 
 const pages = [
   <ThisWeekVsLast title={"This Week vs Last Week"} />,
@@ -17,9 +17,7 @@ const pages = [
 ]
 
 
-const QuickView = ({ ...props }) => {
-  const api = useApiClient();
-  const auth = useAuth();
+const QuickView = ({ views=pages }) => {
 
   const [currentPage,setCurrentPage] = useState(0);
 
@@ -29,7 +27,7 @@ const QuickView = ({ ...props }) => {
     startY: 0,
   })
 
-  let pageDotsRefs = [];
+  let currentPageDotRef = useRef();
 
 
   const pageDotRefCallback = (ele) => {
@@ -38,15 +36,15 @@ const QuickView = ({ ...props }) => {
     }    
   }
 
-  const onPageDotClick = (e) => {    
-    const span = e.target.closest("span");
-    if (!span) return;
-    pageDotsRefs.forEach(pageDot => {
-      pageDot.classList.remove(styles.active);
-    })
-    span.classList.add(styles.active);
-    const page = parseInt(span.dataset.page);
-    setCurrentPage(page);
+  const onPageDotClick = (dot,pageNumber) => {    
+    debugger;
+    if (currentPageDotRef.current){
+      currentPageDotRef.current.classList.remove(styles.active);
+    }
+    dot.classList.add(styles.active);
+    currentPageDotRef.current = dot;
+        
+    setCurrentPage(pageNumber);
   }
 
   const onTouchStartEvent = (e) => {
@@ -84,15 +82,17 @@ const QuickView = ({ ...props }) => {
 
       {pages[currentPage]}
 
-       <div style={{display:"flex",gap:".5rem"}} onClick={onPageDotClick}>
-        {pages.map((_,index) => {
-          if (index === 0){
+       <div style={{display:"flex",gap:".5rem"}}>
+        {views.map((_,index) => {
+          if (index === 0){            
             return (
-              <span key={index} ref={pageDotRefCallback} data-page={index} className={`${styles.page_dot} ${styles.active}`}></span>
+              <PageDot page={index} onClick={onPageDotClick} />
+              // <span key={index} ref={pageDotRefCallback} data-page={index} className={`${styles.page_dot} ${styles.active}`}></span>
             )
           }
           return (
-            <span key={index} ref={pageDotRefCallback} data-page={index} className={styles.page_dot}></span>
+            <PageDot page={index} onClick={onPageDotClick} />
+            // <span key={index} ref={pageDotRefCallback} data-page={index} className={styles.page_dot}></span>
           )
         })}
       </div>

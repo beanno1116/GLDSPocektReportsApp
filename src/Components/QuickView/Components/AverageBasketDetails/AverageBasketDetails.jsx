@@ -1,10 +1,10 @@
 
 import { Area, AreaChart, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import styles from '../../quickView.module.css';
-import siteStyles from '../../../../../../site.module.css';
-import useChartComponent from '../../../../../../hooks/useChartComponent';
-import Mutate from '../../../../../../Utils/Mutate';
-import Loader from '../../../../../../Components/Loader/Loader';
+import siteStyles from '../../../../site.module.css';
+import useChartComponent from '../../../../hooks/useChartComponent';
+import Mutate from '../../../../Utils/Mutate';
+import Loader from '../../../Loader/Loader';
 
 // const data = [
 //       {name: 'Mon', totalSales: 67.43,totalItems: 8},
@@ -18,7 +18,6 @@ import Loader from '../../../../../../Components/Loader/Loader';
 
 const AverageBasketDetails = ({ title }) => {
   const {status,parseChartData} = useChartComponent("AvgBasketDetails",Mutate.basketDetailsData);
-  
   return (
     <div className={`${siteStyles.panel_bg} ${styles.quick_view_report}`}>
       {status.isLoading && <Loader text="Loading Report..."></Loader>}

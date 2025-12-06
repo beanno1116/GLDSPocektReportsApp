@@ -4,7 +4,7 @@ import { useFetchReportData } from "../Api/ApiRoutes";
 
 const useChartComponent = (chart,mutationFn) => {
     const {state} = useAppContext();
-    const {status,data} = useFetchReportData({action:chart,agentString:state.agentString});
+    const {status,data,refetch} = useFetchReportData({action:chart,agentString:state.agentString});
 
     const parseChartData = () => {
       try {
@@ -22,6 +22,7 @@ const useChartComponent = (chart,mutationFn) => {
       state,
       status,
       data,
+      refetch,
       parseChartData
     }
 }

@@ -73,7 +73,7 @@ const useLoginPanel = (navigation) => {
         
         const payloadData = parseGetOrganizationResponse(loginDataResponse);
 
-        debugger;
+        ;
         if (authUser.stores.length > 1){
           navigate("/stores/selector");
         }else{
