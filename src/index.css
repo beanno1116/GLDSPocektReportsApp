@@ -154,3 +154,11 @@ background-image: repeating-linear-gradient(315deg, #00FFFF2E 92%, #073AFF00 100
 .recharts-surface:focus {
   outline: none;
 }
+
+
+@media screen and (max-height: 700px) {
+    /* Styles for small screens */
+  body {
+    font-size: 14px;
+  }   
+}

@@ -9,9 +9,23 @@ import styles from './menuGrid.module.css';
 import PlainUserIcon from '../../assets/icons/PlainUserIcon';
 import IconButton from '../Buttons/IconButton';
 import FlexRow from '../FlexComponents/FlexRow';
+import MenuGridRow from './Components/MenuGridRow';
+import CustomerIcon from '../../assets/icons/CustomerIcon';
+import MenuGridButton from './Components/MenuGridButton';
+import MenuGridButtonTitle from './Components/MenuGridButtonTitle';
 
 
-const MenuGrid = ({ ...props }) => {
+const SHORT_SCREEN_ICON_SIZE = 35;
+const DEFAULT_ICON_SIZE = 45;
+
+const calculateFontSize = () => {
+  if (innerWidth <= 700){
+    return SHORT_SCREEN_ICON_SIZE;
+  }
+  return DEFAULT_ICON_SIZE;
+}
+
+const MenuGrid = ({ gridItems,children }) => {
   const navigate = useNavigate();
 
   const onGridButtonClick = (e,view) => {    
@@ -20,36 +34,51 @@ const MenuGrid = ({ ...props }) => {
 
   return (
     <div className={styles.menu_grid}>
-      <FlexRow hAlign='space-evenly' g='.75rem'>
-        <IconButton onClick={(e) => onGridButtonClick(e,"customer")}>
-          <PlainUserIcon size={45} />
-          <span style={{color:"snow"}}>Customer</span>
-        </IconButton>
-        <IconButton onClick={(e) => onGridButtonClick(e,"store")}>
-          <StoreIcon size={45} />
-          <span style={{color:"snow"}}>Store</span>
-        </IconButton>
-        <IconButton onClick={(e) => onGridButtonClick(e,"item")}>
-          <ItemReportIcons size={45} />
-          <span style={{color:"snow"}}>Item</span>
-        </IconButton>
-      </FlexRow>
-      <FlexRow hAlign='space-evenly' g='.75rem'>
-        <IconButton onClick={(e) => onGridButtonClick(e,"cashier")}>
-          <CashierReportIcon size={45} />
-          <span style={{color:"snow"}}>Cashier</span>
-        </IconButton>
-        <IconButton onClick={(e) => onGridButtonClick(e,"favorites")}>
-          <FavoriteReportsIcon size={45} />
-          <span style={{color:"snow"}}>Favorites</span>
-        </IconButton>
-        <IconButton onClick={(e) => onGridButtonClick(e,"builder")}>
-          <ReportBuilderIcon size={45} />
-          <span style={{color:"snow"}}>Builder</span>
-        </IconButton>
-      </FlexRow>
+      
+      <MenuGridRow>
+        
+        <MenuGridButton action="customer" onClick={onGridButtonClick}>
+          <PlainUserIcon size={calculateFontSize()} />
+          <MenuGridButtonTitle>Customer</MenuGridButtonTitle>
+          {/* <span style={{color:"snow"}}>Customer</span> */}
+        </MenuGridButton>
+
+        <MenuGridButton action="store" onClick={onGridButtonClick}>
+          <StoreIcon size={calculateFontSize()} />
+          <MenuGridButtonTitle>Store</MenuGridButtonTitle>
+        </MenuGridButton>
+
+        <MenuGridButton action="item" onClick={onGridButtonClick}>
+          <ItemReportIcons size={calculateFontSize()} />
+          <MenuGridButtonTitle>Item</MenuGridButtonTitle>
+        </MenuGridButton>
+
+      </MenuGridRow>
+
+      <MenuGridRow>
+
+        <MenuGridButton action="cashier" onClick={onGridButtonClick}>
+          <CashierReportIcon size={calculateFontSize()} />
+          <MenuGridButtonTitle>Cashier</MenuGridButtonTitle>
+        </MenuGridButton>
+        
+        <MenuGridButton action="favorites" onClick={onGridButtonClick}>
+          <FavoriteReportsIcon size={calculateFontSize()} />
+          <MenuGridButtonTitle>Favorites</MenuGridButtonTitle>
+        </MenuGridButton>
+
+        <MenuGridButton action="builder" onClick={onGridButtonClick}>
+          <ReportBuilderIcon size={calculateFontSize()} />
+          <MenuGridButtonTitle>Builder</MenuGridButtonTitle>
+        </MenuGridButton>
+
+      </MenuGridRow>
     </div>
   );
 }
+
+MenuGrid.Row = MenuGridRow;
+MenuGrid.Button = MenuGridButton;
+MenuGrid.ButtonTitle = MenuGridButtonTitle;
 
 export default MenuGrid;

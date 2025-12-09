@@ -11,10 +11,13 @@ import QuickView from '../../Components/QuickView/QuickView';
 import MenuGrid from '../../Components/MenuGrid/MenuGrid';
 import NavBar from '../../Components/NavBar/NavBar';
 import FlexRow from '../../Components/FlexComponents/FlexRow';
+import { homeMenuGridItems } from '../../Components/MenuGrid/Grids/Grids';
 
 
 
 let renderCount = 0;
+
+
 
 
 const useHomeView = () => {
@@ -86,7 +89,7 @@ const HomeView = () => {
 
         <QuickView />
 
-        <MenuGrid />
+        <MenuGrid gridItems={homeMenuGridItems}/>
 
         <HomeViewManager 
           nextView={currentView}
@@ -96,7 +99,7 @@ const HomeView = () => {
 
       </FlexColumn>
 
-      <FlexRow p='1rem 0 1rem 0'>
+      <FlexRow p='0rem 0 0rem 0'>
 
         <NavBar onClick={onNavBarClick}/>
       </FlexRow>

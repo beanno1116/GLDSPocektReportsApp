@@ -11,3 +11,11 @@
   width: 100%;
   border-radius: 1rem;
 }
+
+
+@media (max-height: 700px) {
+    /* Styles for small screens */
+    .nav_bar {
+      padding-bottom: 1rem;
+    }
+}
