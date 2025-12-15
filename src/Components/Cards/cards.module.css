@@ -1,0 +1,87 @@
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;  
+  width: 100%;
+}
+
+
+.body,
+.flex_body {  
+  
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(2px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 1rem;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2), 
+              inset 0 4px 20px rgba(255, 255, 255, 0.3);
+}
+.body::after,
+.flex_body::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  backdrop-filter: blur(1px);
+  box-shadow: inset -10px -8px 0px -11px rgba(255, 255, 255, 1),
+              inset 0px -9px 0px -8px rgba(255, 255, 255, 1);
+  opacity: 0.6;
+  z-index: -1;
+  filter: blur(1px) drop-shadow(10px 4px 6px black) brightness(115%);
+
+}
+
+.flex_body {
+  display: flex;
+  /* background-color: orange; */
+}
+
+.title {
+  padding: 0 .25rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: rgba(255, 250, 250, 0.848);
+}
+
+
+.card_toolbar {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(2px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 1rem;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2), 
+              inset 0 4px 20px rgba(255, 255, 255, 0.3);
+}
+.card_toolbar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  backdrop-filter: blur(1px);
+  box-shadow: inset -10px -8px 0px -11px rgba(255, 255, 255, 1),
+              inset 0px -9px 0px -8px rgba(255, 255, 255, 1);
+  opacity: 0.6;
+  z-index: -1;
+  filter: blur(1px) drop-shadow(10px 4px 6px black) brightness(115%);
+
+}
+
+.card_table_content {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  height: 100%;
+  padding: 0 1rem 0 1rem;
+  overflow-y: scroll;
+  background-color: blue;
+}

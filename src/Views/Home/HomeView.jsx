@@ -1,10 +1,3 @@
-
-import styles from './homeView.module.css';
-
-
-import MenuGrid from './Components/MenuGrid/MenuGrid';
-import NavBar from './Components/NavBar/NavBar';
-import QuickView from './Components/QuickView/QuickView';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import FlexColumn from '../../Components/FlexComponents/FlexColumn';
 import Heading from '../../Components/Labels/Heading';
@@ -13,13 +6,18 @@ import { subscribe, unsubscribe } from '../../events';
 import { STORE_CHANGE_EVENT } from '../../Utilities';
 import { AppContext } from '../../Contexts/AppContext';
 import Store from '../../Models/Store';
+import View from '../Templates/View/View';
+import QuickView from '../../Components/QuickView/QuickView';
+import MenuGrid from '../../Components/MenuGrid/MenuGrid';
+import NavBar from '../../Components/NavBar/NavBar';
+import FlexRow from '../../Components/FlexComponents/FlexRow';
+import { homeMenuGridItems } from '../../Components/MenuGrid/Grids/Grids';
 
-
-
-const ACCOUNT_USER_COUNT = 4;
 
 
 let renderCount = 0;
+
+
 
 
 const useHomeView = () => {
@@ -84,15 +82,14 @@ const HomeView = () => {
   const {state,showModal,currentView,storeContext,onNavBarClick} = useHomeView();
 
   return (
-    <div className={styles.home_view} style={{display:"flex",flexDirection:"column"}}>
-
+    <View>
       <FlexColumn width='100%' height='100%'>
 
         <Heading size='lg' mode='lite'>{storeContext ? storeContext.name : "Store Name"}</Heading>        
 
         <QuickView />
 
-        <MenuGrid />
+        <MenuGrid gridItems={homeMenuGridItems}/>
 
         <HomeViewManager 
           nextView={currentView}
@@ -102,9 +99,12 @@ const HomeView = () => {
 
       </FlexColumn>
 
-      <NavBar onClick={onNavBarClick}/>
+      <FlexRow p='0rem 0 0rem 0'>
 
-    </div>
+        <NavBar onClick={onNavBarClick}/>
+      </FlexRow>
+
+    </View>
   );
 }
 

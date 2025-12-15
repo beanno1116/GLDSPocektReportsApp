@@ -9,25 +9,24 @@ import { useAuth, useAuthActions } from '../../../hooks/useAuth';
 import { useNavigate } from 'react-router';
 import EditUserIcon from '../../../assets/icons/EditUserIcon';
 import Button from '../../../Components/Buttons/Button';
-import IconButton from '../../../Components/Buttons/IconButton';
+import Card from '../../../Components/Cards/Card';
+import PasswordRestPanel from './PasswordRestPanel';
+import { useState } from 'react';
+import EditUserDetailsPanel from './EditUserDetailsPanel';
 
-const CurrentUserDetailPanel = ({ onToggleUserPanel,onPasswordResetClick }) => {
+
+const useUserDetailPanel = () => {
   const auth = useAuth();
   const authActions = useAuthActions();
   const navigate = useNavigate();
+  const [isPasswordResetShowing,setIsPasswordResetShowing] = useState(false);
+  const [isUserSettingsShowing,setIsUserSettingsShowing] = useState(false);
 
-  const onUserEditIconClick = (e) => {
-    onToggleUserPanel && onToggleUserPanel(e);
+  const onUserEditButtonClick = (e) => {
+    setIsUserSettingsShowing(!isUserSettingsShowing);
   }
 
   const onLogoutButtonClick = (e) => {
-    ;
-    if (authActions.logout()){
-      navigate("/login");
-    }
-  }
-
-  const onButtonClickEvent = (e) => {
     const button = e.target;
     const action = button.dataset.action;
     if (action === "logout"){
@@ -36,58 +35,62 @@ const CurrentUserDetailPanel = ({ onToggleUserPanel,onPasswordResetClick }) => {
         return;
       }
     }
-    if (action === "reset"){
-      return;
-    }
-
-    if (action === "edit"){
-      onToggleUserPanel && onToggleUserPanel(e);
-      return;
-    }
-
   }
+
   const onResetPasswordButtonClick = (e) => {
-    onPasswordResetClick && onPasswordResetClick(e);
+    setIsPasswordResetShowing(!isPasswordResetShowing);
   }
+
+  return {
+    isUserSettingsShowing,
+    isPasswordResetShowing,
+    onResetPasswordButtonClick,
+    onUserEditButtonClick,
+    onLogoutButtonClick,
+    authUser: auth.getAuthUser(),
+    username: auth.getAuthUser()?.username,
+    isAdmin: auth.getAuthUser()?.isAdmin
+  }
+}
+
+
+const CurrentUserDetailPanel = () => {
+  const {username,isAdmin,isPasswordResetShowing,isUserSettingsShowing,onResetPasswordButtonClick,onUserEditButtonClick,onLogoutButtonClick} = useUserDetailPanel();
+  
 
   return (
-      <div className={styles.manage_user_section}>
+    <>
+      <PasswordRestPanel when={isPasswordResetShowing} close={(e) => onResetPasswordButtonClick(false)} />
+      <EditUserDetailsPanel when={isUserSettingsShowing} close={(e) => onUserEditButtonClick(false)} />
+      <Card>
+        <Card.Title>Your Details</Card.Title>
+        <Card.Content>
+          <FlexRow g='.5rem' vAlign='center' hAlign='center' p='1rem'>
 
-        <label className={styles.label}>User Information</label>
-
-        <div className={styles.panel_section}>
-          
-          <FlexRow g='.5rem' vAlign='center' hAlign='center'>
-            <button style={{position:"absolute",top:"-40px",right:"0",zIndex:"1",background:"green",border:"2px solid limegreen",borderRadius:"50%",boxShadow:" rgba(0, 0, 0, 0.25) 0px 25px 50px -12px"}} data-action="edit" onClick={onUserEditIconClick}>
-                <EditUserIcon size={60} />                
+              <button className={styles.current_user_icon_button} data-action="edit" onClick={onUserEditButtonClick}>
+                <div style={{background:"#00800096",zIndex:"-1",borderRadius:"50%",boxShadow:" rgba(0, 0, 0, 0.25) 0px 25px 50px -12px"}}>
+                  <EditUserIcon size={50} />                
+                </div>
               </button>
 
-            <FlexColumn g='.5rem' vAlign='center' flex='2'>
-              <FlexRow hAlign='flex-start'>
-                <span className={`${siteStyles.align_right} ${siteStyles.md}`}>{auth.getAuthUser()?.username}</span>
-              </FlexRow>
-              <FlexRow hAlign='flex-start'>
-                <span className={siteStyles.md}>{auth.getAuthUser()?.isAdmin ? "Administrator" : "User"}</span>
-              </FlexRow>
-            </FlexColumn> 
+              <FlexColumn g='.5rem' vAlign='center' flex='2'>
+                <FlexRow hAlign='flex-start'>
+                  <span className={`${siteStyles.align_right} ${siteStyles.md}`}>{username}</span>
+                </FlexRow>
+                <FlexRow hAlign='flex-start'>
+                  <span className={siteStyles.md}>{isAdmin ? "Administrator" : "User"}</span>
+                </FlexRow>
+              </FlexColumn> 
 
-            {/* <FlexRow flex='1' hAlign='flex-end'>
-              
-              <button style={{borderRadius:"50%",border:".2rem solid purple",padding:".25rem",transform:"translate(-10%,-25%)"}} data-action="edit" onClick={onUserEditIconClick}>
-                <EditUserIcon size={35} />                                
-              </button>
-            </FlexRow> */}
+            </FlexRow>
 
-          </FlexRow>
-
-          <FlexRow g='1rem' p='.25rem 0 0 0'>
-            <NavButton action={"reset"} color='black' active={true} size="sm" onClick={onResetPasswordButtonClick}>Reset Password</NavButton>
-            <NavButton action={"logout"} color='black' active={true} size="sm" onClick={onButtonClickEvent}>Logout</NavButton>
-            {/* <Button action={"reset"} size='sm' onClick={onResetPasswordButtonClick}>Reset Password</Button>
-            <Button action={"logout"} size='sm' onClick={onButtonClickEvent}>Logout</Button> */}
-          </FlexRow>
-        </div>
-      </div>
+            <FlexRow g='1rem' p='1rem'>
+              <Button action={"reset"} size='sm' color='black' onClick={onResetPasswordButtonClick}>Reset Password</Button>
+              <Button action={"logout"} size='sm' color='black' onClick={onLogoutButtonClick}>Logout</Button>
+            </FlexRow>
+        </Card.Content>      
+      </Card>
+    </>
   );
 }
 

@@ -1,0 +1,75 @@
+.menu_grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: space-around;
+  width: 100%;
+  /* background-color: red; */
+  padding: 1rem;
+}
+/* .menu_grid {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  grid-template-rows: 2 1fr;
+  gap: 1rem;  
+  width: 100%;
+  background-color: red;
+  padding: 1rem;
+} */
+
+.menu_grid_row {
+  display: flex;
+  justify-content: center;
+  /* background-color: blue; */
+  gap: 1rem;
+  /* padding: 0 2rem; */
+  width: 100%;
+  /* flex-direction: row; */
+  flex-wrap: nowrap;
+  /* justify-content: space-around; */
+}
+
+.menu_grid_button {
+  display: flex;  
+  flex-direction: column;
+  gap: .5rem;
+  /* flex: 1; */
+  /* height: 100%; */
+  width: 33%;
+  max-width: 33%;
+  aspect-ratio: 1 / 1;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 8px;  
+  background-color: #ffffff33;
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(255, 255, 255, 0.3);  
+  box-shadow: rgba(0, 0, 0, 0.18) 0px 2px 4px;
+}
+.menu_grid_button_title {
+  font-size: 1.25rem;
+}
+
+
+@media (max-height: 700px) {
+    /* Styles for small screens */
+    .menu_grid {
+        padding: .5rem 0;
+    }
+    .menu_grid_button  {
+      flex: unset;
+      padding: .5rem;
+      width: 25%;
+    }
+    .menu_grid_button_title {
+      font-size: .8rem;
+    }
+}
+
+@media (max-height: 900px) {
+    /* Styles for small screens */
+    .menu_grid_button_title {
+      font-size: 1rem;
+    }
+}

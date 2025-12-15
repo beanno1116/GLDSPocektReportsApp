@@ -1,23 +1,36 @@
 
 import FlexRow from '../../../Components/FlexComponents/FlexRow';
-import styles from '../manageUserView.module.css';
 import siteStyles from '../../../site.module.css';
+import Card from '../../../Components/Cards/Card';
+import useAppContext from '../../../hooks/useAppContext';
+import { useGetOrgUsers } from '../../../Api/ApiRoutes';
 
-const AccountDetailsPanel = ({seatCount,userCount}) => {
+const AccountDetailsPanel = () => {
+    const {state} = useAppContext();
+    const {status,users} = useGetOrgUsers(state.organization);
+
+    if (status.isLoading){
+      return (
+        <div>Loading...</div>
+      )
+    }
+
   return (
-    <div className={styles.manage_user_section}>
-        <label className={styles.label}>Account</label>
-        <div className={`${styles.panel_section_row} ${styles.space_between}`}>
+    <Card>
+      <Card.Title>Account</Card.Title>
+      <Card.Content>
+        <FlexRow p='1rem'>
           <FlexRow g='.5rem'>
             <span className={siteStyles.md}>Total:</span>
-            <span className={siteStyles.md}>{seatCount}</span>
+            <span className={siteStyles.md}>{state.seats}</span>
           </FlexRow>
           <FlexRow g='.5rem' hAlign='flex-end'>
             <span className={siteStyles.md}>Available:</span>
-            <span className={siteStyles.md}>{seatCount - userCount}</span>
+            <span className={siteStyles.md}>{state.seats - users.length}</span>
           </FlexRow>
-        </div>
-      </div>
+        </FlexRow>
+      </Card.Content>
+    </Card>
   );
 }
 

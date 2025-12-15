@@ -8,9 +8,29 @@ import FlexRow from '../../../Components/FlexComponents/FlexRow';
 import styles from '../manageUserView.module.css';
 import siteStyles from '../../../site.module.css';
 import Format from '../../../Utils/Format';
+import { useAuth } from '../../../hooks/useAuth';
 
 const UserRow = ({user,isLastAdmin,onClick}) => {  
   const {username,isAdmin,registeredDate} = user;  
+  const auth = useAuth();
+
+  const renderDeleteButton = (user) => {
+    const authUser = auth.getAuthUser();
+    if (!user.isAdmin || (authUser.id === user.id)){
+      return (
+        <FlexRow flex='.45'>
+          <IconButton action="delete" onClick={(e) => onClick(e,user.id)}>
+            <TrashIcon size={24} />
+          </IconButton>
+        </FlexRow>
+      )
+    }
+
+    return (
+      <FlexRow flex='.45' />
+    )
+  }
+
   return (
     <li className={styles.user_row} onClick={(e) => onClick(e,user.id)}>
       {
@@ -21,7 +41,7 @@ const UserRow = ({user,isLastAdmin,onClick}) => {
         <div className={siteStyles.md}>{user.registeredDate === "" ? "Pending" : username}</div>
         <div className={siteStyles.sm}>Activated: {user.registeredDate === "" ? "" : Format.shortDateTime(registeredDate)}</div>
       </FlexColumn>
-      { isLastAdmin ? <FlexRow flex='.45'><IconButton action="delete" onClick={(e) => onClick(e,user.id)}><TrashIcon size={24} /></IconButton></FlexRow> : <FlexRow flex='.45'></FlexRow>}
+      {renderDeleteButton(user)}
     </li>
   )
 }

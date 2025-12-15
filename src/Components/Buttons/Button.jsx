@@ -1,10 +1,20 @@
 
 import styles from './button.module.css';
 
+const configurableStyles = {
+  color: "--btn-color",
+  
+}
+
 const Button = ({ disabled=false,theme="light",active=false,action,onClick,color="",size="md",children }) => {
 
   const onButtonClick = (e) => {
     onClick && onClick(e);
+  }
+
+  const buttonClassNames = () => {
+    let classStr = styles.glassButton;
+
   }
 
   return (

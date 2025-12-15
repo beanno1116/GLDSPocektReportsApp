@@ -16,8 +16,8 @@ import XIcon from '../../assets/icons/XIcon';
 import { useAuth } from '../../hooks/useAuth';
 import { useApiClient } from '../../Api/Api';
 import { loader } from '../../Components/Loader/LoaderModal';
-import AddNewUserIcon from '../../assets/icons/AddNewUserIcon';
 import Heading from '../../Components/Labels/Heading';
+import BGImageAddUser from './Components/BGImageAddUser';
 
 const initialFormData = {
   email: "",
@@ -45,7 +45,7 @@ const AddUserForm = ({ handleSubmit }) => {
 
   const onSaveUserChanges = async ({data,isValid}) => {
     loader.loading();
-    debugger;
+    ;
     if (!isValid){
       loader.loaded();
       return;
@@ -103,31 +103,24 @@ const AddUserForm = ({ handleSubmit }) => {
 
       </div>
       )}
-        <div style={{position:"absolute",left:"-25px",top:"100px",transform:"rotate(-11deg) scale(5)"}}>
 
-          <AddNewUserIcon size={125} color='#28304472' />
-        </div>
-      <FlexRow>
-        <Heading size='lg' mode='lite'>Invite New User</Heading>
-      </FlexRow>
+      <BGImageAddUser />
 
-      <FlexRow hAlign='center' p='.5rem 0 0 0'>
-      </FlexRow>
+      <Heading size='lg' mode='lite'>Invite New User</Heading>
 
-      <FlexRow>
-        <TextField  label={"Invite Email"} size={'sm'} {...registerFormInput("email",{required:true})} placeholder="newuser@mail.com" />                
-      </FlexRow>
+      <TextField  label={"Invite Email"} size={'sm'} {...registerFormInput("email",{required:true})} placeholder="Email" />   
 
-      <div className={`${styles.admin_checkbox}`} style={{zIndex:"1"}}>
-        <InputLabel text={"Make Admin"} size='md'/>
-        <WECheckbox size="md" {...registerFormInput("isAdmin")} />
-      </div>
+      <FlexRow vAlign='center' hAlign='center' g='1rem'>
+        <InputLabel text={"Make Admin"} size='lg'/>
+        <WECheckbox size="lg" {...registerFormInput("isAdmin")} />
+      </FlexRow>   
+
 
       <ManageUserStoreList stores={state.stores} currentUser={currentUser} onClick={onStoreRowClick} />
 
 
       <FlexRow g='1rem'>
-        <Button action={"save"} onClick={(e) => onSubmit(e,onSaveUserChanges)}>Create</Button>
+        <Button action={"save"} color='black' onClick={(e) => onSubmit(e,onSaveUserChanges)}>Create</Button>
         <IconButton action="close" onClick={onCloseButtonClick}>
           <XIcon size={20} />
         </IconButton> 

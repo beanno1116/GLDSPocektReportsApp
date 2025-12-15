@@ -12,6 +12,8 @@ import ProtectedRoute from "./Views/ProtectedRoute";
 import ItemReportsView from "./Views/ItemReports/ItemReportsView";
 import { AppContextProvider } from "./Contexts/AppContext";
 import StoreSelectorView from "./Views/StoreSelector/StoreSelectorView";
+import StoreReportsView from "./Views/StoreReports/StoreReportsView";
+
 // import Api, { ApiClient, ApiClientProvider, getApiEndpoint } from "./Api/Api";
 
 // login username password
@@ -47,6 +49,26 @@ const App = () => {
         {
           path: "/reports/item",
           element: <ItemReportsView />
+        },
+        {
+          path: "/reports/store",
+          element: <StoreReportsView />
+        },
+        {
+          path: "/reports/customer",
+          element: <StoreReportsView />
+        },
+        {
+          path: "/reports/cashier",
+          element: <StoreReportsView />
+        },
+        {
+          path: "/reports/favorites",
+          element: <StoreReportsView />
+        },
+        {
+          path: "/reports/builder",
+          element: <StoreReportsView />
         }
       ]
     },
@@ -66,7 +88,7 @@ const App = () => {
                   <div className="App">
                     <div className='app__main__view'>
                       <RouterProvider router={router} />
-                      <LoaderModal />
+                      <LoaderModal />                      
                       {/* <LoginView /> */}
                       {/* <MainView /> */}
                     </div>      

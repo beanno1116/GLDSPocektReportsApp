@@ -94,22 +94,23 @@ const StoreButtonNav = ({ store,onClick }) => {
  }
 
  if (isError){
-  debugger;
+  ;
   return (
     <div>Error occurred!</div>
   )
  }
 
  if (!isLoading){
-
+  debugger;
   const getButtonData = () => {
     const retData = {...viewData[0][0],...viewData[1][0]};    
     return retData;    
   }
   const buttonData = getButtonData();
-   debugger;
+   ;
 
-   if (buttonData?.ValidTransactionCount && buttonData.ValidTransactionCount !== "0"){
+   if (true){
+  //  if (buttonData?.ValidTransactionCount && buttonData.ValidTransactionCount !== "0"){
     return (
       <button data-value={store.id} className={`${styles.store_button} ${siteStyles.panel_bg}`} onClick={onClick}>
         <h1>{store.name}</h1>

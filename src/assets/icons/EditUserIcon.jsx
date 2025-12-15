@@ -1,8 +1,8 @@
 
-const EditUserIcon = ({ size }) => {
+const EditUserIcon = ({ size,color="rgba(255, 250, 250, 0.45)" }) => {
   return (
     
-    <svg id="fi_17571182" width={size} height={size} viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" fill="rgba(255, 250, 250, 0.45)">
+    <svg id="fi_17571182" width={size} height={size} viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" fill={color}>
       <defs>
         <linearGradient id="gradient-full" x1="0%" y1="0%" x2="120%" y2="120%">
           <stop offset="0%" stopColor="rgba(99, 187, 216, 0.6)" />
@@ -19,5 +19,3 @@ const EditUserIcon = ({ size }) => {
 }
 
 export default EditUserIcon;
-
-<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" id="fi_10337163"></svg>

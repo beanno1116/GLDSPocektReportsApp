@@ -1,9 +1,18 @@
 
-import styles from '../manageUserView.module.css';
-import siteStyles from '../../../site.module.css'
+
 import UserRow from './UserRow';
-import NavButton from '../../../Components/Buttons/NavButton';
 import { useAuth } from '../../../hooks/useAuth';
+import Card from '../../../Components/Cards/Card';
+import UserList from '../../../Components/Lists/User/UserList';
+import FlexColumn from '../../../Components/FlexComponents/FlexColumn';
+import FlexRow from '../../../Components/FlexComponents/FlexRow';
+import Button from '../../../Components/Buttons/Button';
+import { useCallback, useState } from 'react';
+import AddUserFormPanel from './AddUserFormPanel';
+import { useGetOrgUsers } from '../../../Api/ApiRoutes';
+import useAppContext from '../../../hooks/useAppContext';
+import ManageUserPanel from './ManageUserPanel';
+import Filter from '../../../Utils/Filter';
 
 
 const isLastAdmin = (users,userId) => {
@@ -18,16 +27,23 @@ const isLastAdmin = (users,userId) => {
   }
 }
 
-const AccountUsersPanel = ({ users,onClick,toggle }) => {
+const AccountUsersPanel = () => {
   const auth = useAuth();
+  const {state} = useAppContext();
+  const {status,users} = useGetOrgUsers(state.organization);
+  const [isDropdownShowing,setIsDropdownShowing] = useState(false);
+  const [isManageUserShowing,setIsManageUserShowing] = useState(false); 
+  const [currentUser, setCurrentUser] = useState(0); 
   
-  const onUserRowClick = (e,action) => {
-    onClick && onClick(action);
-  }
 
   const onAddUserButtonClick = (e) => {
-    toggle && toggle();
+    setIsDropdownShowing(!isDropdownShowing);
   }
+
+  const onUserRowClick = useCallback((e,action) => {
+    setIsManageUserShowing(true);
+    setCurrentUser(action);
+  },[])
 
   const fillUserList = () => {
     const authUser = auth.getAuthUser();
@@ -51,33 +67,37 @@ const AccountUsersPanel = ({ users,onClick,toggle }) => {
       )
     })
   }
+  
+  if (status.isLoading){
+    return (
+      <div>Loading....</div>
+    )
+  }
 
   return (
-    <div className={`${styles.manage_user_section} ${siteStyles.flex_4}`}>
-        
-      <label className={styles.label}>Active users</label>
+    <>
 
-      <div className={`${styles.panel_section} ${siteStyles.flex_4}`}>
+      <AddUserFormPanel when={isDropdownShowing} close={(e) => setIsDropdownShowing(false)} />
 
-        
+      <ManageUserPanel 
+        when={isManageUserShowing} 
+        onChange={(e) => setIsManageUserShowing(false)} 
+        user={Filter.userById(users,currentUser)}  />
 
-        <div style={{position:"relative",flex:"1",width:"100%"}}>
-
-          <div style={{position:"absolute",display:"flex",flexDirection:"column",gap:"1rem",top:"0",left:"0",width:"100%",height:"100%",overflowY:"scroll"}}>
-            {fillUserList()}
-          </div>
-
-        </div>
-        
-        <div className={styles.manage_user_button_section}>
-
-            {auth.getAuthUser().isAdmin && <NavButton size='md' active={true} onClick={onAddUserButtonClick}>Add</NavButton>}
-            {/* {auth.getAuthUser().isAdmin && <NavButton disabled={users.length >= 4 ? true : false}  size='md' active={true} onClick={onAddUserButtonClick}>Add</NavButton>} */}
-
-        </div>
-
-      </div>
-    </div> 
+      <Card flex='1'>
+        <Card.Title>Users</Card.Title>
+        <Card.FlexContent flex='1'>
+          <FlexColumn width='100%' height='100%' p='1rem' g='1rem'>
+            <UserList>
+              {fillUserList()}
+            </UserList>
+            <FlexRow>
+              {auth.getAuthUser().isAdmin && <Button size='md' color='black' onClick={onAddUserButtonClick}>Add</Button>}
+            </FlexRow>
+          </FlexColumn>
+        </Card.FlexContent>
+      </Card>
+    </>
   );
 }
 
