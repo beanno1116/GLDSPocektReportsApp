@@ -90,7 +90,52 @@ class MutateObj {
     }
   }
 
-  
+  safeDetailsData(data){
+    const dataArr = [];
+    const reportMap = new Map();  
+
+    const dataSchema = {
+      PickUp: {},
+      Loan: {},
+      Expected: {},
+      SafeDeposit: {},
+      Received: {},
+      ShortOver: {}
+    }
+
+    debugger;  
+    data.forEach(row => {
+      if (reportMap.has(row.Media)){
+        const mediaMapObj = reportMap.get(row.Media);
+        const type = row.Type.replace(" ","");
+        mediaMapObj[type] = {
+          description: row.Description,
+          quantity: row.Quantity,
+          total: row.Total
+        }
+        reportMap.set(row.Media,mediaMapObj);
+      }else{
+        const mediaMapObj = {
+      PickUp: {},
+      Loan: {},
+      Expected: {},
+      SafeDeposit: {},
+      Received: {},
+      ShortOver: {}
+    }
+        const type = row.Type.replace(" ","");
+        mediaMapObj[type] = {
+          description: row.Description,
+          quantity: row.Quantity,
+          total: row.Total
+        }
+        reportMap.set(row.Media,mediaMapObj)
+      }
+
+    })
+    debugger;
+    return reportMap;
+  }
 
 }
 

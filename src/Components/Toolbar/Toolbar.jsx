@@ -16,31 +16,31 @@ const reportToolbarButtons = [
   {
     id: 1,
     name: "",
-    icon: <OutlineRefreshIcon size={35} color='snow' />,
+    icon: <OutlineRefreshIcon size={30} color='snow' />,
     action: "refresh"
   },
   {
     id: 2,
     name: "",
-    icon: <OutlineCalendarIcon size={35} color='snow' />,
+    icon: <OutlineCalendarIcon size={30} color='snow' />,
     action: "range"
   },
   {
     id: 3,
     name: "",
-    icon: <SendIcon size={35} color='snow' />,
+    icon: <SendIcon size={30} color='snow' />,
     action: "share"
   },
   {
     id: 4,
     name: "",
-    icon: <ExportIcon size={35} color='snow' />,
+    icon: <ExportIcon size={30} color='snow' />,
     action: "export"
   },
 ]
 
 
-const Toolbar = ({ onClick,buttons=[] }) => {
+const Toolbar = ({ onClick,buttons=[],borderRadius="1rem" }) => {
 
   const navRowRef = useRef();
 
@@ -49,8 +49,8 @@ const Toolbar = ({ onClick,buttons=[] }) => {
   }
 
   return (
-    <div className={styles.tool_bar}>
-      <div ref={navRowRef} className={`${siteStyles.panel_bg} ${styles.tool_bar_row}`}> 
+    <div className={styles.tool_bar} style={{borderRadius:borderRadius}}>
+      <div ref={navRowRef} className={`${siteStyles.panel_bg} ${styles.tool_bar_row}`} style={{borderRadius:borderRadius}}> 
         {buttons.map((button,index) => {
           if (index === 1){
             return (

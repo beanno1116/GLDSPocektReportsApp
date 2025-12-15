@@ -84,7 +84,7 @@ const useGetStoresForOrg = () => {
 }
 
 const getOrgUsers = async ({api,signal,token,orgId}) => {
-  const response = await api.get("organizations/users",{params:{token,orgId},signal});   
+  const response = await api.get("/users",{params:{token,orgId},signal});   
   if (response.success){    
     return response.data.map(rd => new User(rd));
   } 
@@ -150,9 +150,14 @@ const useGetStoreConnectionStatus = (agentString) => {
 
 
 
-const getReportData = async (api,params,signal) => {  
-  const response = await api.post("data",params,{...api.headers.applicationJson,signal});  
+const getReportData = async (api,params,signal,mutate) => {  
+  const response = await api.post("data",params,{...api.headers.applicationJson,signal}); 
+
   if (response.success){
+    if (mutate){
+      debugger;
+      return mutate(response.data);
+    }
     return response.data;
   }  
   return [];
@@ -231,7 +236,7 @@ export const useFetchAllReportData = ({queries=testQueries}) => {
   }
 }
 
-const useFetchReportData = ({action,agentString="",enabled=true}) => {  
+const useFetchReportData = ({action,agentString="",enabled=true,mutate}) => {  
   const auth = useAuth();
   const api = useApiClient();
   
@@ -246,7 +251,7 @@ const useFetchReportData = ({action,agentString="",enabled=true}) => {
 
   const { isLoading, isError,isSuccess,isIdle, data,error,refetch } = useQuery({
       queryKey: [action,agentString],
-      queryFn: ({signal}) => getReportData(api,params,signal),
+      queryFn: ({signal}) => getReportData(api,params,signal,mutate),
       refetchOnWindowFocus: false,
       staleTime: Infinity,
       keepPreviousData: true,      

@@ -1,5 +1,6 @@
 
 import styles from './cards.module.css';
+import CardTable from './Components/CardTable';
 import Title from './Components/Title';
 
 const FlexBody = ({children,flex="unset",direction="column"}) => {
@@ -31,5 +32,6 @@ const Card = ({children,flex="unset" }) => {
 Card.Title = Title;
 Card.Content = Body;
 Card.FlexContent = FlexBody;
+Card.Table = CardTable;
 
 export default Card;

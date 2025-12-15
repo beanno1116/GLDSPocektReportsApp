@@ -58,7 +58,33 @@ const reports = {
   ]
 }
 
+const cardToolbarItems = [
 
+  {
+    id: 2,
+    name: "",
+    icon: <HomeIcon size={30} color='snow' />,
+    action: "range"
+  },
+  {
+    id: 3,
+    name: "",
+    icon: <HomeIcon size={30} color='snow' />,
+    action: "share"
+  },
+  {
+    id: 4,
+    name: "",
+    icon: <HomeIcon size={30} color='snow' />,
+    action: "export"
+  },
+    {
+    id: 1,
+    name: "",
+    icon: <HomeIcon size={30} color='snow' />,
+    action: "refresh"
+  }
+]
 
 
 
@@ -72,10 +98,12 @@ const StoreReportsView = ({ ...props }) => {
   const navigate = useNavigate();
 
   const onHomeButtonClick = (action) => {
+    debugger;
     navigate(action,{ viewTransition: true });
   }
 
   const onReportButtonClick = (e) => {    
+    debugger;
     let target = e.currentTarget;
     let report = target.dataset.report;
     let group = target.dataset.group;
@@ -85,18 +113,19 @@ const StoreReportsView = ({ ...props }) => {
 
   return (
     <View>
-      {/* <PanelViewManager when={showReportPanel} view={currentReport} /> */}
-      {showReportPanel && (
+      <PanelViewManager close={() => setShowReportPanel(false)} when={showReportPanel} report={currentReport} view={currentReport} />
+      {/* {showReportPanel && (
         <PanelViewManager>
           <ReportDisplayView report={currentReport} close={()=>setShowReportPanel(false)}/>
         </PanelViewManager>
-      )}
+      )} */}
         
 
         <Heading mode='lite' size='lg'>Store Reports</Heading>
 
+        {/* <FlexColumn flex='1'></FlexColumn> */}
+
         <ReportView>
-          <ReportView.SelectionRow title="Pinned" onClick={onReportButtonClick}/>
           <ReportView.SelectionRow title="Financial" reports={reports.financial} onClick={onReportButtonClick}/>
           <ReportView.SelectionRow title="Department" reports={reports.departments} onClick={onReportButtonClick} />
           <ReportView.SelectionRow title="Sub-Department" reports={reports.subdepartments} onClick={onReportButtonClick} />
@@ -104,7 +133,7 @@ const StoreReportsView = ({ ...props }) => {
 
       
       
-      <BottomNav onClick={onHomeButtonClick} />
+      <BottomNav buttons={cardToolbarItems} onClick={onHomeButtonClick} />
       
     </View>
   );

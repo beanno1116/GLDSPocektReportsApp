@@ -87,8 +87,8 @@ const useLoginPanel = (navigation) => {
         localStorage.set("org",JSON.stringify(payloadData));
         
         dispatch({action:"all",payload:payloadData});
+        loader.loaded();      
       }
-      loader.loaded();      
       return;
     }
     throw new TypeError("Invalid response data");
