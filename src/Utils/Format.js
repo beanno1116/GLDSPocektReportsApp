@@ -108,6 +108,14 @@ class FormatUtil {
     return `$${parseInt(total)}`
   }
 
+  stringAsMoney(value,locale = "en-US") {
+    try {
+      return `${parseFloat(value).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+
 }
 
 const Format = new FormatUtil();

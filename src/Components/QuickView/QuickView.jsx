@@ -37,7 +37,7 @@ const QuickView = ({ views=pages }) => {
   }
 
   const onPageDotClick = (dot,pageNumber) => {    
-    debugger;
+    
     if (currentPageDotRef.current){
       currentPageDotRef.current.classList.remove(styles.active);
     }

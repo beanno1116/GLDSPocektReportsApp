@@ -4,17 +4,17 @@ import FavoriteReportsIcon from '../../assets/icons/FavoriteReportsIcon';
 import HomeIcon from '../../assets/icons/HomeIcon';
 import styles from './bottomNav.module.css';
 
-const BottomNav = ({ onClick,buttons=[],borderRadius="0 0 1rem 1rem" }) => {
+const BottomNav = ({ onClick,buttons=[] }) => {
 
   const onNavButtonClick = (e,action) => {
-    onClick && onClick("/");
+    onClick && onClick(action);
   }
 
   return (
-  <div className={styles.bottom_nav} style={{borderRadius:borderRadius}}>
-    {buttons.map(button => {
+  <div className={styles.bottom_nav}>
+    {buttons.map(button => {      
       return (
-      <button data-action={button.action} className={styles.nav_icon} onClick={(e) => onNavButtonClick(e,"/")}>
+      <button data-action={button.action} className={styles.nav_icon} onClick={(e) => onNavButtonClick(e,button.action)}>
         {button.icon}
       </button>
       )

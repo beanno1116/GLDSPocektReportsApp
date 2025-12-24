@@ -3,13 +3,13 @@
 import styles from '../weAccordion.module.css';
 import ChevronIcon from './icons/ChevronIcon';
 
-const Header = ({ text }) => {
+const Header = ({ children }) => {
   return (
     <span className={styles.accordion_header}>
       <button className={styles.trigger} aria-expanded="false">
-        <label>{text}</label>
+        {children}
       </button>
-      <span className={styles.header_icon}><ChevronIcon width={32} height={32} /></span>
+      <span className={styles.header_icon}><ChevronIcon width={48} height={48} /></span>
     </span>
   )
 }

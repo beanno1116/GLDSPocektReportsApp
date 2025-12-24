@@ -23,7 +23,7 @@ const Card = ({children,flex="unset" }) => {
 
 
   return (
-  <div className={styles.card} style={{flex:flex}}>
+  <div className={styles.card}>
     {children}
   </div>
   );

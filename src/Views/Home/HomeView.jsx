@@ -12,12 +12,42 @@ import MenuGrid from '../../Components/MenuGrid/MenuGrid';
 import NavBar from '../../Components/NavBar/NavBar';
 import FlexRow from '../../Components/FlexComponents/FlexRow';
 import { homeMenuGridItems } from '../../Components/MenuGrid/Grids/Grids';
+import BottomNav from '../../Components/BottomNav/BottomNav';
+import StoreIcon from '../../assets/icons/StoreIcon';
+import SettingsIcon from '../../assets/icons/SettingsIcon';
+import ManageUsersIcon from '../../assets/icons/ManageUsersIcon';
+import HomeIcon from '../../assets/icons/HomeIcon';
 
 
 
 let renderCount = 0;
 
-
+const homeViewBottomNavButtons = [
+  {
+    id: 2,
+    name: "",
+    icon: <HomeIcon size={36} color='snow' />,
+    action: "home"
+  },
+  {
+    id: 3,
+    name: "",
+    icon: <StoreIcon size={36} color="snow" />,
+    action: "store"
+  },
+  {
+    id: 4,
+    name: "",
+    icon: <SettingsIcon size={36} color="snow" /> ,
+    action: "setting"
+  },
+    {
+    id: 1,
+    name: "",
+    icon: <ManageUsersIcon size={36} color='snow' />,
+    action: "user"
+  }
+]
 
 
 const useHomeView = () => {
@@ -54,8 +84,8 @@ const useHomeView = () => {
   },[])
 
 
-
   const getStoreContext = (org) => {    
+
     let context = new Store();
     if (org?.stores.length > 0){
       context = org.stores.filter(store => parseInt(store.id) === parseInt(state.activeStore))[0];
@@ -98,11 +128,12 @@ const HomeView = () => {
           />
 
       </FlexColumn>
+      <BottomNav buttons={homeViewBottomNavButtons} onClick={onNavBarClick} />
 
-      <FlexRow p='0rem 0 0rem 0'>
+      {/* <FlexRow p='0rem 0 0rem 0'>
 
         <NavBar onClick={onNavBarClick}/>
-      </FlexRow>
+      </FlexRow> */}
 
     </View>
   );

@@ -1,4 +1,111 @@
 
+const statGroupMap = new Map();
+
+const salesGroups = {
+  nrgt: "sales",
+  sales: "sales",
+  globaldiscount: "discounts",
+  taxes: "taxes",
+  plus: "plus",
+  received: "received",
+  itemdiscount: "discounts",
+  information: "information",
+  markdowns: "markdowns",
+  poschecks: "backups",
+  exceptions: "exceptions",
+  statistics: "transaction",
+  loyalty: "loyalty",
+  buying: "purchasing",
+  inventory: "inventory"
+}
+
+const statGroups = {
+  sales: [
+    "total sales",
+    "hash_sales",
+    "grand-ttl net",
+    "grand-ttl training",
+    "net sales",
+    "bottle sales pop",
+    "bottle sales beer", 
+    "sales non taxable",
+    "sales during sale period",
+    "sales during tpr period",
+    "sales keyed"
+  ],
+  fees: [
+    "freight weight"
+  ],
+  coupons: [
+    "coupon able",
+    "electronic vendor coupon",
+    "store coupon",
+    "elec. store coupon",
+
+  ],
+  tax: [
+    "tax 1",
+    "taxable 1"
+  ],
+  giftCards: [
+    "gift certificate sold"
+  ],
+  charity: [
+    "charity"
+  ],
+  discounts: [
+    "discountable sales",
+    "sub-department discount",
+    "discounts"
+  ],
+  foodstamps: [
+    "food stampable"
+  ],
+  wic: [
+    "wicable"
+  ],
+  markdowns: [
+    "temporary markdown"
+  ],
+  backup: [
+    "pos transaction backup",
+    "pos transaction restore",
+    "pos suspended balance",
+  ],
+  exceptions: [
+    "cancel last item",
+    "cancel prev. item",
+    "correct. tender",
+    "corrections",
+    "refund key info",
+    "tax refund 1",
+    "no sales"
+  ],
+  customer: [
+    "customers",
+    "customers with id",
+    "items with id",
+  ],
+  items: [
+    "items",
+    "items scanned"
+  ],
+  transaction: [
+    "time complete trans",
+    "time on sub-total",
+    "time on sale",
+    "time idle"
+  ],
+  purchasing: [
+    "deposit buying",
+    "allowances bill back sales",
+    "admissible spending",
+    "gross purchase",
+    "purchase retail value",
+    "total purchased",
+    "cost of goods"
+  ]
+}
 
 class MutateObj {
   #fraudWatchNames;
@@ -91,51 +198,135 @@ class MutateObj {
   }
 
   safeDetailsData(data){
-    debugger;
-    const dataArr = [];
-    const reportMap = new Map();  
+    try {
+      if (!Array.isArray(data)) throw new TypeError("data not of type array");
+
+      const filterArray = [
+        "indrawer",
+        "over/short",
+        "safe expected",
+        "safe ending",
+        "expected"
+      ]
+
+      const safeDetailMap = new Map();
 
     const dataSchema = {
       PickUp: {},
       Loan: {},
-      Expected: {},
+      SafeExpected: {},
       SafeDeposit: {},
       Received: {},
-      ShortOver: {}
+      OverShort: {},
+      CashEnding: {},
     }
 
-    debugger;  
+      
     data.forEach(row => {
-      if (reportMap.has(row.Media)){
-        const mediaMapObj = reportMap.get(row.Media);
-        const type = row.Type.replace(" ","");
-        mediaMapObj[type] = {
-          description: row.Description,
-          quantity: row.Quantity,
-          total: row.Total
+      const tender = row.media;
+      const totalizer = row.totalizer;
+      const description = row.description;
+      const total = row.total;
+      if (filterArray.includes(description.toLowerCase())) return;      
+      if (safeDetailMap.has(tender)){
+
+        const mediaMapObj = safeDetailMap.get(tender);
+
+        if (totalizer === 20){
+          mediaMapObj.subTitle = row.total;
+          safeDetailMap.set(tender,mediaMapObj);
+          return;
         }
-        reportMap.set(row.Media,mediaMapObj);
+
+        let safeDetailRow = {
+          title: description,
+          value: total
+        }
+
+        safeDetailMap.set(tender,{...mediaMapObj,details:[...mediaMapObj.details,safeDetailRow]});
       }else{
-        const mediaMapObj = {
-      PickUp: {},
-      Loan: {},
-      Expected: {},
-      SafeDeposit: {},
-      Received: {},
-      ShortOver: {}
-    }
-        const type = row.Type.replace(" ","");
-        mediaMapObj[type] = {
-          description: row.Description,
-          quantity: row.Quantity,
-          total: row.Total
+
+        if (totalizer === 20){
+          let detailObj = {
+            title: tender,
+            subTitle: total,
+            details: []
+          }
+          safeDetailMap.set(tender,detailObj);
+          return;
         }
-        reportMap.set(row.Media,mediaMapObj)
+
+        let detailObj = {
+          title: tender,
+          subTitle: "",
+          details: [
+            {
+              title: description,
+              value: total
+            }
+          ]
+        }
+        safeDetailMap.set(tender,detailObj);
       }
 
     })
-    debugger;
-    return reportMap;
+    let dataArray = [];
+    for (const [key,value] of safeDetailMap){
+      dataArray.push(value);
+    }    
+    return dataArray;
+    } catch (error) {
+      
+    }
+  }
+
+  storeStatsData(data){
+    try {
+      // 
+      if (!Array.isArray(data)) throw new TypeError("data not of type array");
+      const stateGroupMap = new Map();
+      data.forEach(row => {
+        let description = row.description;
+        let quantity = row.quantity;
+        let group = row.group;
+        let weight = row.weight;
+        let total = row.total;
+
+        if (group === "Global Discount"){
+          debugger;
+        }
+
+        let tempStatGroup = salesGroups[group.toLowerCase().replace(" ","")]; 
+        let statGroup = salesGroups[group.toLowerCase().replace(" ","")];
+        
+        if (stateGroupMap.has(statGroup)){
+          let groupItems = stateGroupMap.get(statGroup);
+          const rowObj = {
+            description,
+            group: statGroup,
+            quantity,
+            weight,
+            total
+          }          
+          stateGroupMap.set(statGroup,[...groupItems,rowObj]);
+        }else {          
+          const rowObj = {
+            description,
+            group: statGroup,
+            quantity,
+            weight,
+            total
+          }          
+          stateGroupMap.set(statGroup,[rowObj]);
+        }
+
+      });
+      
+      return Object.fromEntries(stateGroupMap);
+      
+    } catch (error) {
+      console.error(error.message);
+    }
   }
 
 }

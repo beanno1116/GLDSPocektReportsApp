@@ -19,7 +19,7 @@ const onPeriodButtonClick = (e) => {
     setIsPeriodOptionsShowing(true);
     return;
   }
-  debugger;
+  
 }
 
 

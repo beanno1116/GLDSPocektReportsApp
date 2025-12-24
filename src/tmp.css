@@ -1,0 +1,73 @@
+:root {
+  /* ======================================================
+     Foundations (Deep, calming blues)
+     ====================================================== */
+  --bg-0: #040413;   /* app background */
+  --bg-1: #070822;   /* primary surface */
+  --bg-2: #0B0E34;   /* cards / panels */
+  --bg-3: #11165A;   /* elevated / hover */
+
+  /* ======================================================
+     Glassmorphism (subtle, premium)
+     ====================================================== */
+  --glass:               rgba(255,255,255,0.07);
+  --glass-strong:        rgba(255,255,255,0.11);
+  --glass-ultra:         rgba(255,255,255,0.14);
+  --glass-border:        rgba(255,255,255,0.12);
+  --glass-border-strong: rgba(255,255,255,0.18);
+  --glass-highlight:     rgba(255,255,255,0.28);
+
+  /* ======================================================
+     Brand & Accents
+     ====================================================== */
+  /* Primary — Royal Blue (authority / focus) */
+  --primary:        #4F6BFF;
+  --primary-soft:   #3E57E0;
+  --primary-muted:  #2F3FA8;
+  --primary-glow:   rgba(79,107,255,0.30);
+
+  /* Secondary — Steel Blue-Gray (calm / executive) */
+  --secondary:        #6F86A6;
+  --secondary-soft:   #5C728E;
+  --secondary-muted:  #44566E;
+  --secondary-glow:   rgba(111,134,166,0.26);
+
+  /* Tertiary — Cyan Rim (glass edges / focus) */
+  --tertiary:        #4DDCFF;
+  --tertiary-soft:   #2FC6E6;
+  --tertiary-glow:   rgba(77,220,255,0.30);
+
+  /* ======================================================
+     Typography (low-glare, reporting-friendly)
+     ====================================================== */
+  --text-1: #F1F3FF; /* headings / key metrics */
+  --text-2: #C7CBF4; /* body text */
+  --text-3: #8D93CC; /* labels / hints */
+  --text-4: #5F6499; /* disabled */
+
+  /* ======================================================
+     States & Feedback (muted, premium)
+     ====================================================== */
+  --success: #3FD6A2;
+  --warning: #EBCB8B;
+  --error:   #F07A7A;
+  --info:    #5CC8FF;
+
+  /* ======================================================
+     Lines, Dividers & Shadows
+     ====================================================== */
+  --divider-subtle: rgba(255,255,255,0.06);
+  --divider:        rgba(255,255,255,0.08);
+  --divider-strong: rgba(255,255,255,0.14);
+
+  --shadow-soft: 0 12px 40px rgba(0,0,0,0.45);
+  --shadow-main: 0 18px 60px rgba(0,0,0,0.58);
+  --shadow-inset: inset 0 1px 0 rgba(255,255,255,0.10);
+
+  /* ======================================================
+     Focus & Glow (luxury, controlled)
+     ====================================================== */
+  --focus-ring: 0 0 0 3px rgba(79,107,255,0.22);
+  --glow-soft:  0 0 28px rgba(79,107,255,0.18);
+  --glow-strong:0 0 44px rgba(79,107,255,0.26);
+}

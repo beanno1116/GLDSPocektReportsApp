@@ -1,3 +1,4 @@
+import Format from "./Format";
 
 
 export const removeFromArray = (arr,item) => {
@@ -17,4 +18,14 @@ export const uuid = (prefix) => {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
 
   return text;
+}
+
+export const handleZeroValue = (value) => {
+  
+  if (value === undefined || value === null) return "";
+  if (value === "") return "0.00";
+
+  if (parseFloat(value) === 0.00 || parseFloat(value) === 0) return Format.stringAsMoney(parseFloat(value));
+  
+  return Format.stringAsMoney(value);
 }

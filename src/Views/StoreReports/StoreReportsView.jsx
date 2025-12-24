@@ -63,26 +63,26 @@ const cardToolbarItems = [
   {
     id: 2,
     name: "",
-    icon: <HomeIcon size={30} color='snow' />,
-    action: "range"
+    icon: <HomeIcon size={36} color='snow' />,
+    action: "/"
   },
   {
     id: 3,
     name: "",
-    icon: <HomeIcon size={30} color='snow' />,
-    action: "share"
+    icon: <HomeIcon size={36} color='snow' />,
+    action: "/"
   },
   {
     id: 4,
     name: "",
-    icon: <HomeIcon size={30} color='snow' />,
-    action: "export"
+    icon: <HomeIcon size={36} color='snow' />,
+    action: "/"
   },
     {
     id: 1,
     name: "",
-    icon: <HomeIcon size={30} color='snow' />,
-    action: "refresh"
+    icon: <HomeIcon size={36} color='snow' />,
+    action: "/"
   }
 ]
 
@@ -98,12 +98,12 @@ const StoreReportsView = ({ ...props }) => {
   const navigate = useNavigate();
 
   const onHomeButtonClick = (action) => {
-    debugger;
+    
     navigate(action,{ viewTransition: true });
   }
 
   const onReportButtonClick = (e) => {    
-    debugger;
+    
     let target = e.currentTarget;
     let report = target.dataset.report;
     let group = target.dataset.group;
@@ -113,6 +113,8 @@ const StoreReportsView = ({ ...props }) => {
 
   return (
     <View>
+          <div className={styles.grain}></div>
+    <div className={styles.anamorphic_streak}></div>
       <PanelViewManager close={() => setShowReportPanel(false)} when={showReportPanel} report={currentReport} view={currentReport} />
       {/* {showReportPanel && (
         <PanelViewManager>

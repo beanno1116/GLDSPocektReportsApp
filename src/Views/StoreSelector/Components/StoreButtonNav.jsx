@@ -101,7 +101,7 @@ const StoreButtonNav = ({ store,onClick }) => {
  }
 
  if (!isLoading){
-  debugger;
+  
   const getButtonData = () => {
     const retData = {...viewData[0][0],...viewData[1][0]};    
     return retData;    
