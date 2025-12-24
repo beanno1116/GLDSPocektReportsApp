@@ -91,6 +91,7 @@ class MutateObj {
   }
 
   safeDetailsData(data){
+    debugger;
     const dataArr = [];
     const reportMap = new Map();  
 

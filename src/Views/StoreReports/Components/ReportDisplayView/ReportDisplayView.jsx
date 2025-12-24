@@ -97,7 +97,6 @@ const ReportDisplayView = ({ subViews,report,close }) => {
   }
 
   if (!status.isLoading){
-    debugger;
     const temp = data;
     console.log("Loaded")
   }
