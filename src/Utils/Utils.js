@@ -29,3 +29,11 @@ export const handleZeroValue = (value) => {
   
   return Format.stringAsMoney(value);
 }
+
+export const take = function* (n,iterable){
+  for (let item of iterable){
+    if (n <= 0) return;
+    n--;
+    yield item;
+  }
+}

@@ -137,6 +137,11 @@ button {
 
   --input-label-color-l: var(--l-font-color);
   --input-label-color-d:  var(--d-font-color);
+
+
+  --outer-border-radius: 1rem;
+  --child-border-radius: .5rem;
+
 }
 body {
   background: linear-gradient(109.6deg, rgb(20, 30, 48) 11.2%, rgb(36, 59, 85) 91.1%);

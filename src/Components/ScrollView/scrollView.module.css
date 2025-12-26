@@ -12,7 +12,17 @@
   gap: 1rem;
   width: 100%;
   height: 100%;
-  padding: 0rem 1rem 1rem 1rem;
+  /* padding: 0rem 1rem 1rem 1rem; */
   overflow-y: scroll;
   /* background-color: red; */
+}
+.horizontal_scroll {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;  
+  gap: 1rem;
 }

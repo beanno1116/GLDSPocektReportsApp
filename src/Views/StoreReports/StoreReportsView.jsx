@@ -2,30 +2,31 @@
 import { useNavigate } from 'react-router';
 import HomeIcon from '../../assets/icons/HomeIcon';
 import BottomNav from '../../Components/BottomNav/BottomNav';
-import FlexColumn from '../../Components/FlexComponents/FlexColumn';
 import Heading from '../../Components/Labels/Heading';
 import View from '../Templates/View/View';
 import styles from './storeReportsView.module.css';
 import ReportView from '../Templates/ReportView/ReportView';
-import { useState } from 'react';
-import IconButton from '../../Components/Buttons/IconButton';
-import XIcon from '../../assets/icons/XIcon';
+import { useCallback, useState } from 'react';
 import PanelViewManager from './Components/PanelViewManager';
-import ReportDisplayView from './Components/ReportDisplayView/ReportDisplayView';
+
 
 const reports = {
   financial: [
     {
-      title: "Total Summary"
+      report: "summary",
+      title: "Store Summary"
     },
     {
-      title: "Balance Sheet",
+      report: "balance",
+      title: "Store Balance",
     },
     {
-      title: "Multi Total",
+      report: "multi",
+      title: "Store Multi-Totals",
     },
     {
-      title: "Single Total",
+      report: "single",
+      title: "Store Single Total",
     },
   ],
   departments: [
@@ -91,51 +92,53 @@ const cardToolbarItems = [
 const StoreReportsView = ({ ...props }) => {
   const [showReportPanel,setShowReportPanel] = useState(false);
   const [currentReport,setCurrentReport] = useState({
-    report: "",
+    name: "",
     group: "",
-    type: "Store"
+    type: "",
+    title: ""
   });
   const navigate = useNavigate();
 
-  const onHomeButtonClick = (action) => {
+  const onHomeButtonClick = (e,action) => {
     
     navigate(action,{ viewTransition: true });
   }
 
   const onReportButtonClick = (e) => {    
+    // 
     
     let target = e.currentTarget;
-    let report = target.dataset.report;
+    let name = target.dataset.report;
+    let type = target.dataset.type;
     let group = target.dataset.group;
-    setCurrentReport({...currentReport,report,group});
+    let title = target.dataset.title;
+    setCurrentReport({...currentReport,type,name,group,title});
     setShowReportPanel(!showReportPanel);
   }
 
+  const onClosePanelView = useCallback((e) => {
+    
+    e.stopPropagation();
+    e.preventDefault();
+    setShowReportPanel(false);
+  },[showReportPanel])
+
   return (
     <View>
-          <div className={styles.grain}></div>
-    <div className={styles.anamorphic_streak}></div>
-      <PanelViewManager close={() => setShowReportPanel(false)} when={showReportPanel} report={currentReport} view={currentReport} />
-      {/* {showReportPanel && (
-        <PanelViewManager>
-          <ReportDisplayView report={currentReport} close={()=>setShowReportPanel(false)}/>
-        </PanelViewManager>
-      )} */}
-        
-
+      <div className={styles.grain}></div>
+      <div className={styles.anamorphic_streak}></div>
+      
+      <PanelViewManager close={onClosePanelView} when={showReportPanel} report={currentReport} />
+      
         <Heading mode='lite' size='lg'>Store Reports</Heading>
 
-        {/* <FlexColumn flex='1'></FlexColumn> */}
-
         <ReportView>
-          <ReportView.SelectionRow title="Financial" reports={reports.financial} onClick={onReportButtonClick}/>
-          <ReportView.SelectionRow title="Department" reports={reports.departments} onClick={onReportButtonClick} />
-          <ReportView.SelectionRow title="Sub-Department" reports={reports.subdepartments} onClick={onReportButtonClick} />
+          <ReportView.SelectionRow type="store" group="Financial" reports={reports.financial} onClick={onReportButtonClick}/>
+          <ReportView.SelectionRow type="store" group="Department" reports={reports.departments} onClick={onReportButtonClick} />
+          <ReportView.SelectionRow type="store" group="Sub-Department" reports={reports.subdepartments} onClick={onReportButtonClick} />
         </ReportView>
 
-      
-      
-      <BottomNav buttons={cardToolbarItems} onClick={onHomeButtonClick} />
+        <BottomNav buttons={cardToolbarItems} eventHandler={onHomeButtonClick} />
       
     </View>
   );

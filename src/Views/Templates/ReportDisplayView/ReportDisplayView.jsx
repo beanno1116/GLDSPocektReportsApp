@@ -1,6 +1,8 @@
 
 import { useState } from 'react';
+import XIcon from '../../../../assets/icons/XIcon';
 import Button from '../../../../Components/Buttons/Button';
+import IconButton from '../../../../Components/Buttons/IconButton';
 import FlexColumn from '../../../../Components/FlexComponents/FlexColumn';
 import FlexRow from '../../../../Components/FlexComponents/FlexRow';
 import Heading from '../../../../Components/Labels/Heading';
@@ -18,12 +20,9 @@ import Mutate from '../../../../Utils/Mutate';
 import ChevronIcon from '../../../../assets/icons/ChevronIcon';
 import WEAccordion from '../../../../Components/WEAccordion/WEAccordion';
 import ScrollView from '../../../../Components/ScrollView/ScrollView';
-
+import DetailsCard from '../../../../Components/Cards/DetailsCard';
+import Format from '../../../../Utils/Format';
 import { handleZeroValue } from '../../../../Utils/Utils';
-
-import HorizontalScrollView from '../../../../Components/ScrollView/HorizontalScrollView';
-
-
 
 const views = {
   range: "Range",
@@ -95,14 +94,6 @@ const safeDetailQueries = [
       
     }
   }
-  ,
-  {
-    action: "Stats",
-    adapter: (data) => {
-      const adaptedData = Mutate.storeStatsData(data);
-      return adaptedData;
-    }
-  }
 ]
 
 
@@ -143,9 +134,7 @@ const ReportViewToolbar = ({ buttons,eventHandler }) => {
 
 const ReportViewTitle = ({size,mode="lite",children}) => {
   return (
-    <FlexRow p='1rem 1rem .25rem 1rem'>
-      <Heading size={size} mode={mode}>{children}</Heading>
-    </FlexRow>
+    <Heading size={size} mode={mode}>{children}</Heading>
   )
 }
 
@@ -166,144 +155,10 @@ const ReportViewButtonRow = ({children}) => {
   )
 }
 
-{/* Hero section */}
-const ReportViewHeroRow = ({children}) => {
-  return (
-    <FlexRow  p='.25rem 1rem' g='1rem'>
-      {children}
-      {/* <Hero theme='blue' spacing='between'>
-        <Hero.Title>Total Sales</Hero.Title>
-        <Hero.Value>{Format.moneyAbbreviation(4734.54)}</Hero.Value>
-      </Hero>
-      <Hero theme="blue" spacing='between'>
-        <Hero.Title>Sale Count</Hero.Title>
-        <Hero.Value>111</Hero.Value>
-      </Hero> */}
-    </FlexRow>
-  )
-}
-
-const ReportViewHeading = ({children}) => {
-  return (
-    <FlexRow p='.25rem 1rem'>
-      <Heading size='sm' mode='light' textAlign='left'>{children}</Heading>
-    </FlexRow>
-  )
-}
-
-const ReportViewPinnedRow = ({children}) => {
-  return (
-    <FlexRow p='.25rem 1rem'>
-      <HorizontalScrollView>
-        {children}
-      </HorizontalScrollView>
-    </FlexRow>
-  )
-}
-
-const ReportViewScrollView = ({children}) => {
-  return (
-    <FlexRow flex='1' p='.75rem 1rem'>
-
-      <ScrollView>
-        {children}
-        
-        {/* <FlexRow  p='0 1rem 1rem 1rem' g='1rem'>
-          <Card flex='1'>
-            <Card.Content>
-              <Card.Title>Statistics</Card.Title>
-              <FlexRow p='.5rem'></FlexRow>
-              <FlexRow g='1rem'>
-                <Hero theme='green'>
-                  <Hero.Title>Refunds</Hero.Title>
-                  <Hero.Value>12</Hero.Value>
-                </Hero>
-                <Hero theme='red'>
-                  <Hero.Title>No Sales</Hero.Title>
-                  <Hero.Value>30</Hero.Value>
-                </Hero>
-              </FlexRow>
-              <FlexRow p='.5rem'></FlexRow>
-              <Button size='lg'>See Summary</Button>
-            </Card.Content>
-          </Card>
-        </FlexRow>
-
-        <FlexRow  p='0 1rem 1rem 1rem' g='1rem'>
-          <Card flex='1'>
-            <Card.Content>
-              <Card.Title>Safe</Card.Title>
-              <FlexRow p='.5rem'></FlexRow>
-              <FlexRow g='1rem'>
-                <Hero theme='green'>
-                  <Hero.Title>Refunds</Hero.Title>
-                  <Hero.Value>12</Hero.Value>
-                </Hero>
-                <Hero theme='red'>
-                  <Hero.Title>No Sales</Hero.Title>
-                  <Hero.Value>30</Hero.Value>
-                </Hero>
-              </FlexRow>
-              <FlexRow p='.5rem'></FlexRow>
-              <Button size='lg'>See Summary</Button>
-            </Card.Content>
-          </Card>
-        </FlexRow>
-
-        <FlexRow  p='0 1rem 1rem 1rem' g='1rem'>
-          <Card flex='1'>
-            <Card.Content>
-              <Card.Title>Drawers</Card.Title>
-              <FlexRow p='.5rem'></FlexRow>
-              <FlexRow g='1rem'>
-                <Hero theme='green'>
-                  <Hero.Title>Refunds</Hero.Title>
-                  <Hero.Value>12</Hero.Value>
-                </Hero>
-                <Hero theme='red'>
-                  <Hero.Title>No Sales</Hero.Title>
-                  <Hero.Value>30</Hero.Value>
-                </Hero>
-              </FlexRow>
-              <FlexRow p='.5rem'></FlexRow>
-              <Button size='lg'>See Summary</Button>
-            </Card.Content>
-          </Card>
-        </FlexRow>
-
-        <FlexRow p='0 1rem 1rem 1rem' g='1rem'>
-          <DetailRow></DetailRow>
-        </FlexRow>
-
-        <FlexRow p='0 1rem 1rem 1rem' g='1rem'>
-          <Card flex='1'>
-            <Card.Content>
-              <Card.Title>Safe Information</Card.Title>
-            </Card.Content>
-          </Card>
-        </FlexRow>
-
-        <FlexRow  p='0 1rem 1rem 1rem' g='1rem'>
-          <Card flex='1'>
-            <Card.Content>
-              <Card.Title>Drawer Information</Card.Title>
-            </Card.Content>
-          </Card>
-        </FlexRow> */}
-
-      </ScrollView>
-      
-    </FlexRow>
-  )
-}
 
 
 
-
-
-
-
-const ReportDisplayView = ({ subViews,report,close,children }) => {
+const ReportDisplayView = ({ subViews,report,close }) => {
   const {status,data} = useFetchReportData({action:"Stats",mutate:Mutate.storeStatsData});
   const [isToolbarViewShowing,setIsToolbarViewShowing] = useState(false);
   const [selectedView,setSelectedView] = useState("");
@@ -377,10 +232,25 @@ const ReportDisplayView = ({ subViews,report,close,children }) => {
 
         <ToolbarViewHandler views={subViews} when={isToolbarViewShowing} close={() => setIsToolbarViewShowing(false)} view={selectedView} />
 
-        <FlexColumn width='100%' height='100%'>
-          {children}
-        </FlexColumn>
+        <Heading size='md' mode='lite'>{`${report.type} - ${report.group}`}</Heading>
+
+        <Heading size='lg' mode='lite'>{report.report}</Heading>
+
+        <FlexRow p='0 1rem 1rem 1rem'>
+          <Toolbar buttons={reportToolbarButtons} onClick={onToolbarClick} />
+        </FlexRow>
+
+        <FlexRow p='0 0 1rem 0' hAlign='center'>
+          <div style={{fontSize:"1.25rem",fontWeight:"900",color:"snow"}}><span>Dec 10th 2025</span> to <span>Dec 10th 2025</span></div>
+        </FlexRow>
+
+
         
+
+        <FlexRow g='1rem' p='1rem'>
+          <Button size='lg'>Done</Button>
+          <IconButton size='lg' onClick={close}><XIcon size={24}/></IconButton>
+        </FlexRow>
     </div>
   );
 }
@@ -389,9 +259,5 @@ ReportDisplayView.Toolbar = ReportViewToolbar;
 ReportDisplayView.Title = ReportViewTitle;
 ReportDisplayView.PeriodDisplay = ReportViewPeriodDisplay;
 ReportDisplayView.ButtonRow = ReportViewButtonRow;
-ReportDisplayView.QuickStats = ReportViewHeroRow;
-ReportDisplayView.PinnedRow = ReportViewPinnedRow;
-ReportDisplayView.ScrollView = ReportViewScrollView;
-ReportDisplayView.Heading = ReportViewHeading;
- 
+
 export default ReportDisplayView;

@@ -119,6 +119,45 @@ class MutateObj {
 }
   }
 
+  /*
+    [
+      {
+          "name": "Sun",
+          "thisWeekSales": 57027.62,
+          "lastWeekSales": 43767.74
+      },
+      {
+          "name": "Mon",
+          "thisWeekSales": 77767.04,
+          "lastWeekSales": 44735.72
+      },
+      {
+          "name": "Tue",
+          "thisWeekSales": 110399.73,
+          "lastWeekSales": 44521.24
+      },
+      {
+          "name": "Wed",
+          "thisWeekSales": 0,
+          "lastWeekSales": 43557.11
+      },
+      {
+          "name": "Thu",
+          "thisWeekSales": 0,
+          "lastWeekSales": 46542.75
+      },
+      {
+          "name": "Fri",
+          "thisWeekSales": 0,
+          "lastWeekSales": 43212.67
+      },
+      {
+          "name": "Sat",
+          "thisWeekSales": 0,
+          "lastWeekSales": 52250.66
+      }
+    ]
+  */
   thisWeekVsLastWeekData(data){
     try {
       if (!data) return [];
@@ -146,6 +185,7 @@ class MutateObj {
       for (const [key,value] of tempObj){
         dataArray.push(value);
       }
+      debugger;
       return dataArray;
     } catch (error) {
       console.error(error.message);
@@ -211,70 +251,104 @@ class MutateObj {
 
       const safeDetailMap = new Map();
 
-    const dataSchema = {
-      PickUp: {},
-      Loan: {},
-      SafeExpected: {},
-      SafeDeposit: {},
-      Received: {},
-      OverShort: {},
-      CashEnding: {},
-    }
-
-      
-    data.forEach(row => {
-      const tender = row.media;
-      const totalizer = row.totalizer;
-      const description = row.description;
-      const total = row.total;
-      if (filterArray.includes(description.toLowerCase())) return;      
-      if (safeDetailMap.has(tender)){
-
-        const mediaMapObj = safeDetailMap.get(tender);
-
-        if (totalizer === 20){
-          mediaMapObj.subTitle = row.total;
-          safeDetailMap.set(tender,mediaMapObj);
-          return;
-        }
-
-        let safeDetailRow = {
-          title: description,
-          value: total
-        }
-
-        safeDetailMap.set(tender,{...mediaMapObj,details:[...mediaMapObj.details,safeDetailRow]});
-      }else{
-
-        if (totalizer === 20){
-          let detailObj = {
-            title: tender,
-            subTitle: total,
-            details: []
-          }
-          safeDetailMap.set(tender,detailObj);
-          return;
-        }
-
-        let detailObj = {
-          title: tender,
-          subTitle: "",
-          details: [
-            {
-              title: description,
-              value: total
-            }
-          ]
-        }
-        safeDetailMap.set(tender,detailObj);
+      const totals = {
+        safeStart: 0.00,
+        pickup: 0.00,
+        loan: 0.00,
+        received: 0.00,
+        deposit: 0.00,
+        shortOver: 0.00,
+        safeEnd: 0.00
       }
 
-    })
-    let dataArray = [];
-    for (const [key,value] of safeDetailMap){
-      dataArray.push(value);
-    }    
-    return dataArray;
+      data.forEach(row => {
+        const {media:tender,totalizer,description,total} = row;
+        
+        if (filterArray.includes(description.toLowerCase())) return;      
+
+        if (safeDetailMap.has(tender)){
+
+          const mediaMapObj = safeDetailMap.get(tender);
+
+          if (totalizer === 20){
+            totals.safeEnd = totals.safeEnd + parseFloat(row.total);
+            mediaMapObj.subTitle = row.total;
+            safeDetailMap.set(tender,mediaMapObj);
+            return;
+          }
+
+          if (description.toLowerCase() === "loan"){
+            totals.loan = totals.loan + parseFloat(row.total);            
+          }
+
+          if (description.toLowerCase() === "safe over/short"){
+            totals.shortOver = totals.shortOver + parseFloat(row.total);            
+          }
+          if (description.toLowerCase() === "pick up"){
+            totals.pickup = totals.pickup + parseFloat(row.total);            
+          }
+          if (description.toLowerCase() === "safe deposit"){
+            totals.deposit = totals.deposit + parseFloat(row.total);
+          }
+
+          let safeDetailRow = {
+            title: description,
+            value: total
+          }
+
+          safeDetailMap.set(tender,{...mediaMapObj,details:[...mediaMapObj.details,safeDetailRow]});
+        }else{
+
+          if (totalizer === 20){
+            let detailObj = {
+              title: tender,
+              subTitle: total,
+              details: []
+            }
+            totals.safeEnd = totals.safeEnd + parseFloat(row.total);
+            safeDetailMap.set(tender,detailObj);
+            return;
+          }
+          if (description.toLowerCase() === "loan"){
+            totals.loan = totals.loan + parseFloat(row.total);            
+          }
+
+          if (description.toLowerCase() === "safe over/short"){
+            totals.shortOver = totals.shortOver + parseFloat(row.total);            
+          }
+          if (description.toLowerCase() === "pick up"){
+            totals.pickup = totals.pickup + parseFloat(row.total);            
+          }
+          if (description.toLowerCase() === "safe deposit"){
+            totals.deposit = totals.deposit + parseFloat(row.total);
+          }
+
+          let detailObj = {
+            title: tender,
+            subTitle: "",
+            details: [
+              {
+                title: description,
+                value: total
+              }
+            ]
+          }
+          safeDetailMap.set(tender,detailObj);
+        }
+
+      })
+      
+      
+      let dataArray = [];
+      for (const [key,value] of safeDetailMap){
+        dataArray.push(value);
+      }    
+    
+      
+      return {
+        totals: totals,
+        rows: dataArray
+      }
     } catch (error) {
       
     }
@@ -284,7 +358,9 @@ class MutateObj {
     try {
       // 
       if (!Array.isArray(data)) throw new TypeError("data not of type array");
+
       const stateGroupMap = new Map();
+
       data.forEach(row => {
         let description = row.description;
         let quantity = row.quantity;
@@ -292,8 +368,8 @@ class MutateObj {
         let weight = row.weight;
         let total = row.total;
 
-        if (group === "Global Discount"){
-          debugger;
+        if (description.toLowerCase() === "total sales"){
+          stateGroupMap.set("totalSales",row);
         }
 
         let tempStatGroup = salesGroups[group.toLowerCase().replace(" ","")]; 
@@ -321,6 +397,8 @@ class MutateObj {
         }
 
       });
+
+      
       
       return Object.fromEntries(stateGroupMap);
       

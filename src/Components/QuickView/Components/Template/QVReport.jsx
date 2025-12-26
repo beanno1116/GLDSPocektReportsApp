@@ -4,10 +4,22 @@ import Heading from '../../../Labels/Heading';
 import Loader from '../../../Loader/Loader';
 import styles from '../../quickView.module.css';
 import { publish } from '../../../../events';
+import PeriodSelectorButton from '../../../Buttons/PeriodSelectorButton';
 
 const QVReportTitle = ({text,mode="lite"}) => {
   return (
-    <Heading size='sm' mode={mode}>{text}</Heading>
+    <Heading size='md' mode={mode}>{text}</Heading>
+  )
+}
+
+const QVReportPeriodSelector = ({onClick}) => {
+
+  const onPeriodSelectorClick = (e) => {
+    onClick && onClick(e);
+  }
+
+  return (
+    <PeriodSelectorButton onClick={onPeriodSelectorClick}/>
   )
 }
 
@@ -43,5 +55,6 @@ const QVReport = ({ status,children }) => {
 }
 
 QVReport.Title = QVReportTitle;
+QVReport.PeriodSelector = QVReportPeriodSelector;
 
 export default QVReport;

@@ -19,11 +19,26 @@ const Body = ({flex="unset",children}) => {
   )
 }
 
-const Card = ({children,flex="unset" }) => {
 
+const customizableStyles = {
+  unset: "unset",
+  square: "1 / 1",
+  between: "space-between",
+  evenly: "space-evenly"
+}
+
+
+const Card = ({children,flex="unset" }) => {
+  const calculateStyles = () => {
+    const styleObj = {
+      flex,
+    }
+    
+    return styleObj;
+  }
 
   return (
-  <div className={styles.card}>
+  <div className={styles.card} style={{...calculateStyles()}}>
     {children}
   </div>
   );

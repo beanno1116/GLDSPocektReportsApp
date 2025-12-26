@@ -1,0 +1,21 @@
+
+const SolidBackIcon = ({ size,color="rgba(255, 250, 250, 0.45)" }) => {
+  return (
+    
+    <svg id="fi_9513807" width={size} height={size} viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" fill={color}>
+      <defs>
+        <linearGradient id="gradient-full" x1="0%" y1="0%" x2="120%" y2="120%">
+          <stop offset="0%" stopColor="rgba(99, 187, 216, 0.6)" />
+          <stop offset="90%" stopColor="#ffffff00" />
+        </linearGradient>
+        <linearGradient id="gradient-half" x1="-50%" y1="-50%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#ffffff" />
+          <stop offset="100%" stopColor="#ffffff00" />
+        </linearGradient>
+      </defs>
+      <path d="m496.987 479.867c-7.263 0-13.569-5.252-14.783-12.535-10.824-63.203-72.026-173.512-227.271-179.958v81.093c0 5.619-3.14 10.767-8.136 13.338-4.997 2.57-11.011 2.133-15.583-1.132l-224.933-160.667c-3.942-2.816-6.281-7.363-6.281-12.207 0-4.845 2.339-9.391 6.281-12.206l224.934-160.666c4.571-3.266 10.586-3.703 15.582-1.132s8.136 7.719 8.136 13.338v82.315c95.963 9.572 257.067 78.84 257.067 335.418 0 7.805-5.985 14.306-13.763 14.949-.419.034-.836.052-1.25.052z"></path>
+      </svg>
+  );
+}
+
+export default SolidBackIcon;

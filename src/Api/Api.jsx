@@ -40,7 +40,7 @@ export class ApiClient {
   client;
   endPointBase;
   headers;
-  agentString;
+  #agentString;
 
   constructor(apiEndPointBase){
     this.headers = headers,
@@ -51,8 +51,24 @@ export class ApiClient {
     })
   }
 
+  get agentString(){
+    if (localStorage.getItem("org")){
+      const orgLS = JSON.parse(localStorage.getItem("org"));
+      if (Object.hasOwn(orgLS,"agentString")){
+        return orgLS.agentString;
+      }
+    }
+    return this.#agentString
+  }
+
   updateAgentString(agentString){
-    this.agentString = agentString;
+    this.#agentString = agentString;
+    if (localStorage.getItem("org")){
+      const orgLS = JSON.parse(localStorage.getItem("org"));
+      const orgLSUpdate = {...orgLS,agentString:agentString};
+      localStorage.setItem("org",JSON.stringify(orgLSUpdate));
+      return;
+    }
   }
 
   async dataFetch(signal,token,action,agentString=""){

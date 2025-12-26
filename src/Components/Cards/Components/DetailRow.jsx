@@ -1,6 +1,9 @@
 
+import XIcon from '../../../assets/icons/XIcon';
 import Format from '../../../Utils/Format';
+import { take } from '../../../Utils/Utils';
 import Button from '../../Buttons/Button';
+import IconButton from '../../Buttons/IconButton';
 import FlexColumn from '../../FlexComponents/FlexColumn';
 import FlexRow from '../../FlexComponents/FlexRow';
 import WEAccordion from '../../WEAccordion/WEAccordion';
@@ -38,31 +41,40 @@ const LabelRow = ({label,value}) => {
 }
 
 
-const DetailRow = ({ title,subtitle,details=[] }) => {
+const DetailRow = ({ title,subtitle="",showIcon=true,details=[] }) => {
+
+  
+
+  const close = (e) => {
+
+  }
+  
   return (
     <div className={styles.display_row}>
       <WEAccordion>
         <WEAccordion.Panel>
-          <WEAccordion.Panel.Header>
+          <WEAccordion.Panel.Header showIcon={showIcon}>
             <HeaderLabel text={title} />
-            <SubLabel text={`Ending: $${handleZeroValue(subtitle)}`} />
+            <SubLabel text={subtitle === "" ? "" : `Ending: $${handleZeroValue(subtitle)}`} />
           </WEAccordion.Panel.Header>
           <WEAccordion.Panel.Content>
             
             <FlexColumn width='100%' p='0 .5rem .5rem .5rem'>
 
-              {details.filter(d => parseFloat(d.value) !== 0.00).map(detail => {
+              {[...take(3,details)].filter(d => parseFloat(d.value) !== 0.00).map(detail => {
                 return (
-                  <LabelRow label={detail.title} value={`$${handleZeroValue(detail.value)}`} />
+                  <LabelRow label={detail.description} value={`$${handleZeroValue(detail.total)}`} />
                 )
               })}
               
 
-              {/* <LabelRow label={"Pick Ups"} value={"$25.45"} /> */}
-
             </FlexColumn>
+
+            <FlexRow p='1rem' g='1rem'>
+              <Button size='lg' theme='dark' color="snow">View Summary</Button>
+              <IconButton size='lg' onClick={close}><XIcon size={24}/></IconButton>
+            </FlexRow>
             
-            <Button color="black">View Details</Button>
 
 
           </WEAccordion.Panel.Content>

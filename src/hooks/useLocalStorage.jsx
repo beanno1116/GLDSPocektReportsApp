@@ -27,7 +27,7 @@ const useLocalStorage = () => {
 
   const updateValue = (key,value) => {
     try {
-      if (localStorage.has(key)) {
+      if (localStorage.getItem(key)) {
         const currentValue = localStorage.getItem(key);
         const valueObj = JSON.parse(currentValue);
         if (typeof valueObj === "object"){

@@ -1,0 +1,152 @@
+/* Pocket Reports — Dark Dashboard Theme (based on provided UI) */
+:root{
+  /* Base */
+  --bg-0: #15162A;        /* deepest background */
+  --bg-1: #1D1E34;        /* app shell */
+  --bg-2: #262845;        /* main surface */
+  --bg-3: #2E3050;        /* raised cards */
+  --bg-4: #34385C;        /* hover/active surface */
+
+  /* Borders & dividers (blue-gray) */
+  --stroke-1: rgba(255,255,255,.08);
+  --stroke-2: rgba(255,255,255,.12);
+  --divider:  rgba(255,255,255,.06);
+
+  /* Text */
+  --text-1: #F2F3FA;      /* primary */
+  --text-2: rgba(242,243,250,.78); /* secondary */
+  --text-3: rgba(242,243,250,.55); /* muted */
+  --text-invert: #101225;
+
+  /* Accents (from screenshot vibes) */
+  --accent-violet: #6C4DFF;
+  --accent-cyan:   #3CC7FF;
+  --accent-orange: #F6961D;
+  --accent-peach:  #E99263;
+
+  /* Status */
+  --success: #2FE0A7;
+  --warning: #F6961D;
+  --danger:  #FF4D6D;
+  --info:    #3CC7FF;
+
+  /* Shadows (soft, high-end) */
+  --shadow-1: 0 10px 30px rgba(0,0,0,.35);
+  --shadow-2: 0 18px 60px rgba(0,0,0,.45);
+
+  /* Glass tokens (if you use glass cards) */
+  --glass-fill: rgba(255,255,255,.06);
+  --glass-fill-strong: rgba(255,255,255,.10);
+  --glass-stroke: rgba(255,255,255,.14);
+  --glass-highlight: rgba(255,255,255,.22);
+}
+
+
+/* Primary Button */
+.btn-primary{
+  --g1:#7A5CFF;
+  --g2:#5A3FFF;
+  --g3:#3B2FA3;
+
+  background:
+    linear-gradient(180deg,
+      rgba(255,255,255,.18),
+      rgba(255,255,255,0) 40%),
+    linear-gradient(135deg, var(--g1), var(--g2) 55%, var(--g3));
+
+  color:#F4F5FF;
+  border:1px solid rgba(122,92,255,.45);
+  box-shadow:
+    0 14px 36px rgba(90,63,255,.45),
+    inset 0 1px 0 rgba(255,255,255,.30);
+}
+.btn-primary:hover{
+  filter: brightness(1.08);
+}
+
+/* Secondary Button */
+.btn-secondary{
+  --g1:#4FD2FF;
+  --g2:#2F8DFF;
+  --g3:#1F3C78;
+
+  background:
+    linear-gradient(180deg,
+      rgba(255,255,255,.18),
+      rgba(255,255,255,0) 42%),
+    linear-gradient(135deg, var(--g1), var(--g2) 50%, var(--g3));
+
+  color:#EAF7FF;
+  border:1px solid rgba(79,210,255,.40);
+  box-shadow:
+    0 12px 34px rgba(47,141,255,.40),
+    inset 0 1px 0 rgba(255,255,255,.28);
+}
+
+/* Highligt Button */
+.btn-accent{
+  --g1:#FFB45A;
+  --g2:#F6961D;
+  --g3:#A86114;
+
+  background:
+    linear-gradient(180deg,
+      rgba(255,255,255,.20),
+      rgba(255,255,255,0) 38%),
+    linear-gradient(135deg, var(--g1), var(--g2) 55%, var(--g3));
+
+  color:#2A1600;
+  border:1px solid rgba(246,150,29,.45);
+  box-shadow:
+    0 14px 36px rgba(246,150,29,.40),
+    inset 0 1px 0 rgba(255,255,255,.35);
+}
+
+/* Glass Button */
+.btn-glass{
+  background:
+    linear-gradient(180deg,
+      rgba(255,255,255,.16),
+      rgba(255,255,255,.04));
+
+  color:rgba(242,243,250,.85);
+  border:1px solid rgba(255,255,255,.14);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.20),
+    0 10px 28px rgba(0,0,0,.30);
+}
+
+/* Destructive Button */
+.btn-danger{
+  --g1:#FF6B8A;
+  --g2:#FF4D6D;
+  --g3:#7A2435;
+
+  background:
+    linear-gradient(180deg,
+      rgba(255,255,255,.16),
+      rgba(255,255,255,0) 40%),
+    linear-gradient(135deg, var(--g1), var(--g2) 55%, var(--g3));
+
+  color:#FFECEF;
+  border:1px solid rgba(255,77,109,.45);
+  box-shadow:
+    0 14px 36px rgba(255,77,109,.45),
+    inset 0 1px 0 rgba(255,255,255,.28);
+}
+
+/* Share Button */
+.btn{
+  border-radius: 14px;
+  padding: 12px 16px;
+  font-weight: 650;
+  letter-spacing: .25px;
+  cursor: pointer;
+  transition: transform .15s ease, filter .15s ease;
+}
+.btn:active{
+  transform: translateY(1px);
+}

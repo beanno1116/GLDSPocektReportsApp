@@ -68,7 +68,7 @@ const useHomeView = () => {
     }
   })
 
-  const onNavBarClick = useCallback((action) => {
+  const onNavBarClick = useCallback((e,action) => {
     
     if (action === "home"){
       setShowModal(false);
@@ -113,27 +113,20 @@ const HomeView = () => {
 
   return (
     <View>
-      <FlexColumn width='100%' height='100%'>
 
-        <Heading size='lg' mode='lite'>{storeContext ? storeContext.name : "Store Name"}</Heading>        
+      <Heading size='lg' mode='lite'>{storeContext ? storeContext.name : "Store Name"}</Heading>        
 
-        <QuickView />
+      <QuickView />
 
-        <MenuGrid gridItems={homeMenuGridItems}/>
+      <MenuGrid gridItems={homeMenuGridItems}/>
 
-        <HomeViewManager 
-          nextView={currentView}
-          activeStore={state.activeStore}          
-          when={showModal}
-          />
+      <HomeViewManager 
+        nextView={currentView}
+        activeStore={state.activeStore}          
+        when={showModal}
+        />
 
-      </FlexColumn>
-      <BottomNav buttons={homeViewBottomNavButtons} onClick={onNavBarClick} />
-
-      {/* <FlexRow p='0rem 0 0rem 0'>
-
-        <NavBar onClick={onNavBarClick}/>
-      </FlexRow> */}
+      <BottomNav buttons={homeViewBottomNavButtons} eventHandler={onNavBarClick} />
 
     </View>
   );

@@ -2,6 +2,14 @@
 
 class FormatUtil {
 
+  #isRealNumber(value){
+    try {
+      return typeof value === 'number' && Number.isFinite(value);
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+
   padDateTimeElement(element){
     try {      
       if (!element) throw new Error("Cannot pad undefined or null date/time element");
@@ -113,6 +121,47 @@ class FormatUtil {
       return `${parseFloat(value).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
     } catch (error) {
       console.error(error.message);
+    }
+  }
+
+  /*
+    millions: >=7 1000000
+    hundred thousands: >=6 100000
+    ten thousands: >=5 10000
+    thousands: >=4 1000
+    hundreds: >=3 100
+  */
+
+  moneyAbbreviation(value){
+    try {      
+      
+      if (this.#isRealNumber(parseFloat(value))){
+        const valueAsInt = parseInt(value);
+        const valueAsString = valueAsInt.toString();
+        const valueLength = valueAsString.length;
+        let displayNumber = valueAsString.substring(0,2).slice(0,1) + "." + valueAsString.substring(0,2).slice(1);
+        if (valueLength >= 7){
+          return `$${displayNumber}M`
+        }
+        if (valueLength >= 6 && valueLength < 7){
+          return `$${valueAsString.substring(0,4).slice(0,3) + "." + valueAsString.substring(0,4).slice(3)}K`;
+        }
+        if (valueLength >= 5 && valueLength < 6){
+          return `$${valueAsString.substring(0,3).slice(0,2) + "." + valueAsString.substring(0,3).slice(2)}K`;
+        }
+        if (valueLength >= 4 && valueLength < 5){
+          return `${valueAsString.substring(0,2).slice(0,1) + "." + valueAsString.substring(0,2).slice(1)}K`;
+        }
+        if (valueLength <= 3){
+          return `$${valueAsString}`
+        }
+        if (valueLength < 6 && valueLength > 3){
+          return `$${displayNumber}K`
+        }
+        return `$${displayNumber}`;
+      }
+    } catch (error) {
+      
     }
   }
 

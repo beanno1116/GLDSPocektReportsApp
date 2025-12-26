@@ -3,13 +3,13 @@
 import styles from '../weAccordion.module.css';
 import ChevronIcon from './icons/ChevronIcon';
 
-const Header = ({ children }) => {
+const Header = ({ showIcon="true",children }) => {
   return (
     <span className={styles.accordion_header}>
       <button className={styles.trigger} aria-expanded="false">
         {children}
       </button>
-      <span className={styles.header_icon}><ChevronIcon width={48} height={48} /></span>
+      {showIcon && <span className={styles.header_icon}><ChevronIcon width={48} height={48} /></span>}
     </span>
   )
 }
@@ -28,10 +28,6 @@ const AccordionPanel = ({ children }) => {
   return (
     <div className={styles.panel}>
       {children}
-      {/* <Header text={text} />
-      <Content>
-        {children}
-      </Content> */}
     </div>
   );
 }
