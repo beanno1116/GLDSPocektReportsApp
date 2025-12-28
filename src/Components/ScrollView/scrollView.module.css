@@ -5,6 +5,7 @@
   /* background-color: purple; */
 }
 
+
 .scroll_view {
   position: absolute;
   display: flex;
@@ -16,6 +17,9 @@
   overflow-y: scroll;
   /* background-color: red; */
 }
+.scroll_view::-webkit-scrollbar {
+  display: none;
+}
 .horizontal_scroll {
   position: relative;
   display: flex;
@@ -25,4 +29,9 @@
   overflow-y: hidden;
   white-space: nowrap;  
   gap: 1rem;
+}
+
+
+.flex_1 {
+  flex: 1;
 }

@@ -141,24 +141,24 @@ class FormatUtil {
         const valueLength = valueAsString.length;
         let displayNumber = valueAsString.substring(0,2).slice(0,1) + "." + valueAsString.substring(0,2).slice(1);
         if (valueLength >= 7){
-          return `$${displayNumber}M`
+          return `${displayNumber}M`
         }
         if (valueLength >= 6 && valueLength < 7){
-          return `$${valueAsString.substring(0,4).slice(0,3) + "." + valueAsString.substring(0,4).slice(3)}K`;
+          return `${valueAsString.substring(0,4).slice(0,3) + "." + valueAsString.substring(0,4).slice(3)}K`;
         }
         if (valueLength >= 5 && valueLength < 6){
-          return `$${valueAsString.substring(0,3).slice(0,2) + "." + valueAsString.substring(0,3).slice(2)}K`;
+          return `${valueAsString.substring(0,3).slice(0,2) + "." + valueAsString.substring(0,3).slice(2)}K`;
         }
         if (valueLength >= 4 && valueLength < 5){
           return `${valueAsString.substring(0,2).slice(0,1) + "." + valueAsString.substring(0,2).slice(1)}K`;
         }
         if (valueLength <= 3){
-          return `$${valueAsString}`
+          return `${valueAsString}`
         }
         if (valueLength < 6 && valueLength > 3){
           return `$${displayNumber}K`
         }
-        return `$${displayNumber}`;
+        return `${displayNumber}`;
       }
     } catch (error) {
       

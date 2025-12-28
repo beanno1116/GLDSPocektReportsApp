@@ -11,6 +11,7 @@ if (localData){
     seats: localData.seats,
     organization: localData.organization,
     stores: localData.stores,
+    authorizedStores: localData.authorizedStores,
     users: localData.users,
     activeStore: localData.activeStore,
     agentString: localData.agentString,
@@ -20,6 +21,7 @@ if (localData){
   initialState = {
     organization: "",
     stores: [],
+    authorizedStores: [],
     users: [],
     seats: 0,
     activeStore: 0,

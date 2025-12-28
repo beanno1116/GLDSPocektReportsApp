@@ -9,7 +9,7 @@ import styles from './storeRow.module.css';
 const StoreRow = ({id,name,city,state,active=false,onClick}) => {
   ;
   return (
-    <li className={`${siteStyles.panel_bg} ${styles.store_row} `} onClick={(e) => onClick(e,id)}>
+    <li className={`${styles.store_row} `} onClick={(e) => onClick(e,id)}>
       
       <FlexColumn flex='2' g='.25rem'>
         <div className={`${siteStyles.lg} ${siteStyles.lite}`} style={{fontWeight:"800"}}>{name}</div>

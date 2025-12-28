@@ -20,6 +20,7 @@ import { useAuth } from '../../hooks/useAuth';
 const ManageUserForm = ({ user,submitHandler }) => {
   const {state} = useAppContext(AppContext);
   const auth = useAuth();
+  const authUser = auth.getAuthUser();
   const [makeAdmin,setMakeAdmin] = useState(user ? user.isAdmin : false);
   const [currentUser,setCurrentUser] = useState();
   // const {mutate,isPending,isError,error,isSuccess} = useUpdateUser();
@@ -28,8 +29,7 @@ const ManageUserForm = ({ user,submitHandler }) => {
 
 
   useEffect(() => {
-    if (user){
-      ;;
+    if (user){      
       setMakeAdmin(user.isAdmin);
       setCurrentUser(user);
     }
@@ -74,7 +74,7 @@ const ManageUserForm = ({ user,submitHandler }) => {
   return (
     <>
 
-      {auth.getAuthUser()?.isAdmin && (     
+      {authUser?.isAdmin && (     
         <FlexRow vAlign='center' hAlign='center' g='1rem'>
           <InputLabel text={"Make Admin"} size='md'/>
           <WECheckbox size="md" value={makeAdmin} onChange={onCheckboxChangeEvent} />

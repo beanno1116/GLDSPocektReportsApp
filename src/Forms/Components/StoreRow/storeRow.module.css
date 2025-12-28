@@ -4,8 +4,9 @@
   justify-content: center;
   align-items: center;
   padding: .75rem;
-  border-radius: 8px;
+  border-radius: 1rem;
   width: 100%;
+  border: 1px solid var(--accent-green);
 }
 .store_row.active {
   box-shadow: 0 4px 12px rgba(0, 166, 255, 0.578), inset 0 4px 12px rgba(0, 166, 255, 0.578);

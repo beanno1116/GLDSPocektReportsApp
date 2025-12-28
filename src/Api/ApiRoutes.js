@@ -151,6 +151,7 @@ const useGetStoreConnectionStatus = (agentString) => {
 
 
 const getReportData = async (api,params,signal,mutate) => {  
+  
   const response = await api.post("data",params,{...api.headers.applicationJson,signal}); 
 
   if (response.success){
@@ -236,7 +237,7 @@ export const useFetchAllReportData = ({queries=testQueries}) => {
   }
 }
 
-const useFetchReportData = ({action,agentString="",enabled=true,mutate}) => {  
+const useFetchReportData = ({action,agentString="dfdd44e8-be22-43ef-8313-95f2d1904566",enabled=true,mutate}) => {  
   const auth = useAuth();
   const api = useApiClient();
   

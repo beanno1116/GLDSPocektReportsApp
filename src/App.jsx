@@ -13,6 +13,7 @@ import ItemReportsView from "./Views/ItemReports/ItemReportsView";
 import { AppContextProvider } from "./Contexts/AppContext";
 import StoreSelectorView from "./Views/StoreSelector/StoreSelectorView";
 import StoreReportsView from "./Views/StoreReports/StoreReportsView";
+import ManageUserView from "./Views/ManageUserUpdate/ManageUserView";
 
 // import Api, { ApiClient, ApiClientProvider, getApiEndpoint } from "./Api/Api";
 
@@ -40,7 +41,11 @@ const App = () => {
       children: [
         {
           path: "/",
-          element: <HomeView />
+          element: <HomeView />,
+        },
+        {
+          path: "/manage/users",
+          element: <ManageUserView />
         },
         {
           path:"/stores/selector",
@@ -53,6 +58,18 @@ const App = () => {
         {
           path: "/reports/store",
           element: <StoreReportsView />
+        },
+        {
+          path: "/reports",
+          element: <div style={{color:"snow"}}>Reports View</div>
+        },
+        {
+          path: "/stores",
+          element: <div style={{color:"snow"}}>Stores View</div>
+        },
+        {
+          path: "/settings",
+          element: <div style={{color:"snow"}}>Settings View</div>
         },
         {
           path: "/reports/customer",
