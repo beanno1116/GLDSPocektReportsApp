@@ -1,0 +1,65 @@
+/* The glass card */
+.glass_card{
+    background:
+    radial-gradient(900px 420px at 18% 12%, rgba(255,255,255,.10), transparent 55%),
+    radial-gradient(700px 380px at 85% 88%, rgba(120,170,255,.14), transparent 60%),
+    radial-gradient(520px 260px at 55% 55%, rgba(70,120,255,.10), transparent 60%),
+    linear-gradient(180deg, rgba(10,18,45,.72), rgba(7,10,24,.78));
+}
+
+/* Specular sweep / subtle light bloom */
+.glass_card::before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  border-radius: inherit;
+
+  background: rgba(255,255,255,.08);
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+
+  /* Outer shadow + inner sheen */
+  box-shadow:
+    0 18px 55px rgba(0,0,0,.40),
+    inset 0 1px 0 rgba(255,255,255,.18);
+}
+
+/* Realistic glass edge highlights (top-left bright, bottom-right darker) */
+.glass_card::after{
+    content:"";
+  position:absolute;
+  inset:0;
+  border-radius: inherit;
+  pointer-events:none;
+
+  /* Edge lights */
+  box-shadow:
+    inset 1px 1px 0 rgba(255,255,255,.40),   /* top-left highlight */
+    inset -1px -1px 0 rgba(0,0,0,.38),        /* bottom-right shade */
+    inset 0 0 0 1px rgba(255,255,255,.14);    /* soft inner stroke */
+
+  /* Specular reflections + subtle “caustic” bloom */
+  background:
+    radial-gradient(280px 140px at 18% 16%, rgba(255,255,255,.22), transparent 70%),
+    radial-gradient(260px 160px at 84% 92%, rgba(0,0,0,.22), transparent 72%),
+    linear-gradient(135deg, rgba(255,255,255,.18), transparent 35%, rgba(255,255,255,.06) 60%, transparent);
+  mix-blend-mode: screen;
+  opacity: .95;
+}
+
+.glass_panel{
+  position: relative; /* keeps content above ::before/::after */
+  z-index: 1;
+  border-radius: 20px;
+  padding: 18px 18px 16px;
+
+  background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+  border: 1px solid rgba(255,255,255,.12);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.20),
+    inset 0 -18px 28px rgba(0,0,0,.20);
+
+  color: rgba(255,255,255,.92);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+}

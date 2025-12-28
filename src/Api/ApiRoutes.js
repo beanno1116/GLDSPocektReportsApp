@@ -152,10 +152,10 @@ const useGetStoreConnectionStatus = (agentString) => {
 
 const getReportData = async (api,params,signal,mutate) => {  
   const response = await api.post("data",params,{...api.headers.applicationJson,signal}); 
-debugger;
+
   if (response.success){
     if (mutate){
-      debugger;
+      
       return mutate(response.data);
     }
     return response.data;

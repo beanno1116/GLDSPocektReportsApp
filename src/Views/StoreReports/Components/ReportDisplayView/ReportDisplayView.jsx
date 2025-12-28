@@ -1,17 +1,13 @@
 
 import { useState } from 'react';
-import XIcon from '../../../../assets/icons/XIcon';
 import Button from '../../../../Components/Buttons/Button';
-import IconButton from '../../../../Components/Buttons/IconButton';
-import Card from '../../../../Components/Cards/Card';
 import FlexColumn from '../../../../Components/FlexComponents/FlexColumn';
 import FlexRow from '../../../../Components/FlexComponents/FlexRow';
 import Heading from '../../../../Components/Labels/Heading';
 import Toolbar from '../../../../Components/Toolbar/Toolbar';
-import siteStyles from '../../../../site.module.css';
 import styles from './reportDisplayView.module.css';
-import CardTotalLabel from '../../../../Components/Labels/CardTotalLabel';
-import Format from '../../../../../../../../OrderingPlugin/Scripts/Format';
+
+
 import ToolbarViewHandler from './Components/ToolbarViewHandler';
 import OutlineCalendarIcon from '../../../../assets/icons/OutlineCalendarIcon';
 import OutlineRefreshIcon from '../../../../assets/icons/OutlineRefreshIcon';
@@ -19,11 +15,15 @@ import SendIcon from '../../../../assets/icons/SendIcon';
 import ExportIcon from '../../../../assets/icons/ExportIcon';
 import { useFetchReportData } from '../../../../Api/ApiRoutes';
 import Mutate from '../../../../Utils/Mutate';
-import HeaderLabel from '../../../../Components/Labels/HeaderLabel';
-import SettingsIcon from '../../../../assets/icons/SettingsIcon';
-import BottomNav from '../../../../Components/BottomNav/BottomNav';
 import ChevronIcon from '../../../../assets/icons/ChevronIcon';
 import WEAccordion from '../../../../Components/WEAccordion/WEAccordion';
+import ScrollView from '../../../../Components/ScrollView/ScrollView';
+
+import { handleZeroValue } from '../../../../Utils/Utils';
+
+import HorizontalScrollView from '../../../../Components/ScrollView/HorizontalScrollView';
+
+
 
 const views = {
   range: "Range",
@@ -85,8 +85,226 @@ const cardToolbarItems = [
   }
 ]
 
-const ReportDisplayView = ({ subViews,report,close }) => {
-  const {status,data} = useFetchReportData({action:"safe_details",mutate:Mutate.safeDetailsData})
+const safeDetailQueries = [
+  {
+    action: "SafeDetails",
+    adapter: (data) => {
+      
+      const adaptedData = Mutate.safeDetailsData(data);
+      return adaptedData;
+      
+    }
+  }
+  ,
+  {
+    action: "Stats",
+    adapter: (data) => {
+      const adaptedData = Mutate.storeStatsData(data);
+      return adaptedData;
+    }
+  }
+]
+
+
+const Label = ({text}) => {
+  return (
+    <label className={styles.detail_row_header_label}>{text}</label>
+  )
+}
+
+const SubLabel = ({text}) => {
+  return (
+    <span className={styles.detail_row_header_sublabel}>{text}</span>
+  )
+}
+
+const LabelRow = ({label,value}) => {
+  return (
+    <div className={styles.details_row_label_row}>
+      <label className={styles.details_row_label_row_label}>{label}</label>                  
+      <span className={styles.details_row_label_row_value}>{value}</span>
+    </div>
+  )
+}
+
+
+const ReportViewToolbar = ({ buttons,eventHandler }) => {
+
+  const onToolbarClick = (e) => {
+    eventHandler && eventHandler(e);
+  }
+
+  return (
+    <FlexRow p='0 1rem 1rem 1rem'>
+      <Toolbar buttons={buttons} onClick={onToolbarClick} />
+    </FlexRow>
+  )
+}
+
+const ReportViewTitle = ({size,mode="lite",children}) => {
+  return (
+    <FlexRow p='1rem 1rem .25rem 1rem'>
+      <Heading size={size} mode={mode}>{children}</Heading>
+    </FlexRow>
+  )
+}
+
+const ReportViewPeriodDisplay = ({start,end}) => {
+  return (
+    <FlexRow p='0 0 1rem 0' hAlign='center'>
+      <div style={{fontSize:"1.25rem",fontWeight:"900",color:"snow"}}>
+        <span>{start}</span> to <span>{end}</span></div>
+    </FlexRow>
+  )
+}
+
+const ReportViewButtonRow = ({children}) => {
+  return (
+    <FlexRow g='1rem' p='1rem'>
+      {children}
+    </FlexRow>
+  )
+}
+
+{/* Hero section */}
+const ReportViewHeroRow = ({children}) => {
+  return (
+    <FlexRow  p='.25rem 1rem' g='1rem'>
+      {children}
+      {/* <Hero theme='blue' spacing='between'>
+        <Hero.Title>Total Sales</Hero.Title>
+        <Hero.Value>{Format.moneyAbbreviation(4734.54)}</Hero.Value>
+      </Hero>
+      <Hero theme="blue" spacing='between'>
+        <Hero.Title>Sale Count</Hero.Title>
+        <Hero.Value>111</Hero.Value>
+      </Hero> */}
+    </FlexRow>
+  )
+}
+
+const ReportViewHeading = ({children}) => {
+  return (
+    <FlexRow p='.25rem 1rem'>
+      <Heading size='sm' mode='light' textAlign='left'>{children}</Heading>
+    </FlexRow>
+  )
+}
+
+const ReportViewPinnedRow = ({children}) => {
+  return (
+    <FlexRow p='.25rem 1rem'>
+      <HorizontalScrollView>
+        {children}
+      </HorizontalScrollView>
+    </FlexRow>
+  )
+}
+
+const ReportViewScrollView = ({children}) => {
+  return (
+    <FlexRow flex='1' p='.75rem 1rem'>
+
+      <ScrollView>
+        {children}
+        
+        {/* <FlexRow  p='0 1rem 1rem 1rem' g='1rem'>
+          <Card flex='1'>
+            <Card.Content>
+              <Card.Title>Statistics</Card.Title>
+              <FlexRow p='.5rem'></FlexRow>
+              <FlexRow g='1rem'>
+                <Hero theme='green'>
+                  <Hero.Title>Refunds</Hero.Title>
+                  <Hero.Value>12</Hero.Value>
+                </Hero>
+                <Hero theme='red'>
+                  <Hero.Title>No Sales</Hero.Title>
+                  <Hero.Value>30</Hero.Value>
+                </Hero>
+              </FlexRow>
+              <FlexRow p='.5rem'></FlexRow>
+              <Button size='lg'>See Summary</Button>
+            </Card.Content>
+          </Card>
+        </FlexRow>
+
+        <FlexRow  p='0 1rem 1rem 1rem' g='1rem'>
+          <Card flex='1'>
+            <Card.Content>
+              <Card.Title>Safe</Card.Title>
+              <FlexRow p='.5rem'></FlexRow>
+              <FlexRow g='1rem'>
+                <Hero theme='green'>
+                  <Hero.Title>Refunds</Hero.Title>
+                  <Hero.Value>12</Hero.Value>
+                </Hero>
+                <Hero theme='red'>
+                  <Hero.Title>No Sales</Hero.Title>
+                  <Hero.Value>30</Hero.Value>
+                </Hero>
+              </FlexRow>
+              <FlexRow p='.5rem'></FlexRow>
+              <Button size='lg'>See Summary</Button>
+            </Card.Content>
+          </Card>
+        </FlexRow>
+
+        <FlexRow  p='0 1rem 1rem 1rem' g='1rem'>
+          <Card flex='1'>
+            <Card.Content>
+              <Card.Title>Drawers</Card.Title>
+              <FlexRow p='.5rem'></FlexRow>
+              <FlexRow g='1rem'>
+                <Hero theme='green'>
+                  <Hero.Title>Refunds</Hero.Title>
+                  <Hero.Value>12</Hero.Value>
+                </Hero>
+                <Hero theme='red'>
+                  <Hero.Title>No Sales</Hero.Title>
+                  <Hero.Value>30</Hero.Value>
+                </Hero>
+              </FlexRow>
+              <FlexRow p='.5rem'></FlexRow>
+              <Button size='lg'>See Summary</Button>
+            </Card.Content>
+          </Card>
+        </FlexRow>
+
+        <FlexRow p='0 1rem 1rem 1rem' g='1rem'>
+          <DetailRow></DetailRow>
+        </FlexRow>
+
+        <FlexRow p='0 1rem 1rem 1rem' g='1rem'>
+          <Card flex='1'>
+            <Card.Content>
+              <Card.Title>Safe Information</Card.Title>
+            </Card.Content>
+          </Card>
+        </FlexRow>
+
+        <FlexRow  p='0 1rem 1rem 1rem' g='1rem'>
+          <Card flex='1'>
+            <Card.Content>
+              <Card.Title>Drawer Information</Card.Title>
+            </Card.Content>
+          </Card>
+        </FlexRow> */}
+
+      </ScrollView>
+      
+    </FlexRow>
+  )
+}
+
+
+
+
+
+
+
+const ReportDisplayView = ({ subViews,report,close,children }) => {
+  const {status,data} = useFetchReportData({action:"Stats",mutate:Mutate.storeStatsData});
   const [isToolbarViewShowing,setIsToolbarViewShowing] = useState(false);
   const [selectedView,setSelectedView] = useState("");
 
@@ -96,416 +314,84 @@ const ReportDisplayView = ({ subViews,report,close }) => {
     setSelectedView(views[action]);
   }
 
-  if (!status.isLoading){
+  if (status.isLoading){
+    
     const temp = data;
     console.log("Loaded")
+    return (
+      <div>Loading....</div>
+    )
   }
+  
 
+  const renderStoreStats = (data) => {
+
+    let statGroups = Object.keys(data);
+
+    return statGroups.map(group => {
+      return (
+              <div className={styles.display_row} style={{marginBottom:"1rem"}}>
+          <WEAccordion>
+            <WEAccordion.Panel>
+              <WEAccordion.Panel.Header>
+                <Label text={group} />
+                <SubLabel text={""} />
+                {/* <label style={{fontSize:"1.5rem",fontWeight:"900",color:"#0316028d",textAlign:"left"}}>{data.sales[0].group}</label>
+                <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}></span> */}
+                
+              </WEAccordion.Panel.Header>
+                
+              <WEAccordion.Panel.Content>
+                {data[group].map(stat => {
+                  return (
+                    <>
+                      <FlexColumn width='100%'>
+                        <div style={{width:"100%",display:"inline-flex",justifyContent:"space-between",padding:".25rem 1rem"}}>
+                          <label style={{flex:"2",fontSize:"1.25rem",fontWeight:"500",color:"#F1F3FF"}}>{stat.description}</label>                  
+                          {/* <span style={{flex:"1",fontSize:"1.25rem",fontWeight:"500",color:"#F1F3FF",textAlign:"right"}}>{Format.totalSalesShort(stat.total)}</span> */}
+                          <span style={{flex:"1",fontSize:"1.25rem",fontWeight:"500",color:"#F1F3FF",textAlign:"right"}}>${handleZeroValue(stat.total)}</span>
+                        </div>
+
+                      </FlexColumn>              
+                    </>
+                  )
+                })}
+
+                <FlexColumn width='100%' p='.5rem'>
+                <Button>View Details</Button>
+
+              </FlexColumn>
+              </WEAccordion.Panel.Content>
+            </WEAccordion.Panel>
+          </WEAccordion>
+        </div>
+      )
+    })
+
+
+
+  }
   
   return (
-    <div className={`${siteStyles.panel_bg} ${styles.report_display_view}`}>
+    <div className={`${styles.report_display_view}`}>
 
         <ToolbarViewHandler views={subViews} when={isToolbarViewShowing} close={() => setIsToolbarViewShowing(false)} view={selectedView} />
 
-        <Heading size='md' mode='lite'>{`${report.type} - ${report.group}`}</Heading>
-
-        <Heading size='lg' mode='lite'>{report.report}</Heading>
-
-        <FlexRow p='0 1rem 1rem 1rem'>
-          <Toolbar buttons={reportToolbarButtons} onClick={onToolbarClick} />
-        </FlexRow>
-
-        <FlexRow p='0 0 1rem 0' hAlign='center'>
-          <div style={{fontSize:"1.25rem",fontWeight:"900",color:"snow"}}><span>Dec 10th 2025</span> to <span>Dec 10th 2025</span></div>
-        </FlexRow>
-
-
-        <FlexColumn flex='1'>      
-          
-          <div style={{position:"absolute",display:"flex",flexDirection:"column",gap:"1rem",width:"100%",height:"100%",padding:"0 1rem 1rem 1rem",overflowY:"scroll"}}>
-
-
-            <Card>
-              <Card.Title>Safe Information</Card.Title>
-              <Card.Content>
-                {/* <Heading size='sm'>Safe Information</Heading> */}
-                {/* <Toolbar buttons={reportToolbarButtons} onClick={onToolbarClick}  borderRadius="1rem 1rem 0 0"  /> */}
-                <FlexColumn p='.75rem .75rem' g='.75rem' width='100%'>
-
-                  <div className={styles.display_row}>
-                    <WEAccordion>
-                      <WEAccordion.Panel>
-                        <WEAccordion.Panel.Header text={<FlexRow width="100%" vAlign='center'>
-                          <label style={{fontSize:"1.5rem",fontWeight:"900",color:"#0316028d"}}>Cash</label>
-                          <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}></span>
-                          <span style={{flex:"1",fontSize:"1.1rem",fontWeight:"700",textAlign:"right",color:"#031602e9"}}>$1,256,4915.00</span>
-
-                        </FlexRow>}/>
-                        <WEAccordion.Panel.Content>
-                          <FlexColumn width='100%'>
-                          <div style={{width:"100%",display:"inline-flex",justifyContent:"space-between",padding:".25rem 1rem"}}>
-                            <label style={{flex:"2",fontSize:"1.1rem",fontWeight:"700",color:"#0316028d"}}>Loan</label>                  
-                            <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}>$25.45</span>
-                          </div>
-
-                        </FlexColumn>
-                          <FlexColumn width='100%'>
-                          <div style={{width:"100%",display:"inline-flex",justifyContent:"space-between",padding:".25rem 1rem"}}>
-                            <label style={{flex:"2",fontSize:"1.1rem",fontWeight:"700",color:"#0316028d"}}>Pickup</label>                  
-                            <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}>$25.45</span>
-                          </div>
-
-                        </FlexColumn>
-                          <FlexColumn width='100%' p='.5rem'>
-                          <Button>View Details</Button>
-
-                        </FlexColumn>
-                        </WEAccordion.Panel.Content>
-                      </WEAccordion.Panel>
-                    </WEAccordion>
-                  </div>
-
-                  <div className={styles.display_row}>
-
-                    <WEAccordion>
-                      <WEAccordion.Panel>
-                        <WEAccordion.Panel.Header text={<FlexRow width="100%" vAlign='center'>
-                          <label style={{fontSize:"1.5rem",fontWeight:"900",color:"#0316028d"}}>Check</label>
-                          <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}></span>
-                          <span style={{flex:"1",fontSize:"1.1rem",fontWeight:"700",textAlign:"right",color:"#031602e9"}}>$915.00</span>
-
-                        </FlexRow>}/>
-                        <WEAccordion.Panel.Content>
-                          <FlexColumn width='100%'>
-                          <div style={{width:"100%",display:"inline-flex",justifyContent:"space-between",padding:".25rem 1rem"}}>
-                            <label style={{flex:"2",fontSize:"1.1rem",fontWeight:"700",color:"#0316028d"}}>Pickup</label>                  
-                            <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}>$25.45</span>
-                          </div>
-
-                        </FlexColumn>
-                          <FlexColumn width='100%'>
-                          <div style={{width:"100%",display:"inline-flex",justifyContent:"space-between",padding:".25rem 1rem"}}>
-                            <label style={{flex:"2",fontSize:"1.1rem",fontWeight:"700",color:"#0316028d"}}>Deposit</label>                  
-                            <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}>$25.45</span>
-                          </div>
-
-                        </FlexColumn>
-                        <FlexColumn width='100%' p='.5rem'>
-                          <Button>View Details</Button>
-
-                        </FlexColumn>
-                        </WEAccordion.Panel.Content>
-                      </WEAccordion.Panel>
-                    </WEAccordion>
-                  </div>
-
-                  <div className={styles.display_row}>
-
-                    <WEAccordion>
-                      <WEAccordion.Panel>
-                        <WEAccordion.Panel.Header text={<FlexRow width="100%" vAlign='center'>
-                          <label style={{fontSize:"1.5rem",fontWeight:"900",color:"#0316028d"}}>Debit Card</label>
-                          <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}></span>
-                          <span style={{flex:"1",fontSize:"1.1rem",fontWeight:"700",textAlign:"right",color:"#031602e9"}}>$9105.00</span>
-
-                        </FlexRow>}/>
-                        <WEAccordion.Panel.Content>
-
-                          <FlexColumn width='100%'>
-                          <div style={{width:"100%",display:"inline-flex",justifyContent:"space-between",padding:".25rem 1rem"}}>
-                            <label style={{flex:"2",fontSize:"1.1rem",fontWeight:"700",color:"#0316028d"}}>Deposit</label>                  
-                            <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}>$6309.91</span>
-                          </div>
-
-                        </FlexColumn>
-                        <FlexColumn width='100%' p='.5rem'>
-                          <Button>View Details</Button>
-
-                        </FlexColumn>
-                        </WEAccordion.Panel.Content>
-                      </WEAccordion.Panel>
-                    </WEAccordion>
-                  </div>
-
-                  <div className={styles.display_row}>
-                    <WEAccordion>
-                      <WEAccordion.Panel>
-                        <WEAccordion.Panel.Header text={<FlexRow width="100%" vAlign='center'>
-                          <label style={{fontSize:"1.5rem",fontWeight:"900",color:"#0316028d"}}>Visa</label>
-                          <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}></span>
-                          <span style={{flex:"1",fontSize:"1.1rem",fontWeight:"700",textAlign:"right",color:"#031602e9"}}>$3625.00</span>
-
-                        </FlexRow>}/>
-                        <WEAccordion.Panel.Content>
-
-                          <FlexColumn width='100%'>
-                          <div style={{width:"100%",display:"inline-flex",justifyContent:"space-between",padding:".25rem 1rem"}}>
-                            <label style={{flex:"2",fontSize:"1.1rem",fontWeight:"700",color:"#0316028d"}}>Deposit</label>                  
-                            <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}>$309.91</span>
-                          </div>
-
-                        </FlexColumn>
-                        <FlexColumn width='100%' p='.5rem'>
-                          <Button>View Details</Button>
-
-                        </FlexColumn>
-                        </WEAccordion.Panel.Content>
-                      </WEAccordion.Panel>
-                    </WEAccordion>
-                  </div>
-
-                  <div className={styles.display_row}>
-                    <WEAccordion>
-                      <WEAccordion.Panel>
-                        <WEAccordion.Panel.Header text={<FlexRow width="100%" vAlign='center'>
-                          <label style={{fontSize:"1.5rem",fontWeight:"900",color:"#0316028d"}}>Discover</label>
-                          <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}></span>
-                          <span style={{flex:"1",fontSize:"1.1rem",fontWeight:"700",textAlign:"right",color:"#031602e9"}}>$625.00</span>
-
-                        </FlexRow>}/>
-                        <WEAccordion.Panel.Content>
-
-                          <FlexColumn width='100%'>
-                          <div style={{width:"100%",display:"inline-flex",justifyContent:"space-between",padding:".25rem 1rem"}}>
-                            <label style={{flex:"2",fontSize:"1.1rem",fontWeight:"700",color:"#0316028d"}}>Deposit</label>                  
-                            <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}>$30.91</span>
-                          </div>
-
-                        </FlexColumn>
-                        <FlexColumn width='100%' p='.5rem'>
-                          <Button>View Details</Button>
-
-                        </FlexColumn>
-                        </WEAccordion.Panel.Content>
-                      </WEAccordion.Panel>
-                    </WEAccordion>
-                  </div>
-
-                </FlexColumn>
-
-
-
-              </Card.Content>
-            </Card>
-
-            <Card>
-              <Card.Title>Drawer Information</Card.Title>
-              <Card.Content>
-                {/* <Heading size='sm'>Safe Information</Heading> */}
-                {/* <Toolbar buttons={reportToolbarButtons} onClick={onToolbarClick}  borderRadius="1rem 1rem 0 0"  /> */}
-                <FlexColumn p='.75rem .75rem' g='.75rem' width='100%'>
-
-                  <div className={styles.display_row}>
-                    <WEAccordion>
-                      <WEAccordion.Panel>
-                        <WEAccordion.Panel.Header text={<FlexRow width="100%" vAlign='center'>
-                          <label style={{fontSize:"1.5rem",fontWeight:"900",color:"#0316028d"}}>Cash</label>
-                          <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}></span>
-                          <span style={{flex:"1",fontSize:"1.1rem",fontWeight:"700",textAlign:"right",color:"#031602e9"}}>$1,256,4915.00</span>
-
-                        </FlexRow>}/>
-                        <WEAccordion.Panel.Content>
-                          <FlexColumn width='100%'>
-                          <div style={{width:"100%",display:"inline-flex",justifyContent:"space-between",padding:".25rem 1rem"}}>
-                            <label style={{flex:"2",fontSize:"1.1rem",fontWeight:"700",color:"#0316028d"}}>Loan</label>                  
-                            <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}>$25.45</span>
-                          </div>
-
-                        </FlexColumn>
-                          <FlexColumn width='100%'>
-                          <div style={{width:"100%",display:"inline-flex",justifyContent:"space-between",padding:".25rem 1rem"}}>
-                            <label style={{flex:"2",fontSize:"1.1rem",fontWeight:"700",color:"#0316028d"}}>Pickup</label>                  
-                            <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}>$25.45</span>
-                          </div>
-
-                        </FlexColumn>
-                          <FlexColumn width='100%' p='.5rem'>
-                          <Button>View Details</Button>
-
-                        </FlexColumn>
-                        </WEAccordion.Panel.Content>
-                      </WEAccordion.Panel>
-                    </WEAccordion>
-                  </div>
-
-                  <div className={styles.display_row}>
-
-                    <WEAccordion>
-                      <WEAccordion.Panel>
-                        <WEAccordion.Panel.Header text={<FlexRow width="100%" vAlign='center'>
-                          <label style={{fontSize:"1.5rem",fontWeight:"900",color:"#0316028d"}}>Check</label>
-                          <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}></span>
-                          <span style={{flex:"1",fontSize:"1.1rem",fontWeight:"700",textAlign:"right",color:"#031602e9"}}>$915.00</span>
-
-                        </FlexRow>}/>
-                        <WEAccordion.Panel.Content>
-                          <FlexColumn width='100%'>
-                          <div style={{width:"100%",display:"inline-flex",justifyContent:"space-between",padding:".25rem 1rem"}}>
-                            <label style={{flex:"2",fontSize:"1.1rem",fontWeight:"700",color:"#0316028d"}}>Pickup</label>                  
-                            <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}>$25.45</span>
-                          </div>
-
-                        </FlexColumn>
-                          <FlexColumn width='100%'>
-                          <div style={{width:"100%",display:"inline-flex",justifyContent:"space-between",padding:".25rem 1rem"}}>
-                            <label style={{flex:"2",fontSize:"1.1rem",fontWeight:"700",color:"#0316028d"}}>Deposit</label>                  
-                            <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}>$25.45</span>
-                          </div>
-
-                        </FlexColumn>
-                        <FlexColumn width='100%' p='.5rem'>
-                          <Button>View Details</Button>
-
-                        </FlexColumn>
-                        </WEAccordion.Panel.Content>
-                      </WEAccordion.Panel>
-                    </WEAccordion>
-                  </div>
-
-                  <div className={styles.display_row}>
-
-                    <WEAccordion>
-                      <WEAccordion.Panel>
-                        <WEAccordion.Panel.Header text={<FlexRow width="100%" vAlign='center'>
-                          <label style={{fontSize:"1.5rem",fontWeight:"900",color:"#0316028d"}}>Debit Card</label>
-                          <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}></span>
-                          <span style={{flex:"1",fontSize:"1.1rem",fontWeight:"700",textAlign:"right",color:"#031602e9"}}>$9105.00</span>
-
-                        </FlexRow>}/>
-                        <WEAccordion.Panel.Content>
-
-                          <FlexColumn width='100%'>
-                          <div style={{width:"100%",display:"inline-flex",justifyContent:"space-between",padding:".25rem 1rem"}}>
-                            <label style={{flex:"2",fontSize:"1.1rem",fontWeight:"700",color:"#0316028d"}}>Deposit</label>                  
-                            <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}>$6309.91</span>
-                          </div>
-
-                        </FlexColumn>
-                        <FlexColumn width='100%' p='.5rem'>
-                          <Button>View Details</Button>
-
-                        </FlexColumn>
-                        </WEAccordion.Panel.Content>
-                      </WEAccordion.Panel>
-                    </WEAccordion>
-                  </div>
-
-                  <div className={styles.display_row}>
-                    <WEAccordion>
-                      <WEAccordion.Panel>
-                        <WEAccordion.Panel.Header text={<FlexRow width="100%" vAlign='center'>
-                          <label style={{fontSize:"1.5rem",fontWeight:"900",color:"#0316028d"}}>Visa</label>
-                          <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}></span>
-                          <span style={{flex:"1",fontSize:"1.1rem",fontWeight:"700",textAlign:"right",color:"#031602e9"}}>$3625.00</span>
-
-                        </FlexRow>}/>
-                        <WEAccordion.Panel.Content>
-
-                          <FlexColumn width='100%'>
-                          <div style={{width:"100%",display:"inline-flex",justifyContent:"space-between",padding:".25rem 1rem"}}>
-                            <label style={{flex:"2",fontSize:"1.1rem",fontWeight:"700",color:"#0316028d"}}>Deposit</label>                  
-                            <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}>$309.91</span>
-                          </div>
-
-                        </FlexColumn>
-                        <FlexColumn width='100%' p='.5rem'>
-                          <Button>View Details</Button>
-
-                        </FlexColumn>
-                        </WEAccordion.Panel.Content>
-                      </WEAccordion.Panel>
-                    </WEAccordion>
-                  </div>
-
-                  <div className={styles.display_row}>
-                    <WEAccordion>
-                      <WEAccordion.Panel>
-                        <WEAccordion.Panel.Header text={<FlexRow width="100%" vAlign='center'>
-                          <label style={{fontSize:"1.5rem",fontWeight:"900",color:"#0316028d"}}>Discover</label>
-                          <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}></span>
-                          <span style={{flex:"1",fontSize:"1.1rem",fontWeight:"700",textAlign:"right",color:"#031602e9"}}>$625.00</span>
-
-                        </FlexRow>}/>
-                        <WEAccordion.Panel.Content>
-
-                          <FlexColumn width='100%'>
-                          <div style={{width:"100%",display:"inline-flex",justifyContent:"space-between",padding:".25rem 1rem"}}>
-                            <label style={{flex:"2",fontSize:"1.1rem",fontWeight:"700",color:"#0316028d"}}>Deposit</label>                  
-                            <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}>$30.91</span>
-                          </div>
-
-                        </FlexColumn>
-                        <FlexColumn width='100%' p='.5rem'>
-                          <Button>View Details</Button>
-
-                        </FlexColumn>
-                        </WEAccordion.Panel.Content>
-                      </WEAccordion.Panel>
-                    </WEAccordion>
-                  </div>
-
-                </FlexColumn>
-
-
-
-              </Card.Content>
-            </Card>
-          
-
-            <Card>
-              <Card.Title>Pickups</Card.Title>
-              <Card.Content>
-                <FlexColumn p='.25rem 0' g='.75rem' width='100%'>
-                  <FlexRow p='.25rem .75rem' hAlign='space-between' vAlign='center'>
-                    <span style={{flex:"2",fontSize:"1.25rem",fontWeight:"700",textAlign:"left"}}>Description</span>
-                    <span style={{flex:"1",fontSize:"1.25rem",fontWeight:"700",textAlign:"right"}}>Debit</span>
-                    <span style={{flex:"1",fontSize:"1.25rem",fontWeight:"700",textAlign:"right"}}>Credit</span>
-                  </FlexRow>
-                  <FlexRow p='0 .75rem' hAlign='space-between'>
-                    <label style={{flex:"2",fontSize:"1.1rem",fontWeight:"900",color:"#0316028d"}}>Debuit Card</label>
-                    <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}>$27.94</span>
-                    <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}></span> 
-                  </FlexRow>
-                  <FlexRow p='0 .75rem' hAlign='space-between'>
-                    <label style={{flex:"2",fontSize:"1.1rem",fontWeight:"900",color:"#0316028d"}}>Visa</label>
-                    <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}>$171.96</span>
-                    <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}></span>
-                  </FlexRow>
-                  <FlexRow p='0 .75rem' hAlign='space-between'>
-                    <label style={{flex:"2",fontSize:"1.1rem",fontWeight:"900",color:"#0316028d"}}>Master</label>
-                    <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}>$4.35</span>
-                    <span style={{flex:"1",fontSize:"1rem",fontWeight:"700",textAlign:"right"}}></span>
-                  </FlexRow>
-                </FlexColumn>
-                  <CardTotalLabel icon='usDollar' borderRadius='0 0 1rem 1rem'>
-                    <span style={{display:"flex",justifyContent:"flex-end",alignItems:"center",flex:"1",fontSize:"1.5rem"}}>${Format.stringAsMoney("254.25")}</span>
-                    <span style={{display:"flex",justifyContent:"flex-end",alignItems:"center",flex:"1",padding:"0 .5rem",fontSize:"1.5rem"}}></span>
-                  </CardTotalLabel>
-              </Card.Content>
-            </Card>
-<Card>
-              <Card.Title>Total Loan</Card.Title>
-              <Card.Content>
-                {/* <FlexColumn p='.25rem 0' g='.75rem' width='100%'></FlexColumn> */}
-                  <CardTotalLabel icon='usDollar'>
-                    <span style={{display:"flex",justifyContent:"flex-end",alignItems:"center",flex:"1",fontSize:"1.5rem"}}>${Format.stringAsMoney("0.00")}</span>
-                    <span style={{display:"flex",justifyContent:"flex-end",alignItems:"center",flex:"1",padding:"0 .5rem",fontSize:"1.5rem"}}></span>
-                  </CardTotalLabel>
-              </Card.Content>
-            </Card>
-          </div>
-
-
+        <FlexColumn width='100%' height='100%'>
+          {children}
         </FlexColumn>
-
-        <FlexRow g='1rem' p='1rem'>
-          <Button size='lg'>Done</Button>
-          <IconButton size='lg' onClick={close}><XIcon size={24}/></IconButton>
-        </FlexRow>
+        
     </div>
   );
 }
 
-
-
+ReportDisplayView.Toolbar = ReportViewToolbar;
+ReportDisplayView.Title = ReportViewTitle;
+ReportDisplayView.PeriodDisplay = ReportViewPeriodDisplay;
+ReportDisplayView.ButtonRow = ReportViewButtonRow;
+ReportDisplayView.QuickStats = ReportViewHeroRow;
+ReportDisplayView.PinnedRow = ReportViewPinnedRow;
+ReportDisplayView.ScrollView = ReportViewScrollView;
+ReportDisplayView.Heading = ReportViewHeading;
+ 
 export default ReportDisplayView;

@@ -97,6 +97,46 @@
   left: calc(50% - 40px);
   top: calc(50% - 40px);
 }
+
+.placeholder {
+  /* Glassmorphism properties */
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px); /* For Safari support */
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.3); /* Subtle border for definition */
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+
+  /* Placeholder dimensions and setup for animation */
+  position: relative;
+  overflow: hidden; /* Crucial for containing the moving gradient */
+  height: 20px; /* Example height for a line of text */
+  width: 100%;
+}
+.activity {
+  position: absolute;
+  top: 0;
+  left: -100%; /* Start off-screen to the left */
+  height: 100%;
+  width: 50%; /* The width of the shimmer highlight */
+  /* A gradient that goes from transparent to semi-transparent white and back to transparent */
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: shimmer 1.5s infinite linear; /* Apply the animation */
+}
+
+
+
+@keyframes loading {
+  0%{
+    left: -45%;
+  }
+  100%{
+    left: 100%;
+  }
+}
+
+
+
 @keyframes animate {
   0% { 
     transform: rotate(0deg)
