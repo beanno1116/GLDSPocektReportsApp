@@ -9,6 +9,7 @@
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   margin-bottom: 1.5rem;
+   animation: fadeIn 0.8s ease 0.2s both;
 }
 .card::before {
   content: '';
@@ -47,9 +48,9 @@
   margin-bottom: 1rem;
 }
 .card_list_item:hover {
-  border-color: var(--accent-green);
+  /* border-color: var(--accent-green);
   box-shadow: 0 12px 40px rgba(0, 255, 136, 0.15);
-  transform: translateY(-4px);
+  transform: translateY(-4px); */
 }
 .card_list_item_content {
   flex: 1;
@@ -208,6 +209,9 @@
   font-size: 18px;
   flex-shrink: 0;
 }
+.user_card_details_icon svg {
+  fill: #a855f7;
+}
 .user_card_details_content {
   flex: 1;
   min-width: 0;
@@ -244,8 +248,8 @@
   width: 100%;
 }
 .card_action:hover {
-  background: var(--bg-card);
-  border-radius: 1.5rem;
+  /* background: var(--bg-card);
+  border-radius: 1.5rem; */
 }
 .card_action_icon {
   width: 48px;
@@ -287,6 +291,112 @@
   transform: translateX(4px);
 }
 
+
+/* Report group card css styles */
+.report_group_card {
+  width: 100%;
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: 20px;
+  padding: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+   animation: fadeIn 0.8s ease 0.2s both;
+}
+.report_group_card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+.report_group_header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+.report_group_icon {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 212, 255, 0.2));
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  flex-shrink: 0;
+}
+.report_group_info {
+  flex: 1;
+}
+.report_group_title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 4px
+}
+.report_group_count {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-family: 'Space Mono', monospace;
+}
+.report_group_arrow {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  font-size: 24px;
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
+}
+.report_group_arrow svg {
+  fill: #a855f7;
+}
+.report_group_preview {
+            display: flex;
+            gap: 8px;
+}
+.preview_stat {
+            flex: 1;
+            padding: 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            text-align: center;
+}
+.preview_value {
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'Space Mono', monospace;
+            margin-bottom: 4px;
+}
+.preview_label {
+              font-size: 10px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* Card label css styles */
 .card_compact_label {
   font-size: 14px;
@@ -313,4 +423,11 @@
 }
 .lg {
   font-size: 1.5rem;
+}
+
+
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }

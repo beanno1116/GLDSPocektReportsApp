@@ -35,6 +35,11 @@ import { take } from '../../Utils/Utils';
 import { useQueries } from '@tanstack/react-query';
 import { useApiClient } from '../../Api/Api';
 import SolidUserSettingIcon from '../../assets/icons/SolidUserSettingIcon';
+import TopCategorySection from '../Templates/Components/Sections/TopCategorySection';
+import DateUtility from '../../Utils/DateUtils';
+import LocDataAdapter from '../../Models/LocReportAdapter';
+import { loader } from '../../Components/Loader/LoaderModal';
+import FullScreenLoader from '../../Components/Loader/FullScreenLoader';
 
 
 
@@ -70,36 +75,35 @@ const homeViewBottomNavButtons = [
 
 const useHomeView = () => {
   const {state,dispatch} = useContext(AppContext);
-  const [showModal,setShowModal] = useState(false);
-  const [currentView,setCurrentView] = useState("");
-
-  useEffect(() => {
-
-    const storeChangeEventHandler = (e) => {
-      setShowModal(false);
-      setCurrentView("home");
-    }
-
-    subscribe(STORE_CHANGE_EVENT,storeChangeEventHandler);
-    return () => {      
-      unsubscribe(STORE_CHANGE_EVENT,storeChangeEventHandler);
-    }
+  const api = useApiClient();
+  const navigate = useNavigate();
+  const results = useQueries({
+    queries: homeViewQueries.map(query => ({
+      queryKey: [`${query.action}_${query.key}`,"dfdd44e8-be22-43ef-8313-95f2d1904566"],
+      queryFn: async () => {       
+        const paramObj = {
+          action: query.action,
+          agentString: "dfdd44e8-be22-43ef-8313-95f2d1904566",
+          posFields: query.posFields
+        }  
+        const response = await api.post("data",paramObj,{...api.headers.applicationJson}); 
+        debugger;
+        // const response = await api.post("data",{action:query.action,agentString:"dfdd44e8-be22-43ef-8313-95f2d1904566"},{...api.headers.applicationJson}); 
+        if (response.success){
+          const adaptedData = query.adapter(response.data);
+          debugger;
+          return adaptedData;
+        }  
+        throw new Error("Newtwork response was unsuccessfull");
+      }      
+    }))
   })
 
-  const onNavBarClick = useCallback((e,action) => {
-    
-    if (action === "home"){
-      setShowModal(false);
-      return;
-    }
   
-    setShowModal(false);
-    
-    setCurrentView(action);
-    
-    setShowModal(true);
 
-  },[])
+  const onNavBarClick = useCallback((e,action) => {
+    navigate(action,{viewTransition:true})
+  },[navigate])
 
 
   const getStoreContext = (org) => {    
@@ -138,27 +142,62 @@ const useHomeView = () => {
   }
 
   return {
-    state,
-    showModal,
-    currentView,
+    state,        
     storeContext,
     onNavBarClick,
     render: {
       storeOptions: renderStoreSelectorItems
-    }
+    },
+    results
   }
 }
 
 const homeViewQueries = [
   {
     action: "Stats",
+    key: `stats_home_view_${Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1))}`,
+    posFields: {
+      startDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1)),
+      endDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1))
+    },
     adapter(data) {
+      debugger;
+      const adaptedData = Mutate.storeStatsData(data);
+      return adaptedData;
+    }
+  },
+  {
+    action: "Stats",
+    key: `stats_home_view_${Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),2))}`,
+    posFields: {
+      startDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),2)),
+      endDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),2))
+    },
+    adapter(data) {
+      debugger;
       const adaptedData = Mutate.storeStatsData(data);
       return adaptedData;
     }
   },
   {
     action: "DepartmentTotals",
+    key: `dept_totals_${Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1))}`,
+    posFields: {
+      startDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1)),
+      endDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1))
+    },
+    adapter(data){
+      const adaptedData = Mutate.departmentTotals(data);
+      return adaptedData;
+    }
+  },
+  {
+    action: "DepartmentTotals",
+    key: `dept_totals_comp_${Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),2))}`,
+    posFields: {
+      startDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),2)),
+      endDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),2))
+    },
     adapter(data){
       const adaptedData = Mutate.departmentTotals(data);
       return adaptedData;
@@ -169,47 +208,20 @@ const homeViewQueries = [
 
 
 const HomeView = () => {
-  console.log("HomeView rendered " + renderCount++);
-  const api = useApiClient();
-  const {state,showModal,currentView,storeContext,onNavBarClick,render} = useHomeView();
-  // const {status,parseChartData} = useChartComponent("DepartmentTotals",Mutate.departmentTotals);
-  const navigate = useNavigate();
-  const results = useQueries({
-    queries: homeViewQueries.map(query => ({
-      queryKey: [query.action,"dfdd44e8-be22-43ef-8313-95f2d1904566"],
-      queryFn: async () => {         
-        const response = await api.post("data",{action:query.action,agentString:"dfdd44e8-be22-43ef-8313-95f2d1904566"},{...api.headers.applicationJson}); 
-        if (response.success){
-          const adaptedData = query.adapter(response.data);
-          
-          return adaptedData;
-        }  
-        throw new Error("Newtwork response was unsuccessfull");
-      }      
-    }))
-  })
-
-  const onBottomNavButtonClick = (e) => {
-    const action = e.currentTarget.dataset.action;
-    debugger
-    navigate(action,{ viewTransition: true });    
-  }
-
-  // if (status.isLoading){
-  //   return (
-  //     <div>Loading...</div>
-  //   )
-  // }
+  console.log("HomeView rendered " + renderCount++);  
+  const {render,results,onNavBarClick} = useHomeView();
   
-  // const departmentTotals = parseChartData();
+
+
+
+
   const viewData = results.map(r => r.data);
   const isLoading = results.some(r => r.isLoading);
   const isError = results.some(r => r.isError);
 
-  if (isLoading){
-    debugger;
+  if (isLoading){    
     return (
-      <div>Loading....</div>
+      <FullScreenLoader text={"Loading Dashboard Data"} />
     )
   }
   
@@ -219,18 +231,12 @@ const HomeView = () => {
     )
   }
 
-  const temp = viewData;
-  debugger;
-
-  const dataObj = {
-    stats: viewData[0],
-    departments: viewData[1]
-  }
+  const data = LocDataAdapter.parseHomeViewData(viewData);
 
   return (
     <View>
 
-      <View.Header title="Dashboard" />
+      <View.Header showDate={true} title="Dashboard" />
 
       <ScrollSelector>
         {render.storeOptions()}
@@ -238,11 +244,13 @@ const HomeView = () => {
 
       <ScrollView>
 
+        {/* Store sale stats */}
         <KpiGrid>
-          <KpiGrid.Item title="Revenue" value={`$${Format.moneyAbbreviation(dataObj.stats.totalSales.total)}`} subValue={"↑ 12.3%"} />
-          <KpiGrid.Item title="Transactions" value={Format.moneyAbbreviation(dataObj.stats.totalSales.quantity)} subValue={"↑ 8.1%"} />
-          <KpiGrid.Item title="Avg Basket" value={`$${(dataObj.stats.totalSales.total / dataObj.stats.totalSales.quantity).toFixed(2)}`} subValue={"↑ 3.8%"} />
-          <KpiGrid.Item title="Margin" value={"28.4%"} subValue={"↓ 1.2%"} />
+          {data.stats.map(stat => {
+            return (
+              <KpiGrid.Item title={stat.title} value={Format.string(stat.value,stat.format)} subValue={`↑ ${Format.string(7,"percentage")}`} />              
+            )
+          })}
         </KpiGrid>
 
         <div className={styles.chart_section}>
@@ -271,90 +279,53 @@ const HomeView = () => {
             </div>
         </div>
 
-        <div className={styles.category_section}>
-          
-            <div className={styles.section_title}>Top Departments</div>
-
-            {[...take(5,dataObj.departments)].map(dept => {
+        {/* Top department sales */}
+        <TopCategorySection title={"Top Departments"}>
+          {[...take(5,data.departments)].map(cat => {
             return (
-              <div className={styles.category_item}>
-                <div className={styles.category_info}>
-                    <div className={styles.category_name}>{dept.description.toLowerCase()}</div>
-                    <div className={styles.category_subtitle}>{Format.moneyAbbreviation(parseFloat(dept.quantity))} units sold</div>
-                </div>
-                <div className={styles.category_metric}>
-                    <div className={styles.category_value}>${Format.moneyAbbreviation(parseFloat(dept.total))}</div>
-                    <div className={`${styles.category_change} ${styles.up}`}>+15.2%</div>
-                </div>
-              </div>
+              <TopCategorySection.Item 
+                name={cat.description.toLowerCase()}
+                subtitle={`${Format.moneyAbbreviation(parseFloat(cat.quantity))} units sold`}
+                value={Format.moneyAbbreviation(parseFloat(cat.total))} 
+                delta={Format.string(cat.totalDelta,"percentage")}/>
+
             )
           })}
-            
-            {/* <div className={styles.category_item}>
-                <div className={styles.category_info}>
-                    <div className={styles.category_name}>Produce</div>
-                    <div className={styles.category_subtitle}>42.3K units sold</div>
-                </div>
-                <div className={styles.category_metric}>
-                    <div className={styles.category_value}>$89K</div>
-                    <div className={`${styles.category_change} ${styles.up}`}>+15.2%</div>
-                </div>
-            </div>
+          {/* <div style={{position:"relative",width:"100%",height:"85px"}}></div> */}
+        </TopCategorySection>
 
-            <div className={styles.category_item}>
-                <div className={styles.category_info}>
-                    <div className={styles.category_name}>Dairy & Eggs</div>
-                    <div className={styles.category_subtitle}>31.8K units sold</div>
-                </div>
-                <div className={styles.category_metric}>
-                    <div className={styles.category_value}>$67K</div>
-                    <div className={`${styles.category_change} ${styles.up}`}>+9.8%</div>
-                </div>
-            </div>
+        <View.SectionTitle m='0'>Exceptions</View.SectionTitle>
 
-            <div className={styles.category_item}>
-                <div className={styles.category_info}>
-                    <div className={styles.category_name}>Bakery</div>
-                    <div className={styles.category_subtitle}>28.1K units sold</div>
-                </div>
-                <div className={styles.category_metric}>
-                    <div className={styles.category_value}>$54K</div>
-                    <div className={`${styles.category_change} ${styles.up}`}>+6.4%</div>
-                </div>
-            </div>
+        {/* Exception totals stats */}
+        <KpiGrid>
+          {data.exceptions.map(exception => {
+            return (
+              <KpiGrid.Item title={exception.title} value={Format.moneyAbbreviation(exception.value)} subValue={`↑ ${Format.string(7,"percentage")}`} />              
+            )
+          })}
+        </KpiGrid>
 
-            <div className={styles.category_item}>
-                <div className={styles.category_info}>
-                    <div className={styles.category_name}>Beverages</div>
-                    <div className={styles.category_subtitle}>19.7K units sold</div>
-                </div>
-                <div className={styles.category_metric}>
-                    <div className={styles.category_value}>$41K</div>
-                    <div className={`${styles.category_change} ${styles.down}`}>-2.1%</div>
-                </div>
-            </div> */}
-        <div style={{position:"relative",width:"100%",height:"85px"}}></div>
-        </div>
+        <div style={{height:"190px",width:"100%",marginBottom:"60px",background:"red"}}></div>
 
       </ScrollView>
 
       
     
     <div className={styles.bottom_nav}>
-      <button data-action="reports" className={`${styles.nav_item} ${styles.active}`} onClick={onBottomNavButtonClick}>          
-          <div className={styles.nav_icon}><SolidReportIcon size={40} /></div>          
+      <button data-action="reports" className={`${styles.nav_item} ${styles.active}`} onClick={(e) => onNavBarClick(e,"reports")}>
+          <div className={styles.nav_icon}><SolidReportIcon size={32} /></div>          
           <div className={styles.nav_label}>Reports</div>
       </button>
-      <button data-action="stores" className={styles.nav_item} onClick={onBottomNavButtonClick}>
-          <div className={styles.nav_icon}><StoreIcon size={40} /></div>
+      <button data-action="stores" className={styles.nav_item} onClick={(e) => onNavBarClick(e,"stores")}>
+          <div className={styles.nav_icon}><StoreIcon size={32} /></div>
           <div className={styles.nav_label}>Stores</div>
       </button>
-      <button data-action="/manage/users" className={styles.nav_item} onClick={onBottomNavButtonClick}>
-          <div className={styles.nav_icon}><SolidUserSettingIcon size={40} /></div>
+      <button data-action="/manage/users" className={styles.nav_item} onClick={(e) => onNavBarClick(e,"/manage/users")}>
+          <div className={styles.nav_icon}><SolidUserSettingIcon size={32} /></div>
           <div className={styles.nav_label}>Users</div>
       </button>
-      <button data-action="settings" className={styles.nav_item} onClick={onBottomNavButtonClick}>
-          <div className={styles.nav_icon}><SettingsIcon size={40} /></div>
+      <button data-action="settings" className={styles.nav_item} onClick={(e) => onNavBarClick(e,"settings")}>
+          <div className={styles.nav_icon}><SettingsIcon size={32} /></div>
           <div className={styles.nav_label}>Settings</div>
       </button>
     </div>

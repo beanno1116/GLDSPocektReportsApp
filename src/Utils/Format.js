@@ -9,6 +9,24 @@ class FormatUtil {
       console.error(error.message);
     }
   }
+  #isInstanceOfDate(value){
+    try {
+      if (!value) throw new Error("paramet value is null or undefined");
+      return (Object.prototype.call(value) === "[object Date]") && !isNaN(value);
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+  #dateElementsAsObject(date,padElements=true){
+    return {
+      month: this.padDateTimeElement(date.getMonth() + 1),
+      day: this.padDateTimeElement(date.getDate()),
+      year: date.getFullYear(),
+      hour: this.padDateTimeElement(date.getHours()),
+      minutes: this.padDateTimeElement(date.getMinutes()),
+      period: (date.getHours() > 12) ? "PM" : "AM"
+    }
+  }
 
   padDateTimeElement(element){
     try {      
@@ -165,6 +183,47 @@ class FormatUtil {
     }
   }
 
+  toRequestDateFormat(date){
+    try {
+      if (!date) return "";
+      let dateTime = undefined;
+      
+      if (typeof date === "string"){
+        dateTime = new Date(date);
+        if (!dateTime) throw new TypeError("date parameter not a valid date string");
+      }else{
+        if (this.#isInstanceOfDate(date)) throw TypeError("date parameter not a valid Date() obj");
+        dateTime = date;
+      }
+
+      const dateObj = this.#dateElementsAsObject(dateTime);
+      const {month,day,year} = dateObj;
+      
+      return `${month}/${day}/${year}`;
+      
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+
+  string(value,format){
+    switch (format) {
+      case "currency":
+        return `$${this.stringAsMoney(value)}`;
+      case "number":
+        return value;
+      case "shorNumber":
+        return this.moneyAbbreviation(value);
+      case "shortCurrency":
+        return `$${this.moneyAbbreviation(value)}`;
+      case "percentage":
+        return `${parseFloat(value).toFixed(2)}%`
+    
+      default:
+        return value;
+    }
+
+  }
 }
 
 const Format = new FormatUtil();

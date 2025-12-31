@@ -56,8 +56,7 @@ const PasswordResetForm = ({ submitHandler }) => {
     submitHandler();
   }
   return (
-    <Card m='0'>
-      <FlexColumn flex="1" g="1rem">
+      <FlexColumn flex="1" p='1rem' g="1rem">
         <PasswordTextField label="Current Password" {...registerFormInput("currentPassword",{required:true})} autocomplete="off" placeholder="Current password" />
         <PasswordTextField label="New Password" {...registerFormInput("newPassword",{required:true})} placeholder="New password" />
         <PasswordTextField label="Confirm New Password" {...registerFormInput("confirmPassword",{required:true})} placeholder="Confirm New password" />
@@ -65,7 +64,6 @@ const PasswordResetForm = ({ submitHandler }) => {
           <PrimaryButton size='lg' action={"save"} onClick={(e) => onSubmit(e,handleFormSubmit)}>Reset</PrimaryButton>
         </FlexRow>
       </FlexColumn>
-    </Card>
   );
 }
 

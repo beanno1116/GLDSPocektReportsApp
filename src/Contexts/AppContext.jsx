@@ -5,6 +5,7 @@ export const AppContext = createContext();
 
 let initialState = {};
 let localData = localStorage.getItem("org");
+
 if (localData){
   localData = JSON.parse(localData);
   initialState = {

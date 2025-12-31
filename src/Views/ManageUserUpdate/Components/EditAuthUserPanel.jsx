@@ -1,6 +1,7 @@
 
 import OutlineButton from '../../../Components/Buttons/OutlineButton';
 import DropdownPanel from '../../../Components/DropdownPanel/DropdownPanel';
+import FlexRow from '../../../Components/FlexComponents/FlexRow';
 import TabView from '../../../Components/TabView/TabView';
 import EditUserForm from '../../../Forms/EditUser/EditUserForm';
 import PasswordResetForm from '../../../Forms/PasswordReset/PasswordResetForm';
@@ -40,7 +41,7 @@ const EditAuthUserPanel = ({ user,when,close,...props }) => {
   }
 
   return (
-    <DropdownPanel when={when} p="1rem">
+    <DropdownPanel p='1rem' when={when}>
 
       <UserCard m='0'>
         <UserCard.Header name="Ben Klimaszewski" username="devUser" role={"Administrator"} />
@@ -48,9 +49,12 @@ const EditAuthUserPanel = ({ user,when,close,...props }) => {
 
       <div style={{flex:"1"}}>
         <EditUserInfoTabView />
-      </div>
 
-      <OutlineButton action={"done"} size='lg' onClick={onDoneButtonClick}>Done</OutlineButton>
+      </div>
+      
+      <FlexRow m='0 0 calc(env(safe-area-inset-bottom)) 0'>
+        <OutlineButton action={"/manage/users"} size='lg' onClick={onDoneButtonClick}>Done</OutlineButton>
+      </FlexRow>
       
     </DropdownPanel>
   );

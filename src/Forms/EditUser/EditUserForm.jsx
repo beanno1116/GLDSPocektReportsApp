@@ -21,7 +21,7 @@ const initialData = {
   email: ""
 }
 
-const EditUserForm = ({ handleSubmit }) => {
+const EditUserForm = () => {
   const api = useApiClient();
   const auth = useAuth();
   const {registerFormInput,onSubmit,resetForm} = useWEForm({
@@ -58,17 +58,15 @@ const EditUserForm = ({ handleSubmit }) => {
     loader.loaded();    
   }
 
-  return (
-    <Card m='0'>
-      <FlexColumn flex='1' g='1rem'>
+  return (    
+      <FlexColumn flex='1' p='1rem' g='1rem'>
         <TextField label="First Name" {...registerFormInput("firstName")} placeholder="First name"/>
         <TextField label="Last Name" {...registerFormInput("lastName")} placeholder="Last name"/>
         <TextField label="Email" {...registerFormInput("email")} placeholder="Email address"/>
         <FlexRow g='1rem'>
           <PrimaryButton action="save" size='lg' onClick={(e) => onSubmit(e,onSaveButtonClick)}>Save</PrimaryButton>
         </FlexRow>
-      </FlexColumn>
-    </Card>
+      </FlexColumn>    
   );
 }
 

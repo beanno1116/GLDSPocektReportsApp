@@ -1,16 +1,16 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useGetOrgUsers } from "../../../Api/ApiRoutes";
 import AdminUserIcon from "../../../assets/icons/AdminUserIcon";
 import PlainUserIcon from "../../../assets/icons/PlainUserIcon";
-import PrimaryButton from "../../../Components/Buttons/PrimaryButton";
 import FlexColumn from "../../../Components/FlexComponents/FlexColumn";
 import FlexRow from "../../../Components/FlexComponents/FlexRow";
-import UserList from "../../../Components/Lists/User/UserList";
-import ScrollView from "../../../Components/ScrollView/ScrollView";
 import useAppContext from "../../../hooks/useAppContext";
 import { useAuth } from "../../../hooks/useAuth";
 import Card from "../../Templates/Components/Cards/Card";
-import AddUserPanel from "./AddUserPanel";
+import ManageUserPanel from "./ManageUserPanel";
+import Filter from "../../../Utils/Filter";
+import { useSearchParams } from "react-router";
+
 
 const isLastAdmin = (users,userId) => {
   try {
@@ -32,41 +32,61 @@ const useUsersDetail = () => {
   const {status,users} = useGetOrgUsers(state.organization);
   const [currentUser,setCurrentUser] = useState(0);
   const [showFormPanel,setShowFormPanel] = useState(false);
+  const [searchParams,setSearchParams] = useSearchParams();
+
+  
 
 
-  const onUserListItemClick = (e) => {
-    
-  }
-
-  const onAddUserButtonClick = (e) => {
+  const onUserListItemClick = useCallback((e,userId) => {
+    setCurrentUser(userId);
+    setSearchParams({panelState:"open",user:userId})
     setShowFormPanel(true);
-  }
+  },[setSearchParams])
+
+
   const closeFormPanel = () => {
     setShowFormPanel(false);
   }
 
   const renderUserListItems = () => {
     if (authUser.isAdmin){
-      
-    }
-    
-    return users.map(user => {
+      return users.map(user => {
       const doesAdminExist = isLastAdmin(users,user.id);
 
-      return (
-        <Card.ListItem 
-          user={user} 
-          icon={user.isAdmin ? <AdminUserIcon size={32} /> : <PlainUserIcon size={32} />}
-          onClick={onUserListItemClick}
-        />
-      )
-    })
+        return (
+          <Card.ListItem 
+            user={user} 
+            icon={user.isAdmin ? <AdminUserIcon size={32} /> : <PlainUserIcon size={32} />}
+            onClick={onUserListItemClick}
+          />
+        )
+      })
+    }
+    
+    return <div></div>
+  }
+
+  const onStoreItemClick = (e,action) => {    
+    const activeUser = Filter.userById(users,currentUser);
+    const prevLength = activeUser.stores.length;
+    const filteredUsers = activeUser.stores.filter(store => store !== action);
+    if (filteredUsers.length < prevLength){
+      setCurrentUser({...activeUser,stores: [...filteredUsers]});
+      return;
+    }
+    setCurrentUser({...activeUser,stores: [...activeUser.stores,action]});
+  }
+
+  const getCurrentUser = (userId) => {
+    return Filter.userById(users,userId);
   }
 
   return {
-    closeFormPanel,
-    onAddUserButtonClick,
+    currentUser,
+    getCurrentUser,
+    closeFormPanel,    
     renderUserListItems,
+    onStoreItemClick,
     showFormPanel,
     status,
     users
@@ -75,7 +95,7 @@ const useUsersDetail = () => {
 
 
 const UsersDetail = ({ ...props }) => {
-  const {renderUserListItems,status,onAddUserButtonClick,showFormPanel,closeFormPanel} = useUsersDetail();
+  const {users,currentUser,onStoreItemClick,renderUserListItems,status,showFormPanel,closeFormPanel} = useUsersDetail();
 
 
 
@@ -85,9 +105,10 @@ const UsersDetail = ({ ...props }) => {
     )
   }
 
+
   return (
-    <>
-      <AddUserPanel when={showFormPanel} close={closeFormPanel}/>
+    <>      
+      <ManageUserPanel currentUser={Filter.userById(users,currentUser)} when={showFormPanel} close={closeFormPanel}/>
       <FlexRow flex='1'>
         <Card full={true}>
           <FlexColumn height='100%'>
@@ -95,13 +116,8 @@ const UsersDetail = ({ ...props }) => {
                 <div style={{position:"absolute",width:"100%",height:"100%",overflowY:"scroll",padding:"0rem 0"}}>
                   {renderUserListItems()}
                 </div>
-
-
-
             </FlexRow>
-            <FlexRow>
-              <PrimaryButton onClick={onAddUserButtonClick}>Add User</PrimaryButton>
-            </FlexRow>
+
           </FlexColumn>
         </Card>
       </FlexRow>

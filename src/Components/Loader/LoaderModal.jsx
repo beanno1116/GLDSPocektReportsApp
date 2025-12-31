@@ -6,6 +6,7 @@ import styles from './loader.module.css';
 
 import { publish, subscribe, unsubscribe } from "../../events";
 import WEPortal from "./WEPortal";
+import pocketReportLog from '../../assets/images/pocketReportLogo.png';
 
 
 
@@ -81,8 +82,15 @@ const LoaderModal = ({  config }) => {
         }}
       >
         <div className={styles.loader} ref={modalRef}>
-              <div id={styles.loader}></div>
-            </div>
+              {/* <div id={styles.loader}></div> */}
+            <div className={styles.loading_screen} id="fullScreenLoading">
+              <div className={styles.loading_logo}><img src={pocketReportLog} style={{width:"100%",aspectRatio:"1/1",opacity:".8"}}/></div>
+              <div className={styles.spinner_dual}></div>
+              <div className={styles.loading_text}>Loading Store Data</div>
+              <div className={styles.loading_percentage}>Please wait...</div>
+          </div>
+
+        </div>
 
         {/* <div className={`${styles.modal_container} ${styles.scale_in} ${styles.center}`} style={{...props.style}} ref={modalRef}>  
 

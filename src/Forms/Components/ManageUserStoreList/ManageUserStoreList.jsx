@@ -18,12 +18,12 @@ import CheckmarkIcon from '../../../assets/icons/CheckmarkIcon';
 
 
 
-const ManageUserStoreList = ({ currentUser,onClick }) => {
+const ManageUserStoreList = ({ currentUser,onClick,p="1rem 1rem" }) => {
   const {state} = useAppContext();
 
   const onStoreRowClick = (e,storeId) => {
     try {
-      debugger
+      
       onClick && onClick(e,storeId);
     } catch (error) {
       console.error(error.message);
@@ -43,7 +43,7 @@ const ManageUserStoreList = ({ currentUser,onClick }) => {
           <InputLabel size="sm" text={"Authorize all"} />
           <WECheckbox size="lg" onChange={onCheckboxClick}/>
         </FlexRow>
-        <FlexColumn width='100%' g='1rem' p='1rem 1rem'>
+        <FlexColumn width='100%' g='1rem' p={p}>
           {state.stores.map(store => {                
             if (!currentUser){
               return (              

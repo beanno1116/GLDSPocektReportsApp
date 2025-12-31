@@ -1,0 +1,71 @@
+/* Category List */
+.category_section {
+    animation: fadeIn 1s ease 1.3s both;
+}
+
+.section_title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+}
+
+.category_item {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 1.25rem;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.category_item:active {
+    transform: scale(0.98);
+    background: var(--bg-secondary);
+}
+
+.category_info {
+    flex: 1;
+}
+
+.category_name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    text-transform: capitalize;
+}
+
+.category_subtitle {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-family: 'Space Mono', monospace;
+}
+
+.category_metric {
+    text-align: right;
+}
+
+.category_value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.category_change {
+    font-size: 1rem;
+    font-family: 'Space Mono', monospace;
+}
+
+.category_change.up {
+    color: var(--accent-green);
+}
+
+.category_change.down {
+    color: var(--accent-orange);
+}

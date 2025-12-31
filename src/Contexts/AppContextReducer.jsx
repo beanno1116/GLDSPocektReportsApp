@@ -31,7 +31,7 @@ export const appContextReducer = (state,action) => {
     case UPDATE_USERS:
       return {...state,users:action.payload}
     case UPDATE_ACTIVE_STORE:
-
+    
       syncLocalStorage.update("activeStore",action.payload);
       
       return {...state,activeStore:action.payload}

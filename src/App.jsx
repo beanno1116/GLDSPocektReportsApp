@@ -14,6 +14,7 @@ import { AppContextProvider } from "./Contexts/AppContext";
 import StoreSelectorView from "./Views/StoreSelector/StoreSelectorView";
 import StoreReportsView from "./Views/StoreReports/StoreReportsView";
 import ManageUserView from "./Views/ManageUserUpdate/ManageUserView";
+import ReportView from "./Views/Report/ReportView";
 
 // import Api, { ApiClient, ApiClientProvider, getApiEndpoint } from "./Api/Api";
 
@@ -61,7 +62,7 @@ const App = () => {
         },
         {
           path: "/reports",
-          element: <div style={{color:"snow"}}>Reports View</div>
+          element: <ReportView />
         },
         {
           path: "/stores",

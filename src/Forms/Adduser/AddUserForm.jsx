@@ -34,8 +34,8 @@ const initialFormData = {
 
 const NewUserInformationForm = ({registerFormInput}) => {
   return (
-    <Card>
-      <FlexColumn g='2rem'>
+  
+      <FlexColumn g='2rem' p='1rem'>
         <TextField  label={"Email"} size={'sm'} {...registerFormInput("email",{required:true})} />   
         <TextField  label={"Name"} size={'sm'} {...registerFormInput("name")} />   
         <FlexRow vAlign='center' hAlign='center' g='1rem'>
@@ -44,7 +44,6 @@ const NewUserInformationForm = ({registerFormInput}) => {
         </FlexRow>   
       </FlexColumn>
 
-    </Card>
   )
 }
 

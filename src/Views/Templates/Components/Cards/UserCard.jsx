@@ -26,10 +26,10 @@ const CardHeader = ({name,username,role}) => {
 
 const CardBody = ({children}) => <div className={styles.user_card_body}>{children}</div>
 
-const CardDetailsRow = ({label,value}) => {
+const CardDetailsRow = ({icon,label,value}) => {
   return (
     <div className={styles.user_card_details_row}>
-      <div className={styles.user_card_details_icon}>🏪</div>
+      <div className={styles.user_card_details_icon}>{icon}</div>
       <div className={styles.user_card_details_content}>
         <div className={styles.user_card_details_label}>{label}</div>
         <div className={styles.user_card_details_value}>{value}</div>

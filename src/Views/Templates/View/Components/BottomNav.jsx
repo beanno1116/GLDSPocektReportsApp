@@ -16,11 +16,12 @@ const NavButtonLabel = ({children}) => {
 const NavButton = ({icon,label,action,onClick,children}) => {
 
   const onButtonClick = (e) => {
-    onClick && onClick(e);
+    const action = e.currentTarget.dataset.action;
+    onClick && onClick(e,action);
   }
 
   return (
-    <button data-action="reports" className={`${styles.nav_item} ${styles.active}`} onClick={onButtonClick}>          
+    <button data-action={action} className={`${styles.nav_item} ${styles.active}`} onClick={onButtonClick}>          
       <div className={styles.nav_icon}>{icon}</div>          
       <div className={styles.nav_label}>{label}</div>
     </button>

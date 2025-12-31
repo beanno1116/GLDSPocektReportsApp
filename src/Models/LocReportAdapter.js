@@ -1,13 +1,11 @@
+import { calculatePercentChange } from "../Utils/Utils";
 
-
-class SafeDescriptors {
-  loan = 1000;
-
+const exceptionNameMappings = {
+  "cancelprev.item": "Cancel prev item",
+  "cancelorder": "Canceled orders",
+  "refundkeyinfo": "Refunds",
+  "taxexempt1": "Tax 1 Exemptions"
 }
-
-const safeDescriptorsMap = new Map({
-
-})
 
 
 
@@ -65,6 +63,85 @@ class LocReportAdapter {
       
     }
   }
+
+  parseHomeViewData(data){
+    try {
+      if (!Array.isArray(data)) throw new TypeError("parameter not of type array");
+      
+      const todayStats = data[0];
+      const prevStats = data[1];
+      const todayDepts = data[2];
+      const prevDepts = data[3];
+      
+      const homeViewData = {
+        stats: [
+          {
+            title: "Revenue",
+            format: "shortCurrency",
+            value: todayStats.totalSales.total,
+            delta: calculatePercentChange((prevStats.totalSales.total,todayStats.totalSales.total))
+          },
+          {
+            title: "Transactions",
+            format: "shortNumber",
+            value: todayStats.totalSales.quantity,
+            delta: calculatePercentChange(prevStats.totalSales.quantity,todayStats.totalSales.quantity)
+          },
+          {
+            title: "Avg Basket",
+            format: "currency",
+            value: todayStats.totalSales.total / todayStats.totalSales.quantity,
+            delta: calculatePercentChange(prevStats.totalSales.total / prevStats.totalSales.quantity,todayStats.totalSales.total / todayStats.totalSales.quantity)
+          },
+          {
+            title: "Margin",
+            format: "percentage",
+            value: "28.4%",
+            delta: "↓ 1.2%"
+          }
+        ],
+        exceptions: todayStats.exceptions.map(exception => {          
+          return {
+            title: exceptionNameMappings[exception.description.toLowerCase().replace(/ /g, '')],
+            format: "shortNumber",
+            value: exception.total,
+            delta: "↓ 1.2%"
+          }
+        })        
+      }
+
+
+      const departmentArray = [];
+
+      todayDepts.forEach((department,index) => {
+        const {description,quantity,total,weight} = department;
+        const prevDept = prevDepts[index];
+        let arrObj = {
+          description: description,
+          quantity: quantity,
+          prevQuantity: prevDept.quantity,
+          quantityDelta: calculatePercentChange(prevDept.quantity,quantity),
+          total: department.total,
+          prevTotal: prevDept.total,
+          totalDelta: calculatePercentChange(prevDept.total,total),
+          weight: weight,
+          prevWeight: prevDept.weight,
+          weightDelta: weight,
+        }
+        departmentArray.push(arrObj);
+      });
+
+      homeViewData.departments = departmentArray;
+
+      return homeViewData;
+
+    } catch (error) {
+      
+    }
+  }
+
 }
 
-export default LocReportAdapter;
+const LocDataAdapter = new LocReportAdapter();
+
+export default LocDataAdapter;

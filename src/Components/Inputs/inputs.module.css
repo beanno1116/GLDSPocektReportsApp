@@ -5,6 +5,7 @@
   flex-direction: column;
   gap: 8px;
   width: 100%;
+  animation: fadeIn 0.8s ease 0.2s both;
 }
 .text_area {
   height: 100%;
@@ -174,4 +175,10 @@ input.text_field_input:-webkit-autofill:focus {
     -webkit-transform: translateX(-6px);
             transform: translateX(-6px);
   }
+}
+
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
