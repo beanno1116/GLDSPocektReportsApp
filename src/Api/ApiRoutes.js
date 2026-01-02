@@ -86,7 +86,7 @@ const useGetStoresForOrg = () => {
 const getOrgUsers = async ({api,signal,token,orgId}) => {
   const response = await api.get("/users",{params:{token,orgId},signal});   
   if (response.success){    
-    debugger;
+    
     return response.data.map(rd => new User(rd));
   } 
   return [];

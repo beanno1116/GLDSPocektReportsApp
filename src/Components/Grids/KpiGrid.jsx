@@ -10,6 +10,31 @@ const KpiGridItem = ({title,value,subValue}) => {
   )
 }
 
+const SummaryGridItem = ({icon,label,value,change}) => {
+  return (
+    <div className={styles.summary_card} onclick="viewDetails('revenue')">
+      <div className={styles.summary_icon}>{icon}</div>
+      <div className={styles.summary_label}>{label}</div>
+      <div className={styles.summary_value}>{value}</div>
+      <div className={`${styles.summary_change} ${styles.positive}`}>↑ 12.3%</div>
+    </div>
+  )
+}
+
+const ActionGridItem = ({icon,label,onClick}) => {
+
+  const onGritItemClick = (e) => {
+    onClick && onClick(e);
+  }
+
+  return (
+    <div className={styles.action_card} onclick={onGritItemClick}>
+      <div className={styles.action_icon}>{icon}</div>
+      <div className={styles.action_label}>{label}</div>
+    </div>
+  )
+}
+
 const KpiGrid = ({ children }) => {
   return (
     <div className={styles.kpi_grid}>
@@ -19,5 +44,7 @@ const KpiGrid = ({ children }) => {
 }
 
 KpiGrid.Item = KpiGridItem
+KpiGrid.SummaryItem = SummaryGridItem;
+KpiGrid.ActionItem = ActionGridItem;
 
 export default KpiGrid;

@@ -1,6 +1,7 @@
 
 import BottomNav from './Components/BottomNav';
 import Header from './Components/Header';
+import SectionHeader from './Components/SectionHeader';
 import SectionTitle from './Components/SectionTitle';
 import styles from './view.module.css';
 
@@ -13,6 +14,7 @@ const View = ({ direction="column", children }) => {
 }
 
 View.Header = Header;
+View.SectionHeader = SectionHeader;
 View.SectionTitle = SectionTitle;
 View.BottomNav = BottomNav;
 

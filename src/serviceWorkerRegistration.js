@@ -29,6 +29,10 @@ export function register(config) {
       return;
     }
 
+    window.addEventListener('fetch',(e) => {
+      debugger;
+    })
+
     window.addEventListener('load', () => {
       const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
 
@@ -63,6 +67,7 @@ function registerValidSW(swUrl, config) {
         }
         installingWorker.onstatechange = () => {
           if (installingWorker.state === 'installed') {
+    
             if (navigator.serviceWorker.controller) {
               // At this point, the updated precached content has been fetched,
               // but the previous service worker will still serve the older

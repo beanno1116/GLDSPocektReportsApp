@@ -87,11 +87,11 @@ const useHomeView = () => {
           posFields: query.posFields
         }  
         const response = await api.post("data",paramObj,{...api.headers.applicationJson}); 
-        debugger;
+        
         // const response = await api.post("data",{action:query.action,agentString:"dfdd44e8-be22-43ef-8313-95f2d1904566"},{...api.headers.applicationJson}); 
         if (response.success){
           const adaptedData = query.adapter(response.data);
-          debugger;
+          
           return adaptedData;
         }  
         throw new Error("Newtwork response was unsuccessfull");
@@ -155,27 +155,25 @@ const useHomeView = () => {
 const homeViewQueries = [
   {
     action: "Stats",
-    key: `stats_home_view_${Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1))}`,
+    key: `stats_${Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1))}`,
     posFields: {
       startDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1)),
       endDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1))
     },
-    adapter(data) {
-      debugger;
-      const adaptedData = Mutate.storeStatsData(data);
+    adapter(data) {      
+      const adaptedData = LocDataAdapter.parseStoreStatsData(data);
       return adaptedData;
     }
   },
   {
     action: "Stats",
-    key: `stats_home_view_${Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),2))}`,
+    key: `stats_${Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),2))}`,
     posFields: {
       startDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),2)),
       endDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),2))
     },
-    adapter(data) {
-      debugger;
-      const adaptedData = Mutate.storeStatsData(data);
+    adapter(data) {      
+      const adaptedData = LocDataAdapter.parseStoreStatsData(data);
       return adaptedData;
     }
   },
@@ -305,14 +303,14 @@ const HomeView = () => {
           })}
         </KpiGrid>
 
-        <div style={{height:"190px",width:"100%",marginBottom:"60px",background:"red"}}></div>
+        <div style={{height:"75px",width:"100%"}}></div>
 
       </ScrollView>
 
       
     
     <div className={styles.bottom_nav}>
-      <button data-action="reports" className={`${styles.nav_item} ${styles.active}`} onClick={(e) => onNavBarClick(e,"reports")}>
+      <button data-action="/report/groups" className={`${styles.nav_item} ${styles.active}`} onClick={(e) => onNavBarClick(e,"/report/groups")}>
           <div className={styles.nav_icon}><SolidReportIcon size={32} /></div>          
           <div className={styles.nav_label}>Reports</div>
       </button>

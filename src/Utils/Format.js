@@ -212,7 +212,7 @@ class FormatUtil {
         return `$${this.stringAsMoney(value)}`;
       case "number":
         return value;
-      case "shorNumber":
+      case "shortNumber":
         return this.moneyAbbreviation(value);
       case "shortCurrency":
         return `$${this.moneyAbbreviation(value)}`;

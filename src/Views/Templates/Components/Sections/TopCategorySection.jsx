@@ -4,12 +4,12 @@ import styles from './sections.module.css';
 import Card from '../Cards/Card';
 
 
-const CategorySectionItem = ({name,subtitle,value,delta="",...props}) => {
+const CategorySectionItem = ({name,subtitle="",value,delta="",...props}) => {
   return (
     <div className={styles.category_item}>
       <div className={styles.category_info}>
           <div className={styles.category_name}>{name}</div>
-          <div className={styles.category_subtitle}>{subtitle}</div>
+          {subtitle !== "" && <div className={styles.category_subtitle}>{subtitle}</div>}
       </div>
       <div className={styles.category_metric}>
           <div className={styles.category_value}>${value}</div>

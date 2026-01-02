@@ -2,11 +2,12 @@
 .scroll_selector {
   display: flex;
   gap: 8px;
-  align-items: center;
-  margin-bottom: 24px;
+  align-items: center;  
   overflow-x: auto;    
+  overflow-y: hidden;
   animation: fadeIn 0.8s ease 0.2s both;
   scrollbar-width: none;
+  padding: .5rem 0 1.5rem 0;
 }
 
 .scroll_selector::-webkit-scrollbar {

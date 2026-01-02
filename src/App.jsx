@@ -12,9 +12,10 @@ import ProtectedRoute from "./Views/ProtectedRoute";
 import ItemReportsView from "./Views/ItemReports/ItemReportsView";
 import { AppContextProvider } from "./Contexts/AppContext";
 import StoreSelectorView from "./Views/StoreSelector/StoreSelectorView";
-import StoreReportsView from "./Views/StoreReports/StoreReportsView";
+// import StoreReportsView from "./Views/StoreReports/StoreReportsView";
 import ManageUserView from "./Views/ManageUserUpdate/ManageUserView";
-import ReportView from "./Views/Report/ReportView";
+import ReportGroupsView from "./Views/Report/ReportGroupsView";
+import StoreReportsView from "./Views/Reports/StoreReports/StoreReportsView";
 
 // import Api, { ApiClient, ApiClientProvider, getApiEndpoint } from "./Api/Api";
 
@@ -53,16 +54,16 @@ const App = () => {
           element: <StoreSelectorView />
         },
         {
-          path: "/reports/item",
+          path: "/report/items",
           element: <ItemReportsView />
         },
         {
-          path: "/reports/store",
+          path: "/report/stores",
           element: <StoreReportsView />
         },
         {
-          path: "/reports",
-          element: <ReportView />
+          path: "/report/groups",
+          element: <ReportGroupsView />
         },
         {
           path: "/stores",
@@ -73,19 +74,19 @@ const App = () => {
           element: <div style={{color:"snow"}}>Settings View</div>
         },
         {
-          path: "/reports/customer",
+          path: "/reports/customers",
           element: <StoreReportsView />
         },
         {
-          path: "/reports/cashier",
+          path: "/reports/cashiers",
           element: <StoreReportsView />
         },
         {
-          path: "/reports/favorites",
+          path: "/report/favorites",
           element: <StoreReportsView />
         },
         {
-          path: "/reports/builder",
+          path: "/report/builder",
           element: <StoreReportsView />
         }
       ]
@@ -106,9 +107,7 @@ const App = () => {
                   <div className="App">
                     <div className='app__main__view'>
                       <RouterProvider router={router} />
-                      <LoaderModal />                      
-                      {/* <LoginView /> */}
-                      {/* <MainView /> */}
+                      <LoaderModal />
                     </div>      
                   </div>
                 </QueryClientProvider>

@@ -40,7 +40,7 @@ const ManageUserView = ({ ...props }) => {
 
       <UsersDetail />
 
-      <View.BottomNav fixed={false}>
+      <View.BottomNav>
         <BottomNav.Button onClick={onBottomNavClick} action={"/"} icon={<HomeIcon size={32} />} label="Home" />
         <BottomNav.Button onClick={onBottomNavClick} action={"add"} icon={<AddNewUserIcon size={32} />} label="Add" />
       </View.BottomNav>

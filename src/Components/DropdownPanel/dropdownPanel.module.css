@@ -16,7 +16,7 @@
   transform-origin: top center;
   transform: scale(0);
   transition: transform .3s ease-in-out, opacity .3s ease-in-out;
-  z-index: 10;
+  z-index: 11;
 }
 .dropdown_panel
 .panel_container {
