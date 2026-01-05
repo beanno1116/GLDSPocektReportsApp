@@ -16,6 +16,8 @@ import StoreSelectorView from "./Views/StoreSelector/StoreSelectorView";
 import ManageUserView from "./Views/ManageUserUpdate/ManageUserView";
 import ReportGroupsView from "./Views/Report/ReportGroupsView";
 import StoreReportsView from "./Views/Reports/StoreReports/StoreReportsView";
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import StoreLoyaltyDetails from "./Views/Reports/StoreReports/StoreLoyaltyDetails";
 
 // import Api, { ApiClient, ApiClientProvider, getApiEndpoint } from "./Api/Api";
 
@@ -23,7 +25,13 @@ import StoreReportsView from "./Views/Reports/StoreReports/StoreReportsView";
 // register username password accessCode
 // users post 
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000
+    }
+  }
+});
 const apiClient = new ApiClient(getApiEndpoint(false));
 
 const AppViewOutlet = ({children}) => {
@@ -60,6 +68,10 @@ const App = () => {
         {
           path: "/report/stores",
           element: <StoreReportsView />
+        },
+        {
+          path: "/report/stores/loyalty",
+          element: <StoreLoyaltyDetails />
         },
         {
           path: "/report/groups",
@@ -104,6 +116,7 @@ const App = () => {
           <AuthProvider>
             <AuthActionsProvider>          
                 <QueryClientProvider client={queryClient}>
+                   <ReactQueryDevtools initialIsOpen={false} />
                   <div className="App">
                     <div className='app__main__view'>
                       <RouterProvider router={router} />

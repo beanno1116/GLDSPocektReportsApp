@@ -1,5 +1,6 @@
 /* Store Selector */
 .scroll_selector {
+  position: relative;
   display: flex;
   gap: 8px;
   align-items: center;  
@@ -8,6 +9,8 @@
   animation: fadeIn 0.8s ease 0.2s both;
   scrollbar-width: none;
   padding: .5rem 0 1.5rem 0;
+  mask-image: linear-gradient(to left, transparent 0%, black 10%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to left, transparent 0%, black 10%, black 90%, transparent 100%);
 }
 
 .scroll_selector::-webkit-scrollbar {

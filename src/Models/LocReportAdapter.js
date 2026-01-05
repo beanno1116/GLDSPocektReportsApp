@@ -1,31 +1,9 @@
-import { m } from "motion/react";
 import { calculatePercentChange, removeAllSpaces } from "../Utils/Utils";
+import DepartmentRecord from './DepartmentRecord';
 import DateUtility from "../Utils/DateUtils";
+import StatRecord from "./StatRecord";
+import Calculate from "../Utils/Caclulate";
 
-const exceptionNameMappings = {
-  "cancelprev.item": "Cancel prev item",
-  "cancelorder": "Canceled orders",
-  "refundkeyinfo": "Refunds",
-  "taxexempt1": "Tax 1 Exemptions"
-}
-const salesGroups = {
-  nrgt: "sales",
-  sales: "sales",
-  globaldiscount: "discounts",
-  taxes: "taxes",
-  plus: "plus",
-  received: "received",
-  itemdiscount: "discounts",
-  information: "information",
-  markdowns: "markdowns",
-  poschecks: "backups",
-  exceptions: "exceptions",
-  statistics: "transaction",
-  loyalty: "loyalty",
-  buying: "purchasing",
-  inventory: "inventory",
-  costofgoods: "sales"
-}
 
 const salesMapping = {
   "totalsales": {
@@ -51,6 +29,21 @@ const salesMapping = {
   "costofgoods": {
     key: "costOfGoodsSold",
     name: "COG Sold",
+    group: "sales"
+  },
+  "discountablesales": {
+    key: "discountableSales",
+    name: "Discountable Sales",
+    group: "sales"
+  },
+  "foodstampable": {
+    key: "foodstampable",
+    name: "Foodstampable",
+    group: "sales"
+  },
+  "wicable": {
+    key: "wicable",
+    name: "Wicable",
     group: "sales"
   }
 }
@@ -154,6 +147,40 @@ const transactionMapping = {
     group: "transaction"
   }
 }
+const discountMapping = {
+  "globaldiscount": {
+    key: "globalDiscount",
+    name: "Global Discount",
+    group: "discount"
+  },
+  "customerdiscount": {
+    key: "customerDiscount",
+    name: "Customer Distcount",
+    group: "discount"
+  }
+}
+const markdownMapping = {
+  "salesduringsaleperiod": {
+    key: "salesPeriodSales",
+    name: "Sales During Sales Period",
+    group: "markdown"
+  },
+  "salesduringtprperiod": {
+    key: "tprPeriodSales",
+    name: "Sales During TPR Period",
+    group: "markdown"
+  },
+  "salesduringinstoreperiod": {
+    key: "instorePeriodSales",
+    name: "Sales During Instore Period",
+    group: "markdown"
+  },
+  "temporarymarkdown": {
+    key: "temporaryMarkDown",
+    name: "Temporay Markdowns",
+    group: "markdown"
+  },
+}
 
 const storeReportData = {
   loyalty: {
@@ -197,10 +224,36 @@ const storeReportData = {
 
 
 const getMapping = (key) => {
-  const mappings = {...salesMapping,...loyaltyMapping,...couponMapping,...taxMapping,...exceptionMapping,...transactionMapping};
+  const mappings = {...salesMapping,...loyaltyMapping,...couponMapping,...taxMapping,...exceptionMapping,...transactionMapping,...discountMapping,...markdownMapping};
+  const map = mappings[key];
+  if (map === undefined){
+    return {
+      group: "others"
+    }
+  }  
   return mappings[key]
 }
 
+const findDepartment = (depts,id) => {
+  if (!Array.isArray(depts)) throw new TypeError("depts not of type array");
+  return depts.find(dept => parseInt(dept.departmentId) === parseInt(id));
+}
+
+const parseStat = (statCollection,stat) => {
+  try {
+    // const objCopy = structuredClone(obj);
+    return [...statCollection,stat];
+    // if (group === "others"){
+    //   let othersArr = obj.length > 0 ? [...obj,stat] : [stat]; // update the stat group others array
+    //   return othersArr;
+    // }else{
+    //   objCopy[key] = stat; // add a property to the statGroup obj
+    // }
+    // return objCopy;
+  } catch (error) {
+    console.error(error.message);
+  }
+}
 
 class LocReportAdapter {
 
@@ -209,55 +262,55 @@ class LocReportAdapter {
 
       if (!Array.isArray(data)) throw new TypeError("data not of type array");
 
+      // New Map to collect the stat group objects while parsing
       const stateGroupMap = new Map();
 
-
+      // Iterating through the data to parse the store stats from LOC POS
       data.forEach(row => {
 
-        const {description,quantity,weight,total} = row;
+        const {description,quantity,weight,total,group} = row;
 
+        // Use the row object description as a key to find a mapping removing the 
+        // spaces and making it lowercase
         const mapKey = removeAllSpaces(description.toLowerCase());
 
+        /*
+          Get mapping for stat. If mapping does not 
+          exist, returns {key:"",group:"others"}
+        */
         const mapping = getMapping(mapKey);
 
-        if (mapping === undefined) return;
         
-        let statGroup = mapping.group;
-        let statKey = mapping.key;
+        let statGroup = mapping.group; // stat group from mapping
+        let statKey =  mapping?.key ? mapping.key : group; // stat key from mapping
+        let statName = mapping?.name ? mapping.name : description; // stat name from mapping
+        let statGroupArr = [];
+
+        // Create a new StatRecord object
+        const newStat = new StatRecord({quantity,weight,total,group:statGroup,description:statName,lookup:statKey});
         
-        
+        // Check if an entry in the statGroupMap exists
         if (stateGroupMap.has(statGroup)){
 
-          let groupObj = stateGroupMap.get(statGroup);
+          // Group exists in the statGroupMap
+          statGroupArr = stateGroupMap.get(statGroup);
 
-          groupObj[statKey] = {
-            description: mapping.name,
-            group: statGroup,
-            quantity,
-            weight,
-            total
-          }   
-
-          stateGroupMap.set(statGroup,groupObj);
-
+          statGroupArr = parseStat(statGroupArr,newStat);
+          
+          stateGroupMap.set(statGroup,statGroupArr);
+          
         }else {
-
-          const groupObj = {};
-
-          groupObj[mapping.key] = {
-            description: mapping.name,
-            group: statGroup,
-            quantity,
-            weight,
-            total
-          }        
-
-          stateGroupMap.set(statGroup,groupObj);
+          // Group does not exist in the statGroupMap
+    
+          statGroupArr = parseStat([],newStat);
+          
+          stateGroupMap.set(statGroup,statGroupArr);
 
         }
 
       });
-
+      
+      let temp =  Object.fromEntries(stateGroupMap);
       return Object.fromEntries(stateGroupMap);
       
     } catch (error) {
@@ -319,106 +372,153 @@ class LocReportAdapter {
 
   parseHomeViewData(data){
     try {
-      debugger;
       if (!Array.isArray(data)) throw new TypeError("parameter not of type array");
       
       const todayStats = data[0];
       const prevStats = data[1];
-      const todayDepts = data[2];
-      const prevDepts = data[3];
-      debugger;
-      const homeViewData = {
-        stats: [
-          {
+      const todayDepts = data[2].map(d => new DepartmentRecord(d));
+      const prevDepts = data[3].map(d => new DepartmentRecord(d));
+
+      const parseSales = (salesData,compareData) => {
+        const salesFilter = {
+          totalSales: {
             title: "Revenue",
             format: "shortCurrency",
-            value: todayStats.sales.totalSales.total,
-            delta: calculatePercentChange((prevStats.sales.totalSales.total,todayStats.sales.totalSales.total))
+            property: "total"
           },
-          {
-            title: "Transactions",
-            format: "shortNumber",
-            value: todayStats.sales.totalSales.quantity,
-            delta: calculatePercentChange(prevStats.sales.totalSales.quantity,todayStats.sales.totalSales.quantity)
+          costOfGoodsSold: {
+            title: "COG Sold",
+            format: "shortCurrency",
+            property: "total"
           },
-          {
+          margin: {
+            title:"Margin",
+            format: "percentage",    
+          },
+          avgBasket: {
             title: "Avg Basket",
-            format: "currency",
-            value: todayStats.sales.totalSales.total / todayStats.sales.totalSales.quantity,
-            delta: calculatePercentChange(prevStats.sales.totalSales.total / prevStats.sales.totalSales.quantity,todayStats.sales.totalSales.total / todayStats.sales.totalSales.quantity)
-          },
-          {
-            title: "Margin",
-            format: "percentage",
-            value: "28.4%",
-            delta: "↓ 1.2%"
+            format: "currency"
           }
-        ],
-        exceptions: [
-          {
-            title: todayStats.exception.cancelOrder.description,
+        }
+        const salesStatArray = [];
+        
+        let totalSalesStat = {};
+        let totalCostOfGoodsSoldStat = {};
+
+        salesData.forEach(data => {
+          if (data.lookup === "totalSales") {
+            totalSalesStat = data;
+          }
+          if (data.lookup === "costOfGoodsSold") {
+            totalCostOfGoodsSoldStat = data;
+          }
+          const statMeta = salesFilter[data.lookup];
+          if (statMeta){
+            const previousStat = compareData.filter(cd => cd.lookup === data.lookup)[0];
+            const value = data[statMeta.property];
+            salesStatArray.push({
+              title: statMeta.title,
+              format: statMeta.format,
+              value: value,
+              delta: Calculate.percentChange(previousStat[statMeta.property],value)
+            })
+          }
+        })
+        
+        const prevTotalSalesStat = compareData.filter(cd => cd.lookup === totalSalesStat.lookup)[0];
+        const prevTotalCostOfGoodsSoldStat = compareData.filter(cd => cd.lookup === totalCostOfGoodsSoldStat.lookup)[0];
+        const marginStatMeta = salesFilter.margin;
+        const avgBasketStatMeta = salesFilter.avgBasket;
+        salesStatArray.push({
+          title: avgBasketStatMeta.title,
+          format: avgBasketStatMeta.format,
+          value: totalSalesStat.total / totalSalesStat.quantity,
+          delta: Calculate.percentChange(prevTotalSalesStat.total / prevTotalSalesStat.quantity,totalSalesStat.total / totalSalesStat.quantity)
+        })
+        salesStatArray.push({
+          title: marginStatMeta.title,
+          format: marginStatMeta.format,
+          value: Calculate.margin(totalSalesStat.total,totalCostOfGoodsSoldStat.total),
+          delta: Calculate.percentChange(Calculate.margin(prevTotalSalesStat.total,prevTotalCostOfGoodsSoldStat.total),Calculate.margin(totalSalesStat.total,totalSalesStat.total))
+        })
+        return salesStatArray;
+      }
+      const parseExceptions = (exceptionData,compareData) => {
+        const exceptionFilter = {
+          cancelPrevItem: {
+            title: "Cancel Prev Item",
             format: "shortNumber",
-            value: todayStats.exception.cancelOrder.quantity,
-            delta: "↓ 1.2%"
+            property: "quantity"
           },
-          {
-            title: todayStats.exception.noSales.description,
+          refunds: {
+            title: "Refunds",
             format: "shortNumber",
-            value: todayStats.exception.noSales.total,
-            delta: "↓ 1.2%"
+            property: "quantity"
           },
-          {
-            title: todayStats.exception.cancelPrevItem.description,
+          noSales: {
+            title:"No Sales",
             format: "shortNumber",
-            value: todayStats.exception.cancelPrevItem.quantity,
-            delta: "↓ 1.2%"
+            property: "quantity"    
           },
-          {
-            title: todayStats.exception.refunds.description,
+          cancelOrder: {
+            title: "Canceled Orders",
             format: "shortNumber",
-            value: todayStats.exception.refunds.total,
-            delta: "↓ 1.2%"
-          },
-        ]
-        // exceptions: todayStats.exceptions.map(exception => {          
-        //   return {
-        //     title: exceptionNameMappings[exception.description.toLowerCase().replace(/ /g, '')],
-        //     format: "shortNumber",
-        //     value: exception.total,
-        //     delta: "↓ 1.2%"
-        //   }
-        // })        
+            property: "quantity"
+          }
+        }
+
+        debugger;
+        const exceptionStatsArray = [];
+        exceptionData.forEach(data => {
+          const statMeta = exceptionFilter[data.lookup];
+          if (statMeta){
+            exceptionStatsArray.push({
+              title: statMeta.title,
+              format: statMeta.format,
+              value: data[statMeta.property],
+              quantity: data.quantity,
+              delta: Calculate.percentChange(data.quantity,data.quantity)
+            })
+          }
+        })
+        return exceptionStatsArray;
+      }
+
+      const homeViewData = {
+        stats: parseSales(todayStats.sales,prevStats.sales),
+        exceptions: parseExceptions(todayStats.exception,prevStats.exception)     
       }
 
 
       const departmentArray = [];
 
       todayDepts.forEach((department,index) => {
-        const {description,quantity,total,weight} = department;
-        const prevDept = prevDepts[index];
+        const {departmentId,description,quantity,total,weight} = department;
+        const prevDept = findDepartment(prevDepts,departmentId);
         let arrObj = {
           description: description,
           quantity: quantity,
-          prevQuantity: prevDept.quantity,
-          quantityDelta: calculatePercentChange(prevDept.quantity,quantity),
           total: department.total,
-          prevTotal: prevDept.total,
-          totalDelta: calculatePercentChange(prevDept.total,total),
           weight: weight,
-          prevWeight: prevDept.weight,
           weightDelta: weight,
+          prevTotal: prevDept ? prevDept.total : 0.00,
+          prevQuantity: prevDept ? prevDept.quantity : 0,
+          prevWeight: prevDept ? prevDept.weight : 0.00,
+          quantityDelta: prevDept ? calculatePercentChange(prevDept.quantity,quantity) : 0,
+          totalDelta: prevDept ? calculatePercentChange(prevDept.total,total) : 0.00,
         }
         departmentArray.push(arrObj);
       });
 
       homeViewData.departments = departmentArray;
-
+      debugger;
       return homeViewData;
 
     } catch (error) {
-      
+      console.error(error.message)
     }
   }
+  
 
 }
 

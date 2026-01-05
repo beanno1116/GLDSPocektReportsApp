@@ -39,10 +39,13 @@ export const take = function* (n,iterable){
 }
 
 export const calculatePercentChange = (value,changeValue) => {
+  
   let pct = ((changeValue - value) / value) * 100;
   
   return ((changeValue - value) / value) * 100;
 }
+
+
 
 export const removeAllSpaces = (string) => {
   return string.replace(/ /g, '');

@@ -71,7 +71,7 @@ const ReportGroupsView = ({ ...props }) => {
 
   return (
     <View>
-      <View.Header showDate={true} title={"Report Groups"} />
+      <View.Header showDate={false} title={"Report Groups"} />
       <ScrollSelector>
         {render.storeSelections()}
       </ScrollSelector>

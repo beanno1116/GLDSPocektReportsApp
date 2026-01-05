@@ -407,7 +407,60 @@
 
 
 
-
+/* Metric Card css styles */
+.metric_card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: 18px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+.metric_card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+}
+.metric_icon {
+  font-size: 28px;
+  margin-bottom: 12px;
+}
+.metric_label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.metric_value {
+  font-size: 32px;
+  font-weight: 800;
+  font-family: 'Space Mono', monospace;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.metric_change {
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.metric_change.positive {
+  color: var(--accent-green);
+}
+.metric_change.negative {
+  color: var(--accent-orange);
+}
+.metric_change.neutral {
+  color: var(--text-secondary);
+}
 
 
 

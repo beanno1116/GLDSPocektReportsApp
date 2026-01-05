@@ -1,7 +1,6 @@
 
 import { useNavigate } from 'react-router';
 import SettingsIcon from '../../../assets/icons/SettingsIcon';
-import ScrollSelector from '../../../Components/ScrollSelector/ScrollSelector';
 import View from '../../Templates/View/View';
 import ScrollView from '../../../Components/ScrollView/ScrollView';
 import KpiGrid from '../../../Components/Grids/KpiGrid';
@@ -14,52 +13,19 @@ import DateUtility from '../../../Utils/DateUtils';
 import { useApiClient } from '../../../Api/Api';
 import { useQueries, useQueryClient } from '@tanstack/react-query';
 import FullScreenLoader from '../../../Components/Loader/FullScreenLoader';
-import { calculatePercentChange } from '../../../Utils/Utils';
 import SolidReportIcon from '../../../assets/icons/SolidReportIcon';
 import DollarSignIcon from '../../../assets/icons/DollarSignIcon';
 import ChartTabView from './Components/ChartTabView';
-import { useRef, useState } from 'react';
-import { div } from 'motion/react-client';
+import { useCallback, useRef, useState } from 'react';
 import RefreshIndicator from '../../../Components/Loader/RefreshIndicator';
+import Calculate from '../../../Utils/Caclulate';
+import WEModal from '../../../Components/WEModal/WEModal';
+import useModal from '../../../Components/WEModal/hooks/useModal';
+import DatePickerModal from '../../../Modals/DatePickerModal';
+import PeriodSelector from '../../../Components/PeriodSelector/PeriodSelector';
+import PerentSignIcon from '../../../assets/icons/PercentSignIcon';
+import ViewModalManager from './Components/ViewModalManager';
 
-const scrollSelectorOptions = [
-  {
-    id: 6,
-    text: "Custom",
-    action: "custom",
-    active: false
-  },
-  {
-    id: 1,
-    text: "Today",
-    action: "today",
-    active: true
-  },
-  {
-    id: 2,
-    text: "Yesterday",
-    action: "prevDay",
-    active: false
-  },
-  {
-    id: 3,
-    text: "Last Week",
-    action: "prevWeek",
-    active: false
-  },
-  {
-    id: 4,
-    text: "Last Month",
-    action: "prevMonth",
-    active: false
-  },
-  {
-    id: 5,
-    text: "Last Year",
-    action: "prevYear",
-    active: false
-  }
-]
 
 const viewQueries = [
   {
@@ -81,144 +47,273 @@ const viewQueries = [
 ]
 
 const viewAdapter = (data) => {
+  
   if (!Array.isArray(data)) throw new TypeError("parameter not of type array");      
   const todayStats = data[0];
   const prevStats = data[1];
+  debugger;
 
-
-  const viewData = {
-    stats: [
-      {
+  const parseSales = (salesData,compareData) => {
+    const salesFilter = {
+      totalSales: {
         title: "Revenue",
         format: "shortCurrency",
-        value: todayStats.sales.totalSales.total,
-        delta: calculatePercentChange((prevStats.sales.totalSales.total,todayStats.sales.totalSales.total))
+        property: "total"
       },
-      {
+      costOfGoodsSold: {
         title: "COG Sold",
         format: "shortCurrency",
-        value: todayStats.sales.costOfGoodsSold.total,
-        delta: calculatePercentChange(prevStats.sales.totalSales.quantity,todayStats.sales.totalSales.quantity)
+        property: "total"
       },
-      {
+      margin: {
+        title:"Margin",
+        format: "percentage",    
+      },
+      avgBasket: {
         title: "Avg Basket",
-        format: "currency",
-        value: todayStats.sales.totalSales.total / todayStats.sales.totalSales.quantity,
-        delta: calculatePercentChange(prevStats.sales.totalSales.total / prevStats.sales.totalSales.quantity,todayStats.sales.totalSales.total / todayStats.sales.totalSales.quantity)
-      },
-      {
-        title: "Margin",
-        format: "percentage",
-        value: parseInt(calculatePercentChange(todayStats.sales.costOfGoodsSold.total,todayStats.sales.totalSales.total)),
-        delta: "↓ 1.2%"
+        format: "currency"
       }
-    ],
-    exceptions: [
-      {
-        title: todayStats.exception.cancelOrder.description,
-        format: "shortNumber",
-        value: todayStats.exception.cancelOrder.quantity,
-        delta: "↓ 1.2%"
+    }
+    const salesStatArray = [];
+    
+    let totalSalesStat = {};
+    let totalCostOfGoodsSoldStat = {};
+
+    salesData.forEach(data => {
+      if (data.lookup === "totalSales") {
+        totalSalesStat = data;
+      }
+      if (data.lookup === "costOfGoodsSold") {
+        totalCostOfGoodsSoldStat = data;
+      }
+      const statMeta = salesFilter[data.lookup];
+      if (statMeta){
+        const previousStat = compareData.filter(cd => cd.lookup === data.lookup)[0];
+        const value = data[statMeta.property];
+        salesStatArray.push({
+          title: statMeta.title,
+          format: statMeta.format,
+          value: value,
+          delta: Calculate.percentChange(previousStat[statMeta.property],value)
+        })
+      }
+    })
+    
+    const prevTotalSalesStat = compareData.filter(cd => cd.lookup === totalSalesStat.lookup)[0];
+    const prevTotalCostOfGoodsSoldStat = compareData.filter(cd => cd.lookup === totalCostOfGoodsSoldStat.lookup)[0];
+    const marginStatMeta = salesFilter.margin;
+    const avgBasketStatMeta = salesFilter.avgBasket;
+    salesStatArray.push({
+      title: avgBasketStatMeta.title,
+      format: avgBasketStatMeta.format,
+      value: totalSalesStat.total / totalSalesStat.quantity,
+      delta: Calculate.percentChange(prevTotalSalesStat.total / prevTotalSalesStat.quantity,totalSalesStat.total / totalSalesStat.quantity)
+    })
+    salesStatArray.push({
+      title: marginStatMeta.title,
+      format: marginStatMeta.format,
+      value: Calculate.margin(totalSalesStat.total,totalCostOfGoodsSoldStat.total),
+      delta: Calculate.percentChange(Calculate.margin(prevTotalSalesStat.total,prevTotalCostOfGoodsSoldStat.total),Calculate.margin(totalSalesStat.total,totalSalesStat.total))
+    })
+    return salesStatArray;
+  }
+
+  const parseLoyalty = (loyaltyData,compareData) => {
+    const salesFilter = {
+      customers: {
+        title: "Customers",
+        format: "shortCurrency",
+        property: "total"
       },
-      {
-        title: todayStats.exception.noSales.description,
-        format: "shortNumber",
-        value: todayStats.exception.noSales.total,
-        delta: "↓ 1.2%"
-      },
-      {
-        title: todayStats.exception.cancelPrevItem.description,
-        format: "shortNumber",
-        value: todayStats.exception.cancelPrevItem.quantity,
-        delta: "↓ 1.2%"
-      },
-      {
-        title: todayStats.exception.refunds.description,
-        format: "currency",
-        value: todayStats.exception.refunds.total,
-        delta: "↓ 1.2%"
-      },
-    ],
-    loyalty: [
-      {
-        title: "Points Given",
-        format: "shortNumber",
-        value: todayStats.loyalty.pointsGiven.quantity,
-        delta: "↓ 1.2%"
-      },
-      {
-        title: "Points Redeemed",
-        format: "shortNumber",
-        value: todayStats.loyalty.pointsRedeemed.quantity,
-        delta: "↓ 1.2%"
-      },
-      {
-        title: "Transactions",
-        format: "shortNumber",
-        value: todayStats.loyalty.customers.quantity,
-        delta: "↓ 1.2%"
-      },
-      {
+      items: {
         title: "Items",
         format: "shortNumber",
-        value: todayStats.loyalty.items.quantity.toFixed(0),
-        delta: "↓ 1.2%"
+        property: "quantity"
       },
-    ],
-    coupon: [
-      {
-        title: todayStats.coupon.storeCoupon.description,        
-        value: todayStats.coupon.storeCoupon.total,
-        quantity: `${todayStats.coupon.storeCoupon.quantity} redeemed`,
-        delta: "↓ 1.2%"
+      pointsGiven: {
+        title:"Points Given",
+        format: "shortNumber",
+        property: "quantity"    
       },
-      {
-        title: todayStats.coupon.eStoreCoupon.description,        
-        value: todayStats.coupon.eStoreCoupon.total,
-        quantity: `${todayStats.coupon.eStoreCoupon.quantity} redeemed`,
-        delta: "↓ 1.2%"
+      pointsRedeemed: {
+        title: "Points Redeemed",
+        format: "shortNumber",
+        property: "quantity"
       }
-    ],
-    tax: [
-      {
-        title: todayStats.tax.tax.description,        
-        value: todayStats.tax.tax.total,
-        quantity: todayStats.tax.tax.quantity,
-        delta: "↓ 1.2%"
-      },
-      {
-        title: todayStats.tax.taxable.description,        
-        value: todayStats.tax.taxable.total,
-        quantity: todayStats.tax.taxable.quantity,
-        delta: "↓ 1.2%"
+    }
+
+    const loyaltyStatArray = [];
+    loyaltyData.forEach(data => {
+      const statMeta = salesFilter[data.lookup];
+      if (statMeta){
+        loyaltyStatArray.push({
+          title: statMeta.title,
+          format: statMeta.format,
+          value: data[statMeta.property],
+          delta: data[statMeta.property]
+        })
       }
-    ],
-    transaction: [
-      {
-        title: todayStats.transaction.itemsScanned.description,
-        format: "shortNumber",
-        value: todayStats.transaction.itemsScanned.quantity,
-        delta: "↓ 1.2%"
+    })
+
+    return loyaltyStatArray;
+  }
+
+  const parseCoupons = (couponData,compareData) => {
+    const couponFilter = {
+      storeCoupon: {
+        title: "Store Coupons",
+        format: "shortCurrency",
+        property: "total"
       },
-      {
-        title: todayStats.transaction.items.description,
-        format: "shortNumber",
-        value: todayStats.transaction.items.quantity,
-        delta: "↓ 1.2%"
+      eStoreCoupon: {
+        title: "E Store Coupon",
+        format: "currency",
+        property: "total"
       },
-      {
-        title: todayStats.transaction.customers.description,
-        format: "shortNumber",
-        value: todayStats.transaction.customers.quantity,
-        delta: "↓ 1.2%"
+      venderCoupon: {
+        title:"Vendor Coupons",
+        format: "currency",
+        property: "total"    
       },
-      {
-        title: todayStats.transaction.salesKeyed.description,
-        format: "shortNumber",
-        value: todayStats.transaction.salesKeyed.quantity,
-        delta: "↓ 1.2%"
+      eVendorCoupon: {
+        title: "E Vendor Coupon",
+        format: "currency",
+        property: "total"
+      }
+    }
+
+    const couponStatsArray = [];
+
+    couponData.forEach(coupon => {
+      const statMeta = couponFilter[coupon.lookup];
+      couponStatsArray.push({
+        title: statMeta.title,
+        format: statMeta.format,
+        value: coupon[statMeta.property],
+        quantity: coupon.quantity,
+        delta: coupon[statMeta.propterty]
+      })
+    })
+
+    return couponStatsArray;
+  }
+
+  const parseTaxes = (taxData,compareData) => {
+    const taxFilter = {
+      tax: {
+        title: "Tax",
+        format: "currency",
+        property: "total"
       },
-    ]
+      taxable: {
+        title: "Taxable",
+        format: "shortCurrency",
+        property: "total"
+      }
+    }
+
+    const taxStatsArray = [];
+
+    taxData.forEach(tax => {
+      const statMeta = taxFilter[tax.lookup];
+      taxStatsArray.push({
+        title: statMeta.title,
+        format: statMeta.format,
+        value: tax[statMeta.property],
+        quantity: parseInt(tax.quantity),
+        delta: Calculate.percentChange(compareData[statMeta.property],tax[statMeta.property]),
+      })
+    })
+
+    return taxStatsArray;
+  }
+
+  const parseTransaction = (transData,compareData) => {
+    const transFilter = {
+      customers: {
+        title: "Customers",
+        format: "shortNumber",
+        property: "quantity"
+      },
+      items: {
+        title: "Items",
+        format: "shortNumber",
+        property: "quantity"
+      },
+      itemsScanned: {
+        title:"Items Scanned",
+        format: "shortNumber",
+        property: "quantity"    
+      },
+      salesKeyed: {
+        title: "Sales Keyed",
+        format: "shortNumber",
+        property: "quantity"
+      }
+    }
+
+    const transStatsArray = [];
+
+    transData.forEach(data => {
+      const statMeta = transFilter[data.lookup];
+      if (statMeta){
+        transStatsArray.push({
+          title: statMeta.title,
+          format: statMeta.format,
+          value: data[statMeta.property],
+          quantity: data.quantity,
+          delta: data.quantity
+        })
+      }
+    })
+    return transStatsArray;
+  }
+
+  const parseExceptions = (exceptionData,compareData) => {
+     const exceptionFilter = {
+      cancelPrevItem: {
+        title: "Cancel Prev Item",
+        format: "shortNumber",
+        property: "quantity"
+      },
+      refunds: {
+        title: "Refunds",
+        format: "shortNumber",
+        property: "quantity"
+      },
+      noSales: {
+        title:"No Sales",
+        format: "shortNumber",
+        property: "quantity"    
+      },
+      cancelOrder: {
+        title: "Canceled Orders",
+        format: "shortNumber",
+        property: "quantity"
+      }
+    }
+
+    const exceptionStatsArray = [];
+    exceptionData.forEach(data => {
+      const statMeta = exceptionFilter[data.lookup];
+      exceptionStatsArray.push({
+        title: statMeta.title,
+        format: statMeta.format,
+        value: data[statMeta.property],
+        quantity: data.quantity,
+        delta: data.quantity
+      })
+    })
+    return exceptionStatsArray;
+  }
+
+  const viewData = {
+    sales: parseSales(todayStats.sales,prevStats.sales),
+    exceptions: parseExceptions(todayStats.exception,prevStats.exception),
+    loyalty: parseLoyalty(todayStats.loyalty,prevStats.loyalty),
+    coupon: parseCoupons(todayStats.coupon,prevStats.coupon),
+    tax: parseTaxes(todayStats.tax,prevStats.tax),
+    transaction: parseTransaction(todayStats.transaction,prevStats.transaction)
   }
   return viewData;
 }
@@ -227,22 +322,52 @@ const useStoreReportsView = () => {
   const api = useApiClient();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const {modalState,toggleModal} = useModal();
 
 
-  const periodRef = useRef("today");
+  const currentPeriod = useRef("today");
+  const dateLockRef = useRef(false);
 
   const getPeriodDateRange = (key) => {
-    const selectedPeriod = periodRef.current;
+    const isDateLocked = dateLockRef.current;
+    let selectedPeriod = currentPeriod.current;
+
+    if (isDateLocked) {
+      const lockedDateRange = DateUtility.getDateAtPeriodInterval(selectedPeriod,new Date());
+      lockedDateRange.startDate = DateUtility.toRequestDateFormat(lockedDateRange.startDate);
+      lockedDateRange.endDate = DateUtility.toRequestDateFormat(lockedDateRange.endDate);
+      return lockedDateRange;
+    }
+
+
+    
+
+    if (key === "past"){
+      if (selectedPeriod === "prevWeek"){
+        selectedPeriod = "week";
+      }
+      if (selectedPeriod === "today"){
+        selectedPeriod = "prevDay";
+      }
+      if (selectedPeriod === "prevDay"){
+        selectedPeriod = "today";
+      }
+      if (selectedPeriod === "prevMonth"){
+        selectedPeriod = "month";
+      }
+    }
+    
+
     const dateRange = DateUtility.getDateForPeriod(selectedPeriod);
     dateRange.startDate = Format.toRequestDateFormat(dateRange.startDate);
     dateRange.endDate = Format.toRequestDateFormat(dateRange.endDate);
-    debugger;
+    // 
     return dateRange;
   }
   
   const results = useQueries({
     queries: viewQueries.map(query => ({
-      queryKey: [`${query.action}_${query.key}`,"dfdd44e8-be22-43ef-8313-95f2d1904566"],
+      queryKey: [`${query.action}_${query.key}`,currentPeriod.current,"dfdd44e8-be22-43ef-8313-95f2d1904566"],
       queryFn: async () => {   
         
         const paramObj = {
@@ -250,8 +375,8 @@ const useStoreReportsView = () => {
           agentString: "dfdd44e8-be22-43ef-8313-95f2d1904566",
           posFields: getPeriodDateRange(query.key)
         }  
-        const response = await api.post("data",paramObj,{...api.headers.applicationJson}); 
-        
+        const response = await api.post("data",paramObj,{...api.headers.applicationJson});
+        debugger;
         // const response = await api.post("data",{action:query.action,agentString:"dfdd44e8-be22-43ef-8313-95f2d1904566"},{...api.headers.applicationJson}); 
         if (response.success){
           const adaptedData = query.adapter(response.data);
@@ -270,7 +395,7 @@ const useStoreReportsView = () => {
         isError: results.some(r => r.isError),
         refetchAll: () => {
           viewQueries.forEach(query => {
-            queryClient.invalidateQueries({queryKey:[`${query.action}_${query.key}`,"dfdd44e8-be22-43ef-8313-95f2d1904566"]})
+            queryClient.invalidateQueries({queryKey:[`${query.action}_${query.key}`,currentPeriod.current,"dfdd44e8-be22-43ef-8313-95f2d1904566"]})
           })
         }
       };
@@ -281,48 +406,43 @@ const useStoreReportsView = () => {
     navigate("/report/groups",{viewTransition:true});
   }
 
-  const onPeriodButtonClick = (e,period) => {    
+  const onDateLockClick = (e,isLocked) => {
+    dateLockRef.current = isLocked;
+  }
+
+  const onPeriodChange = useCallback((e,period) => {  
+    e.stopPropagation();
+    e.preventDefault(); 
+    if (period === "custom"){
+      toggleModal();
+      currentPeriod.current = period;    
+      return;
+    }
     e.currentTarget.scrollIntoView({
       block: 'start',
       inline: 'center',
       behavior: 'smooth' 
     });    
-    periodRef.current = period;    
     results.refetchAll();
-   }
+    currentPeriod.current = period;    
+   },[results,toggleModal])
 
-  const renderPeriodOptions = () => {
-    return scrollSelectorOptions.map((period,index) => {              
-      return (
-        <ScrollSelector.Item 
-          key={period.id} 
-          id={period.action} 
-          active={periodRef.current === period.action ? true : false} 
-          text={period.text} 
-          onClick={(e) => onPeriodButtonClick(e,period.action)} 
-        />
-      )
-    })
-  }
 
   return {
+    navigate,
     results,
+    modalState,
+    toggleModal,
+    onDateLockClick,
     onNavbarClick,
-    render: {
-      periodOptions: renderPeriodOptions
-    }
+    onPeriodChange
   }
 }
 
 
 
 const StoreReportsView = ({ ...props }) => {
-  const {results,onNavbarClick,render} = useStoreReportsView();
-  
-  
-
-
-
+  const {navigate,results,onNavbarClick,modalState,toggleModal,onPeriodChange,onDateLockClick} = useStoreReportsView();
 
 
   if (results.isLoading){
@@ -340,23 +460,21 @@ const StoreReportsView = ({ ...props }) => {
   }
 
   
-  const {coupon,stats,tax,exceptions,loyalty,transaction} = viewAdapter(results.viewData);
+  const {coupon,sales,tax,exceptions,loyalty,transaction} = viewAdapter(results.viewData);
 
-  const onDateLockClick = (e,isLocked) => {
-    console.log(isLocked);
+  const onViewAllClick = (e,action) => {
+    debugger;
+    navigate(action,{viewTransition:true});
+
   }
 
   return (
     <View>
       <RefreshIndicator when={results.isFetching} />   
       <View.Header showDate={true} title={"Store Report"} onClick={onDateLockClick}/>
-        
-        <ScrollSelector>
-          {
-           render.periodOptions()
-          }
-        </ScrollSelector>
-        
+
+        <PeriodSelector onClick={onPeriodChange}/>
+
         <ScrollView>
 
 
@@ -365,19 +483,26 @@ const StoreReportsView = ({ ...props }) => {
 
           <View.SectionTitle m='.5rem 0'>General</View.SectionTitle>
           <KpiGrid>
-            {stats.map(stat => {
+            {sales.length === 0 && <div>No data found</div>}
+            {sales.map(stat => {
               return (
-                <KpiGrid.SummaryItem icon={<DollarSignIcon size={24} />} label={stat.title} value={Format.string(stat.value,stat.format)}/>
+                <KpiGrid.SummaryItem 
+                  icon={stat.format === "percentage" ? <PerentSignIcon size={20} /> : <DollarSignIcon size={24} />} 
+                  label={stat.title} 
+                  value={stat.value} 
+                  type={stat.format} 
+                  subValue={stat.delta}/>
               )
             })}
           </KpiGrid>
 
-          <View.SectionHeader m='.5rem 0' title={"Loyalty"} />
+          <View.SectionHeader m='.5rem 0' title={"Loyalty"} viewAll={onViewAllClick} action="/report/stores/loyalty"/>
           <KpiGrid>
+            {loyalty.length === 0 && <div>No data found!</div>}
             {
               loyalty.map(item => {
                 return (
-                  <KpiGrid.Item title={item.title} value={Format.string(item.value,item.format)}/>
+                  <KpiGrid.Item title={item.title} value={item.value} subValue={item.delta} format={item.format} type={item.format} />
                 )
               })
             }
@@ -427,7 +552,7 @@ const StoreReportsView = ({ ...props }) => {
             {
               transaction.map(item => {
                 return (
-                  <KpiGrid.Item title={item.title} value={Format.string(item.value,item.format)}/>
+                  <KpiGrid.Item title={item.title} value={item.value} type={item.format} />
                 )
               })
             }      
@@ -441,9 +566,7 @@ const StoreReportsView = ({ ...props }) => {
 
           <div style={{height:"75px",width:"100%"}}></div>
         </ScrollView>
-        
-       
-       
+
        <View.BottomNav>
           <View.BottomNav.Button action="/report/groups" onClick={onNavbarClick} icon={<SolidReportIcon size={36} />}>Home</View.BottomNav.Button>
           {/* <View.BottomNav.Button icon={<StoreIcon size={32}/>}>Stores</View.BottomNav.Button> */}
@@ -452,6 +575,10 @@ const StoreReportsView = ({ ...props }) => {
           <View.BottomNav.Button icon={<SettingsIcon size={32} />}>Settings</View.BottomNav.Button>
         </View.BottomNav>
 
+      <WEModal config={{showCloseButton:false}} isOpen={modalState} toggle={()=> toggleModal()}>
+       <DatePickerModal onClose={() => toggleModal()}/>
+       {/* <ViewModalManager modal={"loyalty"} /> */}
+      </WEModal>
     </View>
   );
 }

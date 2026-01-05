@@ -65,6 +65,16 @@ class DateUtils {
       console.error(error.message);
     }
   }
+  setWeekBack(date,week=1){
+    try {
+      if (!this.#isInstanceOfDate(date)) throw new TypeError("paramater is not of type Date");
+      const dateCopy = new Date(date);
+      dateCopy.setDate(dateCopy.getDate() - (7 * week));
+      return dateCopy;
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
   setMonthBack(date=new Date(),months=1){
     try {
       if (!this.#isInstanceOfDate(date)) throw new TypeError("paramater is not of type Date");
@@ -89,7 +99,7 @@ class DateUtils {
   getStartOfWeek(date=new Date(),day=0){
     try {
       if (!this.#isInstanceOfDate(date)) throw new TypeError("paramater is not of type Date");
-      debugger;
+      
       const dayOfWeek = date.getDay();
       const startDate = new Date(date);
       const diff = (date.getDate() - dayOfWeek) + day;
@@ -194,6 +204,46 @@ class DateUtils {
       console.error(error.message);
     }
   }
+  getDateAtPeriodInterval(period,date=new Date()){
+    try {
+      const dateRange = {
+        startDate: new Date(date),
+        endDate: new Date(date)
+      }
+      switch (period) {
+        case this.TODAY_PERIOD:
+          break;
+        case this.PREV_DAY_PERIOD:
+                
+          break;
+        case this.PREV_WEEK_PERIOD:
+            
+          break;
+        case this.PREV_MONTH_PERIOD:
+          dateRange.startDate = this.setMonthBack(date);
+          dateRange.endDate = this.setMonthBack(date);
+          break;
+        case this.PREV_YEAR_PERIOD:
+         
+          break;
+        case this.WEEK_PERIOD:
+          dateRange.startDate = this.setWeekBack(date);
+          dateRange.endDate = this.setWeekBack(date);
+          break;
+        case this.MONTH_PERIOD:
+          
+          break;
+        case this.YEAR_PERIOD:
+         
+          break;
+        default:
+          break;
+      }
+    } catch (error) {
+      
+    }
+  }
+
 }
 
 const DateUtility = new DateUtils();

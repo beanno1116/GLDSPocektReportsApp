@@ -30,7 +30,7 @@ export function register(config) {
     }
 
     window.addEventListener('fetch',(e) => {
-      debugger;
+      
     })
 
     window.addEventListener('load', () => {

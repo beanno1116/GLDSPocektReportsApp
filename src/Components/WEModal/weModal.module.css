@@ -1,0 +1,109 @@
+.modal_container {
+  --bg-opacity: 0.7;
+  
+  position: fixed;
+  inset: 0; /* inset sets all 4 values (top right bottom left) much like how we set padding, margin etc., */
+  background-color: rgba(0, 0, 0, var(--bg-opacity));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease-in-out;
+  overflow: hidden;
+  z-index: 999;
+  transform-origin: center;    
+  transform: scale(0);
+  opacity: 0;
+  pointer-events: none;  
+  /* padding: 10rem 15rem; */
+}
+.scale_in.center {
+  transform-origin: center;
+}
+/* .scale_in.left {
+  transform-origin: left;
+  transform: scaleX(0);
+} */
+/* .we-modal__container-enter-done {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
+}
+.we-modal__container-exit {
+  opacity: 0;
+  transform: scale(0.01);
+} */
+
+.myEnterDone {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
+}
+.myExit {
+  opacity: 0;
+  transform: scale(0);
+}
+
+.we-modal__container-scale-in-left-enter-done {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scaleY(1);
+}
+.we-modal__container-scale-in-left-exit {
+  opacity: 0;
+  transform: scaleY(0);
+}
+/* .we-modal__container-scale-in-center-enter-done {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
+}
+.we-modal__container-scale-in-center-exit {
+  opacity: 0;
+  transform: scale(0);
+}
+
+.we-modal__container-scale-in-left-enter-done {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scaleY(1);
+}
+.we-modal__container-scale-in-left-exit {
+  opacity: 0;
+  transform: scaleY(0);
+} */
+
+.close_btn {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 1em;
+  right: 1em;
+  width: 55px;
+  height: 55px;
+  padding: 0;
+  padding-left: 2px;
+  margin: 0;
+  border: 0;
+  outline: 0;
+  box-shadow: 0;
+  border-radius: 50%;
+  background-color: transparent;
+  color: red;
+  cursor: pointer;
+  z-index: 1;
+}
+.close_btn:hover {
+  background-color: rgba(41, 41, 41, 0.7);
+  box-shadow: inset 2px 2px 2px  rgba(0, 0, 0, 0.7);
+}
+
+.content {
+  color: #fff;
+  
+  font-size: 1.2rem;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}

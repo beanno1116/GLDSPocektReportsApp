@@ -10,9 +10,9 @@ class FormatUtil {
     }
   }
   #isInstanceOfDate(value){
-    try {
+     try {
       if (!value) throw new Error("paramet value is null or undefined");
-      return (Object.prototype.call(value) === "[object Date]") && !isNaN(value);
+      return (Object.prototype.toString.call(value) === "[object Date]") && !isNaN(value);
     } catch (error) {
       console.error(error.message);
     }
@@ -142,6 +142,14 @@ class FormatUtil {
     }
   }
 
+  stringAsNumber(value,locale="en-US"){
+    try {
+      return `${parseFloat(value).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+
   /*
     millions: >=7 1000000
     hundred thousands: >=6 100000
@@ -183,24 +191,18 @@ class FormatUtil {
     }
   }
 
-  toRequestDateFormat(date){
+  toRequestDateFormat(date=new Date()){
     try {
-      if (!date) return "";
-      let dateTime = undefined;
-      
-      if (typeof date === "string"){
-        dateTime = new Date(date);
-        if (!dateTime) throw new TypeError("date parameter not a valid date string");
-      }else{
-        if (this.#isInstanceOfDate(date)) throw TypeError("date parameter not a valid Date() obj");
-        dateTime = date;
-      }
 
-      const dateObj = this.#dateElementsAsObject(dateTime);
+      if (!date) return "";
+      if (!this.#isInstanceOfDate(date)) throw TypeError("date parameter not a valid Date() obj");
+
+      const dateObj = this.#dateElementsAsObject(date);
+
       const {month,day,year} = dateObj;
-      
+
       return `${month}/${day}/${year}`;
-      
+
     } catch (error) {
       console.error(error.message);
     }
@@ -211,13 +213,13 @@ class FormatUtil {
       case "currency":
         return `$${this.stringAsMoney(value)}`;
       case "number":
-        return value;
+        return this.stringAsNumber(value);
       case "shortNumber":
         return this.moneyAbbreviation(value);
       case "shortCurrency":
         return `$${this.moneyAbbreviation(value)}`;
       case "percentage":
-        return `${parseFloat(value).toFixed(2)}%`
+        return `${parseInt(value)}%`
     
       default:
         return value;
