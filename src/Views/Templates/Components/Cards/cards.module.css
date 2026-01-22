@@ -1,5 +1,6 @@
 
-.card {
+.card,
+.trend_card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 20px;
@@ -10,8 +11,10 @@
   cursor: pointer;
   margin-bottom: 1.5rem;
    animation: fadeIn 0.8s ease 0.2s both;
+   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
-.card::before {
+.card::before,
+.trend_card::before {
   content: '';
   position: absolute;
   top: 0;
@@ -26,9 +29,9 @@
 .card:hover::before {
   /* transform: scaleX(1); */
 }
-.card:active {
-  transform: scale(.98);
-}
+
+
+
 /* .card:hover {
   border-color: var(--accent-green);
   box-shadow: 0 12px 40px rgba(0, 255, 136, 0.15);
@@ -75,6 +78,12 @@
   font-weight: 700;
   line-height: 1;
   margin-bottom: 4px;
+}
+
+
+/* Trend Card css styles */
+.trend_card {
+  /* min-height: 400px; */
 }
 
 

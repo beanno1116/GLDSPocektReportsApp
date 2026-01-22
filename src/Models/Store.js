@@ -1,19 +1,19 @@
 
 
 class Store {
-  agentString;
-  id;
-  sid;
-  customer;
-  name;
-  type;
-  address;
-  addressTwo;
-  city;
-  state;
-  zipcode;
-  phoneNumber;
-  altPhoneNumber;
+  agentString = "";
+  id = "";
+  sid = "";
+  customer = "";
+  name = "";
+  type = "";
+  address = "";
+  addressTwo = "";
+  city = "";
+  state = "";
+  zipcode = "";
+  phoneNumber = "";
+  altPhoneNumber = "";
   
   #createdBy;
   #modifiedBy;
@@ -21,7 +21,10 @@ class Store {
   #modifiedDate;
 
   constructor(){
-
+    this.#createdBy = "";
+    this.#modifiedBy = "";
+    this.#creationDate = "";
+    this.#modifiedDate = "";
   }
 
 

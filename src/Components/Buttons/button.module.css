@@ -399,6 +399,114 @@ gap: .5rem;
   color: black;
 }
 
+
+
+/* Split Button css styles */
+.split_button {
+  position: relative;
+  display: inline-block;
+  /* flex: 1; */
+  width: 15ch;
+  /* width: max-content; */
+}
+.split_button_group {
+  display: flex;
+  gap: 0;
+}
+.split_button_main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: .5rem .75rem;
+  background: linear-gradient(135deg, #00ff88, #00d4ff);
+  border: none;
+  border-radius: .5rem 0 0 .5rem;
+  color: #0a0e27;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.button_icon {
+  font-size: .8rem;
+}
+.split_button_toggle {
+  padding: .5rem .5rem;
+  background: linear-gradient(135deg, #00ff88, #00d4ff);
+  border: none;
+  border-left: 1px solid rgba(10, 14, 39, 0.2);
+  border-radius: 0 .5rem .5rem 0;
+  color: #0a0e27;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.chevron {
+  margin-left: auto;
+  font-size: 1rem;
+  /* transform: rotate(0deg); */
+  transition: transform 0.3s ease;
+}
+.open {
+  transform: rotate(19deg);
+  color: red;
+}
+.split_button_menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  /* left: 0; */
+  width: fit-content;
+  right: 0;
+  background: #1a2147;
+  border: 2px solid #2a3463;
+  border-radius: 16px;
+  padding: 8px;
+  z-index: 1000;
+  min-width: 100%;
+  max-height: 400px;
+  overflow-y: auto;
+  transform-origin: top;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  animation: slideDown 0.2s ease;
+}
+@keyframes slideDown {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.divider {
+  height: 1px;
+  background: #2a3463;
+  margin: 8px 0;
+}
+.split_button_menu_item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  color: #ffffff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+
+
+
+
 .round_button {
   width: 5rem;
   height: 5rem;

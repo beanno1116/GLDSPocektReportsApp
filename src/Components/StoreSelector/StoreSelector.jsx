@@ -1,12 +1,13 @@
+import { useCallback } from 'react';
 import ScrollSelector from '../ScrollSelector/ScrollSelector';
 
 
 const StoreSelector = ({ stores=[],activeStore,onClick }) => {
 
-  const handleStoreSelction = (e,storeId) => {
+  const handleSelection = useCallback((storeId) => (e) => {
     if (activeStore === storeId) return;
     onClick && onClick(e,storeId);
-  }
+  },[activeStore,onClick])
 
   return (
     <ScrollSelector>
@@ -17,7 +18,7 @@ const StoreSelector = ({ stores=[],activeStore,onClick }) => {
             id={store.id} 
             active={activeStore === store.id ? true : false} 
             text={store.name} 
-            onClick={(e) => handleStoreSelction(e,store.id)} 
+            onClick={handleSelection(store.id)} 
           />
         )
       })}

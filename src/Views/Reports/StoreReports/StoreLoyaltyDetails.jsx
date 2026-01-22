@@ -15,6 +15,8 @@ import BackIcon from '../../../assets/icons/BackIcon';
 import FlexRow from '../../../Components/FlexComponents/FlexRow';
 import PrimaryButton from '../../../Components/Buttons/PrimaryButton';
 import SettingsIcon from '../../../assets/icons/SettingsIcon';
+import ReportHero from '../Components/ReportHero/ReportHero';
+import FlexColumn from '../../../Components/FlexComponents/FlexColumn';
 
 
 const viewQueries = [
@@ -47,23 +49,13 @@ const StoreLoyaltyDetails = ({ ...props }) => {
 
   return (
     <View>
-      <HeaderNav title="Store Loyalty" />
 
-                <PeriodSelector />
-           
-        <ScrollView>
+      <FlexColumn height='100%'>
+          <ReportHero title={"Store Loyalty Report"} badge={"Loyalty Program"} period={"Jan 2026"} description={"Comprehensive analysis of your loyalty program's performance at a store level and engagement metrics"} />
 
-          <div className={styles.report_hero}>
-            <div className={styles.report_meta}>
-                <div className={styles.meta_badge}>Loyalty Program</div>
-                <div className={`${styles.meta_badge} ${styles.period}`}>Dec 2024</div>
-            </div>
-            <div className={styles.report_title}>Store Loyalty Report</div>
-            <div className={styles.report_subtitle}>
-                Comprehensive analysis of your loyalty program's performance at a store level and engagement metrics
-            </div>
-            <div className={styles.report_date}>Generated on December 27, 2024</div>
-        </div>
+          <FlexRow flex='1'>
+        <ScrollView type='absolute'>
+
 
 
           <KpiGrid>
@@ -86,6 +78,13 @@ const StoreLoyaltyDetails = ({ ...props }) => {
           
           <div style={{height:"75px",width:"100%"}}></div>
         </ScrollView>
+
+          </FlexRow>
+          
+
+      </FlexColumn>
+         
+           
 
       
 

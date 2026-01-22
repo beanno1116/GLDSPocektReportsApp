@@ -10,7 +10,6 @@ import ManageUsersIcon from '../../assets/icons/ManageUsersIcon';
 import HomeIcon from '../../assets/icons/HomeIcon';
 
 import styles from './homeView.module.css';
-import ScrollSelector from '../../Components/ScrollSelector/ScrollSelector';
 import KpiGrid from '../../Components/Grids/KpiGrid';
 import ScrollView from '../../Components/ScrollView/ScrollView';
 import SolidReportIcon from '../../assets/icons/SolidReportIcon';
@@ -26,8 +25,8 @@ import TopCategorySection from '../Templates/Components/Sections/TopCategorySect
 import DateUtility from '../../Utils/DateUtils';
 import LocDataAdapter from '../../Models/LocReportAdapter';
 import FullScreenLoader from '../../Components/Loader/FullScreenLoader';
-import PeriodSelector from '../../Components/PeriodSelector/PeriodSelector';
 import StoreSelector from '../../Components/StoreSelector/StoreSelector';
+import Filter from '../../Utils/Filter';
 
 
 
@@ -139,24 +138,26 @@ const useHomeView = () => {
 
   
 
-  const onNavBarClick = useCallback((e,action) => {
+  const onNavBarClick = useCallback((action) => (e) => {
     navigate(action,{viewTransition:true})
   },[navigate])
 
 
   const getStoreContext = (org) => {    
-
     let context = new Store();
     if (org?.stores.length > 0){
-      context = org.stores.filter(store => parseInt(store.id) === parseInt(state.activeStore))[0];
+      const filteredContext = Filter.storeById(org.stores,state.activeStore);
+      if (filteredContext.length > 0){
+        return filteredContext[0]
+      }
     }
     return context;
   }
 
 
-  const onStoreSelected = (e,storeId) => {
+  const onStoreSelected = useCallback((e,storeId) => {
     dispatch({type:UPDATE_ACTIVE_STORE,payload:storeId});    
-  }
+  },[dispatch])
   
   let storeContext = getStoreContext(state);
 
@@ -213,6 +214,7 @@ const HomeView = () => {
       <ScrollView>
 
         {/* Store sale stats */}
+        <View.SectionTitle m='0 0 .5rem 0'>General</View.SectionTitle>
         <KpiGrid>
           {stats.map(stat => {
             return (
@@ -277,19 +279,19 @@ const HomeView = () => {
       </ScrollView>
 
       <div className={styles.bottom_nav}>
-        <button data-action="/report/groups" className={`${styles.nav_item} ${styles.active}`} onClick={(e) => onNavBarClick(e,"/report/groups")}>
+        <button data-action="/report/groups" className={`${styles.nav_item} ${styles.active}`} onClick={onNavBarClick("/report/groups")}>
             <div className={styles.nav_icon}><SolidReportIcon size={32} /></div>          
             <div className={styles.nav_label}>Reports</div>
         </button>
-        <button data-action="stores" className={styles.nav_item} onClick={(e) => onNavBarClick(e,"stores")}>
+        <button data-action="stores" className={styles.nav_item} onClick={onNavBarClick("stores")}>
             <div className={styles.nav_icon}><StoreIcon size={32} /></div>
             <div className={styles.nav_label}>Stores</div>
         </button>
-        <button data-action="/manage/users" className={styles.nav_item} onClick={(e) => onNavBarClick(e,"/manage/users")}>
+        <button data-action="/manage/users" className={styles.nav_item} onClick={onNavBarClick("/manage/users")}>
             <div className={styles.nav_icon}><SolidUserSettingIcon size={32} /></div>
             <div className={styles.nav_label}>Users</div>
         </button>
-        <button data-action="settings" className={styles.nav_item} onClick={(e) => onNavBarClick(e,"settings")}>
+        <button data-action="settings" className={styles.nav_item} onClick={onNavBarClick("settings")}>
             <div className={styles.nav_icon}><SettingsIcon size={32} /></div>
             <div className={styles.nav_label}>Settings</div>
         </button>

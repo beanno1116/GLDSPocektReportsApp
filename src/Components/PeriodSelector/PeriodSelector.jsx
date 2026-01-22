@@ -1,5 +1,5 @@
 
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import ScrollSelector from '../ScrollSelector/ScrollSelector';
 import styles from './periodSelector.module.css';
 
@@ -49,16 +49,17 @@ const defaultScrollBehavior = {
       behavior: 'smooth' 
     }
 
-const PeriodSelector = ({ options=scrollSelectorOptions,scrollBehavior=defaultScrollBehavior,onClick }) => {
-  const [period,setPeriod] = useState("today");
+const PeriodSelector = ({ currentPeriod,options=scrollSelectorOptions,scrollBehavior=defaultScrollBehavior,onClick }) => {
+  const [period,setPeriod] = useState(currentPeriod);
 
   const optionRef = useRef("today");
 
-  const onPeriodButtonClick = (e,option) => {
+  const onPeriodButtonClick = useCallback((option) => (e) => {
     e.currentTarget.scrollIntoView(scrollBehavior);    
-    setPeriod(option);
+    // setPeriod(option);
+    optionRef.current = option;
     onClick && onClick(e,option);
-  }
+  },[onClick,scrollBehavior])
 
   return (
     <ScrollSelector>
@@ -67,9 +68,9 @@ const PeriodSelector = ({ options=scrollSelectorOptions,scrollBehavior=defaultSc
           <ScrollSelector.Item 
             key={option.id} 
             id={option.action} 
-            active={period === option.action ? true : false} 
+            active={currentPeriod === option.action ? true : false} 
             text={option.text} 
-            onClick={(e) => onPeriodButtonClick(e,option.action)} 
+            onClick={onPeriodButtonClick(option.action)} 
           />
         )
       })}

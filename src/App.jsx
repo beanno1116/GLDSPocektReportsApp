@@ -14,10 +14,11 @@ import { AppContextProvider } from "./Contexts/AppContext";
 import StoreSelectorView from "./Views/StoreSelector/StoreSelectorView";
 // import StoreReportsView from "./Views/StoreReports/StoreReportsView";
 import ManageUserView from "./Views/ManageUserUpdate/ManageUserView";
-import ReportGroupsView from "./Views/Report/ReportGroupsView";
+import ReportGroupsView from "./Views/ReportGroups/ReportGroupsView";
 import StoreReportsView from "./Views/Reports/StoreReports/StoreReportsView";
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import StoreLoyaltyDetails from "./Views/Reports/StoreReports/StoreLoyaltyDetails";
+import StoreSalesDetails from "./Views/Reports/StoreReports/StoreSalesDetails";
 
 // import Api, { ApiClient, ApiClientProvider, getApiEndpoint } from "./Api/Api";
 
@@ -72,6 +73,10 @@ const App = () => {
         {
           path: "/report/stores/loyalty",
           element: <StoreLoyaltyDetails />
+        },
+        {
+          path: "/report/stores/sales",
+          element: <StoreSalesDetails /> 
         },
         {
           path: "/report/groups",

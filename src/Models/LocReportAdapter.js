@@ -3,6 +3,7 @@ import DepartmentRecord from './DepartmentRecord';
 import DateUtility from "../Utils/DateUtils";
 import StatRecord from "./StatRecord";
 import Calculate from "../Utils/Caclulate";
+import { title } from "motion/react-client";
 
 
 const salesMapping = {
@@ -255,13 +256,30 @@ const parseStat = (statCollection,stat) => {
   }
 }
 
+const selectStatGroup = (statObj) => {
+  return (group,statName) => {
+    try {
+      if (Object.keys(statObj).length === 0) return new StatRecord();
+      const statGroup = statObj[group];
+      if (statGroup){
+        const filteredStats = statGroup.filter(g => g.lookup === statName);
+        if (filteredStats.length > 0){
+          return filteredStats[0];
+        }
+      }
+      return new StatRecord();
+    } catch (error) {
+      console.error(`[ERROR] [LocReportAdapter] [selectStatGroup] - ${error.message}`);
+    }
+  }
+}
+
 class LocReportAdapter {
 
   parseStoreStatsData(data){
     try {
 
       if (!Array.isArray(data)) throw new TypeError("data not of type array");
-
       // New Map to collect the stat group objects while parsing
       const stateGroupMap = new Map();
 
@@ -310,7 +328,6 @@ class LocReportAdapter {
 
       });
       
-      let temp =  Object.fromEntries(stateGroupMap);
       return Object.fromEntries(stateGroupMap);
       
     } catch (error) {
@@ -378,71 +395,68 @@ class LocReportAdapter {
       const prevStats = data[1];
       const todayDepts = data[2].map(d => new DepartmentRecord(d));
       const prevDepts = data[3].map(d => new DepartmentRecord(d));
+      const selectStat = selectStatGroup(todayStats);
+      const selectCompareStat = selectStatGroup(prevStats);
 
-      const parseSales = (salesData,compareData) => {
-        const salesFilter = {
-          totalSales: {
-            title: "Revenue",
-            format: "shortCurrency",
-            property: "total"
-          },
-          costOfGoodsSold: {
-            title: "COG Sold",
-            format: "shortCurrency",
-            property: "total"
-          },
-          margin: {
-            title:"Margin",
-            format: "percentage",    
-          },
-          avgBasket: {
-            title: "Avg Basket",
-            format: "currency"
-          }
-        }
-        const salesStatArray = [];
-        
-        let totalSalesStat = {};
-        let totalCostOfGoodsSoldStat = {};
 
-        salesData.forEach(data => {
-          if (data.lookup === "totalSales") {
-            totalSalesStat = data;
-          }
-          if (data.lookup === "costOfGoodsSold") {
-            totalCostOfGoodsSoldStat = data;
-          }
-          const statMeta = salesFilter[data.lookup];
-          if (statMeta){
-            const previousStat = compareData.filter(cd => cd.lookup === data.lookup)[0];
-            const value = data[statMeta.property];
-            salesStatArray.push({
-              title: statMeta.title,
-              format: statMeta.format,
-              value: value,
-              delta: Calculate.percentChange(previousStat[statMeta.property],value)
-            })
-          }
-        })
-        
-        const prevTotalSalesStat = compareData.filter(cd => cd.lookup === totalSalesStat.lookup)[0];
-        const prevTotalCostOfGoodsSoldStat = compareData.filter(cd => cd.lookup === totalCostOfGoodsSoldStat.lookup)[0];
-        const marginStatMeta = salesFilter.margin;
-        const avgBasketStatMeta = salesFilter.avgBasket;
-        salesStatArray.push({
-          title: avgBasketStatMeta.title,
-          format: avgBasketStatMeta.format,
-          value: totalSalesStat.total / totalSalesStat.quantity,
-          delta: Calculate.percentChange(prevTotalSalesStat.total / prevTotalSalesStat.quantity,totalSalesStat.total / totalSalesStat.quantity)
-        })
-        salesStatArray.push({
-          title: marginStatMeta.title,
-          format: marginStatMeta.format,
-          value: Calculate.margin(totalSalesStat.total,totalCostOfGoodsSoldStat.total),
-          delta: Calculate.percentChange(Calculate.margin(prevTotalSalesStat.total,prevTotalCostOfGoodsSoldStat.total),Calculate.margin(totalSalesStat.total,totalSalesStat.total))
-        })
-        return salesStatArray;
+      const totalSalesStat = selectStat("sales","totalSales");
+      const totalSalesCompareStat = selectCompareStat("sales","totalSales");
+      const totalSalesTile = {
+        title: "Revenue",
+        format: "shortCurrency",
+        property: "total",
+        value: totalSalesStat.total,
+        delta: Calculate.percentChange(totalSalesCompareStat.total,totalSalesStat.total)
       }
+
+      const costOfGoodsSoldStat = selectStat("sales","costOfGoodsSold");
+      const costOfGoodsSoldCompareStat = selectCompareStat("sales","costOfGoodsSold");
+      const costOfGoodsSoldTile = {
+        title: "COG Sold",
+        format: "shortCurrency",
+        property: "total",
+        value: costOfGoodsSoldStat.total,
+        delta: Calculate.percentChange(costOfGoodsSoldCompareStat.total,costOfGoodsSoldStat.total)
+      }
+
+      const transactionCountStat = selectStat("transaction","customers");
+      const transactionCountCompareStat = selectCompareStat("transaction","customers");
+      const transactionCountTile = {
+        title: "Transactions",
+        format: "shortNumber",
+        property: "total",
+        value: transactionCountStat.quantity,
+        delta: Calculate.percentChange(transactionCountCompareStat.quantity,transactionCountStat.quantity)
+      }
+
+      const loyaltyTransactionCountStat = selectStat("loyalty","customers");
+      const loyaltyTransactionCountCompareStat = selectCompareStat("loyalty","customers");
+      const loyaltyTransactionCountTile = {
+        title: "Loyalty Trans.",
+        format: "shortNumber",
+        property: "total",
+        value: loyaltyTransactionCountStat.quantity,
+        delta: Calculate.percentChange(loyaltyTransactionCountCompareStat.quantity,loyaltyTransactionCountStat.quantity)
+      }
+
+      const averageBasketTile = {
+        title: "Avg Basket",
+        format: "currency",
+        property: "total",
+        value: totalSalesStat.total / totalSalesStat.quantity,
+        delta: Calculate.percentChange(totalSalesCompareStat.total / totalSalesCompareStat.quantity,totalSalesStat.total / totalSalesStat.quantity)
+      }
+
+      const marginTile = {
+        title: "Margin",
+        format: "percentage",
+        property: "total",
+        value: Calculate.margin(totalSalesStat.total,costOfGoodsSoldStat.total),
+        delta: Calculate.percentChange(Calculate.margin(totalSalesCompareStat.total,costOfGoodsSoldCompareStat.total),Calculate.margin(totalSalesStat.total,costOfGoodsSoldStat.total))
+      }
+
+      debugger;
+
       const parseExceptions = (exceptionData,compareData) => {
         const exceptionFilter = {
           cancelPrevItem: {
@@ -467,7 +481,7 @@ class LocReportAdapter {
           }
         }
 
-        debugger;
+        
         const exceptionStatsArray = [];
         exceptionData.forEach(data => {
           const statMeta = exceptionFilter[data.lookup];
@@ -485,9 +499,13 @@ class LocReportAdapter {
       }
 
       const homeViewData = {
-        stats: parseSales(todayStats.sales,prevStats.sales),
+        stats: [totalSalesTile,costOfGoodsSoldTile,averageBasketTile,marginTile,transactionCountTile,loyaltyTransactionCountTile],
         exceptions: parseExceptions(todayStats.exception,prevStats.exception)     
       }
+      // const homeViewData = {
+      //   stats: parseSales(todayStats.sales,prevStats.sales),
+      //   exceptions: parseExceptions(todayStats.exception,prevStats.exception)     
+      // }
 
 
       const departmentArray = [];
@@ -511,7 +529,7 @@ class LocReportAdapter {
       });
 
       homeViewData.departments = departmentArray;
-      debugger;
+      
       return homeViewData;
 
     } catch (error) {
@@ -519,6 +537,45 @@ class LocReportAdapter {
     }
   }
   
+  parseHourlySales(data){
+    try {
+       if (!Array.isArray(data)) throw new TypeError("parameter not of type array");
+       const hourMap = new Map();
+       
+
+       data.forEach(row => {
+        const {description,hour} = row;
+
+        const mapKey = removeAllSpaces(description.toLowerCase());
+        /*
+          Get mapping for stat. If mapping does not 
+          exist, returns {key:"",group:"others"}
+        */
+        const mapping = getMapping(mapKey);
+
+        if (mapping.group === "others") return;
+        
+        const newStatRecord = new StatRecord({...row,description:mapping.name,lookup:mapping.key,group:mapping.group});
+
+
+        if (hourMap.has(mapping.key)){
+          const hourlySales = hourMap.get(mapping.key);
+
+          hourlySales.push(newStatRecord);
+
+          hourMap.set(mapping.key,hourlySales)
+        } else {
+          hourMap.set(mapping.key,[newStatRecord]);
+        }
+        
+       })
+
+      const tempRetObj = Object.fromEntries(hourMap);        
+      return Object.fromEntries(hourMap);
+    } catch (error) {
+      console.error(error.message)
+    }
+  }
 
 }
 

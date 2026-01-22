@@ -21,7 +21,7 @@ const NavButton = ({icon,label,action,onClick,children}) => {
   }
 
   return (
-    <button data-action={action} className={`${styles.nav_item} ${styles.active}`} onClick={onButtonClick}>          
+    <button data-action={action} className={`${styles.nav_item} ${styles.active}`} onClick={onClick && onClick(action)}>          
       <div className={styles.nav_icon}>{icon}</div>          
       <div className={styles.nav_label}>{label}</div>
     </button>

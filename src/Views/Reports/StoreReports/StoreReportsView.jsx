@@ -25,6 +25,10 @@ import DatePickerModal from '../../../Modals/DatePickerModal';
 import PeriodSelector from '../../../Components/PeriodSelector/PeriodSelector';
 import PerentSignIcon from '../../../assets/icons/PercentSignIcon';
 import ViewModalManager from './Components/ViewModalManager';
+import StatRecord from '../../../Models/StatRecord';
+import { viewAdapter } from './viewDataAdapter';
+
+
 
 
 const viewQueries = [
@@ -46,277 +50,7 @@ const viewQueries = [
   },
 ]
 
-const viewAdapter = (data) => {
-  
-  if (!Array.isArray(data)) throw new TypeError("parameter not of type array");      
-  const todayStats = data[0];
-  const prevStats = data[1];
-  debugger;
 
-  const parseSales = (salesData,compareData) => {
-    const salesFilter = {
-      totalSales: {
-        title: "Revenue",
-        format: "shortCurrency",
-        property: "total"
-      },
-      costOfGoodsSold: {
-        title: "COG Sold",
-        format: "shortCurrency",
-        property: "total"
-      },
-      margin: {
-        title:"Margin",
-        format: "percentage",    
-      },
-      avgBasket: {
-        title: "Avg Basket",
-        format: "currency"
-      }
-    }
-    const salesStatArray = [];
-    
-    let totalSalesStat = {};
-    let totalCostOfGoodsSoldStat = {};
-
-    salesData.forEach(data => {
-      if (data.lookup === "totalSales") {
-        totalSalesStat = data;
-      }
-      if (data.lookup === "costOfGoodsSold") {
-        totalCostOfGoodsSoldStat = data;
-      }
-      const statMeta = salesFilter[data.lookup];
-      if (statMeta){
-        const previousStat = compareData.filter(cd => cd.lookup === data.lookup)[0];
-        const value = data[statMeta.property];
-        salesStatArray.push({
-          title: statMeta.title,
-          format: statMeta.format,
-          value: value,
-          delta: Calculate.percentChange(previousStat[statMeta.property],value)
-        })
-      }
-    })
-    
-    const prevTotalSalesStat = compareData.filter(cd => cd.lookup === totalSalesStat.lookup)[0];
-    const prevTotalCostOfGoodsSoldStat = compareData.filter(cd => cd.lookup === totalCostOfGoodsSoldStat.lookup)[0];
-    const marginStatMeta = salesFilter.margin;
-    const avgBasketStatMeta = salesFilter.avgBasket;
-    salesStatArray.push({
-      title: avgBasketStatMeta.title,
-      format: avgBasketStatMeta.format,
-      value: totalSalesStat.total / totalSalesStat.quantity,
-      delta: Calculate.percentChange(prevTotalSalesStat.total / prevTotalSalesStat.quantity,totalSalesStat.total / totalSalesStat.quantity)
-    })
-    salesStatArray.push({
-      title: marginStatMeta.title,
-      format: marginStatMeta.format,
-      value: Calculate.margin(totalSalesStat.total,totalCostOfGoodsSoldStat.total),
-      delta: Calculate.percentChange(Calculate.margin(prevTotalSalesStat.total,prevTotalCostOfGoodsSoldStat.total),Calculate.margin(totalSalesStat.total,totalSalesStat.total))
-    })
-    return salesStatArray;
-  }
-
-  const parseLoyalty = (loyaltyData,compareData) => {
-    const salesFilter = {
-      customers: {
-        title: "Customers",
-        format: "shortCurrency",
-        property: "total"
-      },
-      items: {
-        title: "Items",
-        format: "shortNumber",
-        property: "quantity"
-      },
-      pointsGiven: {
-        title:"Points Given",
-        format: "shortNumber",
-        property: "quantity"    
-      },
-      pointsRedeemed: {
-        title: "Points Redeemed",
-        format: "shortNumber",
-        property: "quantity"
-      }
-    }
-
-    const loyaltyStatArray = [];
-    loyaltyData.forEach(data => {
-      const statMeta = salesFilter[data.lookup];
-      if (statMeta){
-        loyaltyStatArray.push({
-          title: statMeta.title,
-          format: statMeta.format,
-          value: data[statMeta.property],
-          delta: data[statMeta.property]
-        })
-      }
-    })
-
-    return loyaltyStatArray;
-  }
-
-  const parseCoupons = (couponData,compareData) => {
-    const couponFilter = {
-      storeCoupon: {
-        title: "Store Coupons",
-        format: "shortCurrency",
-        property: "total"
-      },
-      eStoreCoupon: {
-        title: "E Store Coupon",
-        format: "currency",
-        property: "total"
-      },
-      venderCoupon: {
-        title:"Vendor Coupons",
-        format: "currency",
-        property: "total"    
-      },
-      eVendorCoupon: {
-        title: "E Vendor Coupon",
-        format: "currency",
-        property: "total"
-      }
-    }
-
-    const couponStatsArray = [];
-
-    couponData.forEach(coupon => {
-      const statMeta = couponFilter[coupon.lookup];
-      couponStatsArray.push({
-        title: statMeta.title,
-        format: statMeta.format,
-        value: coupon[statMeta.property],
-        quantity: coupon.quantity,
-        delta: coupon[statMeta.propterty]
-      })
-    })
-
-    return couponStatsArray;
-  }
-
-  const parseTaxes = (taxData,compareData) => {
-    const taxFilter = {
-      tax: {
-        title: "Tax",
-        format: "currency",
-        property: "total"
-      },
-      taxable: {
-        title: "Taxable",
-        format: "shortCurrency",
-        property: "total"
-      }
-    }
-
-    const taxStatsArray = [];
-
-    taxData.forEach(tax => {
-      const statMeta = taxFilter[tax.lookup];
-      taxStatsArray.push({
-        title: statMeta.title,
-        format: statMeta.format,
-        value: tax[statMeta.property],
-        quantity: parseInt(tax.quantity),
-        delta: Calculate.percentChange(compareData[statMeta.property],tax[statMeta.property]),
-      })
-    })
-
-    return taxStatsArray;
-  }
-
-  const parseTransaction = (transData,compareData) => {
-    const transFilter = {
-      customers: {
-        title: "Customers",
-        format: "shortNumber",
-        property: "quantity"
-      },
-      items: {
-        title: "Items",
-        format: "shortNumber",
-        property: "quantity"
-      },
-      itemsScanned: {
-        title:"Items Scanned",
-        format: "shortNumber",
-        property: "quantity"    
-      },
-      salesKeyed: {
-        title: "Sales Keyed",
-        format: "shortNumber",
-        property: "quantity"
-      }
-    }
-
-    const transStatsArray = [];
-
-    transData.forEach(data => {
-      const statMeta = transFilter[data.lookup];
-      if (statMeta){
-        transStatsArray.push({
-          title: statMeta.title,
-          format: statMeta.format,
-          value: data[statMeta.property],
-          quantity: data.quantity,
-          delta: data.quantity
-        })
-      }
-    })
-    return transStatsArray;
-  }
-
-  const parseExceptions = (exceptionData,compareData) => {
-     const exceptionFilter = {
-      cancelPrevItem: {
-        title: "Cancel Prev Item",
-        format: "shortNumber",
-        property: "quantity"
-      },
-      refunds: {
-        title: "Refunds",
-        format: "shortNumber",
-        property: "quantity"
-      },
-      noSales: {
-        title:"No Sales",
-        format: "shortNumber",
-        property: "quantity"    
-      },
-      cancelOrder: {
-        title: "Canceled Orders",
-        format: "shortNumber",
-        property: "quantity"
-      }
-    }
-
-    const exceptionStatsArray = [];
-    exceptionData.forEach(data => {
-      const statMeta = exceptionFilter[data.lookup];
-      exceptionStatsArray.push({
-        title: statMeta.title,
-        format: statMeta.format,
-        value: data[statMeta.property],
-        quantity: data.quantity,
-        delta: data.quantity
-      })
-    })
-    return exceptionStatsArray;
-  }
-
-  const viewData = {
-    sales: parseSales(todayStats.sales,prevStats.sales),
-    exceptions: parseExceptions(todayStats.exception,prevStats.exception),
-    loyalty: parseLoyalty(todayStats.loyalty,prevStats.loyalty),
-    coupon: parseCoupons(todayStats.coupon,prevStats.coupon),
-    tax: parseTaxes(todayStats.tax,prevStats.tax),
-    transaction: parseTransaction(todayStats.transaction,prevStats.transaction)
-  }
-  return viewData;
-}
 
 const useStoreReportsView = () => {
   const api = useApiClient();
@@ -376,8 +110,7 @@ const useStoreReportsView = () => {
           posFields: getPeriodDateRange(query.key)
         }  
         const response = await api.post("data",paramObj,{...api.headers.applicationJson});
-        debugger;
-        // const response = await api.post("data",{action:query.action,agentString:"dfdd44e8-be22-43ef-8313-95f2d1904566"},{...api.headers.applicationJson}); 
+
         if (response.success){
           const adaptedData = query.adapter(response.data);
           
@@ -430,6 +163,7 @@ const useStoreReportsView = () => {
 
   return {
     navigate,
+    period: currentPeriod.current,
     results,
     modalState,
     toggleModal,
@@ -442,10 +176,10 @@ const useStoreReportsView = () => {
 
 
 const StoreReportsView = ({ ...props }) => {
-  const {navigate,results,onNavbarClick,modalState,toggleModal,onPeriodChange,onDateLockClick} = useStoreReportsView();
+  const {navigate,results,onNavbarClick,modalState,toggleModal,onPeriodChange,onDateLockClick,period} = useStoreReportsView();
 
 
-  if (results.isLoading){
+  if (results.isFetching){
     return (
       <FullScreenLoader text={"Loading Store Report Data"} />
     )
@@ -460,7 +194,7 @@ const StoreReportsView = ({ ...props }) => {
   }
 
   
-  const {coupon,sales,tax,exceptions,loyalty,transaction} = viewAdapter(results.viewData);
+  const {coupon,sales,tax,exceptions,loyalty,transaction} = viewAdapter(results.viewData[0],results.viewData[1]);
 
   const onViewAllClick = (e,action) => {
     debugger;
@@ -471,17 +205,18 @@ const StoreReportsView = ({ ...props }) => {
   return (
     <View>
       <RefreshIndicator when={results.isFetching} />   
+      
       <View.Header showDate={true} title={"Store Report"} onClick={onDateLockClick}/>
 
-        <PeriodSelector onClick={onPeriodChange}/>
+        <PeriodSelector currentPeriod={period} onClick={onPeriodChange}/>
 
         <ScrollView>
 
 
-          <View.SectionTitle m='.5rem 0'>Store Sales</View.SectionTitle>
+          
           <ChartTabView />
 
-          <View.SectionTitle m='.5rem 0'>General</View.SectionTitle>
+          <View.SectionHeader m='.5rem 0' title={"Sales"} viewAll={onViewAllClick} action="/report/stores/sales"/>
           <KpiGrid>
             {sales.length === 0 && <div>No data found</div>}
             {sales.map(stat => {

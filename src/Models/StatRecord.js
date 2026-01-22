@@ -6,7 +6,10 @@ class StatRecord {
   quantity = 0;
   weight = 0.00;
   total = 0.00;
+  hour = "";
   #lookup = "";
+  #periodStart = "";
+  #periodEnd = "";
 
   constructor(recordObj){
     if (recordObj){
@@ -15,7 +18,10 @@ class StatRecord {
       this.quantity = recordObj?.quantity || 0;
       this.weight = recordObj?.weight || 0.00;
       this.total = recordObj?.total || 0.00;
+      this.hour = recordObj?.hour || "";
       this.#lookup = recordObj?.lookup || "";
+      this.#periodStart = recordObj?.periodStart || "";
+      this.#periodEnd = recordObj?.periodEnd || "";
     }
   }
 
