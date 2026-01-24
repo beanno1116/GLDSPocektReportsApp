@@ -4,6 +4,7 @@ import DateUtility from "../Utils/DateUtils";
 import StatRecord from "./StatRecord";
 import Calculate from "../Utils/Caclulate";
 import { title } from "motion/react-client";
+import Format from "../Utils/Format";
 
 
 const salesMapping = {
@@ -455,7 +456,7 @@ class LocReportAdapter {
         delta: Calculate.percentChange(Calculate.margin(totalSalesCompareStat.total,costOfGoodsSoldCompareStat.total),Calculate.margin(totalSalesStat.total,costOfGoodsSoldStat.total))
       }
 
-      debugger;
+      
 
       const parseExceptions = (exceptionData,compareData) => {
         const exceptionFilter = {
@@ -541,7 +542,6 @@ class LocReportAdapter {
     try {
        if (!Array.isArray(data)) throw new TypeError("parameter not of type array");
        const hourMap = new Map();
-       
 
        data.forEach(row => {
         const {description,hour} = row;
@@ -569,11 +569,59 @@ class LocReportAdapter {
         }
         
        })
-
-      const tempRetObj = Object.fromEntries(hourMap);        
+      
       return Object.fromEntries(hourMap);
     } catch (error) {
       console.error(error.message)
+    }
+  }
+
+  parseDepartmentTotals(data){
+    try {
+      if (!Array.isArray(data)) throw new TypeError("data is not of type array");
+      const retTotalsArr = [];
+      data.forEach(row => {
+        const {description,number} = row;
+
+        const lookup = Format.toCamelCase(description);
+        const desc = Format.toCapitalized(description);
+
+        const departmentTotalStat = new StatRecord({...row,number,description:desc,lookup,group:"deptartment_sales"});
+
+        retTotalsArr.push(departmentTotalStat);
+      })
+      return retTotalsArr;
+    } catch (error) {
+      console.error(`[ERROR] [LocReportReportAdapter] [parseDepartmentTotals] - ${error.message}`);
+    }
+  }
+
+  parseBalanceSheet(data){
+    try {
+      // debugger;
+      let temp = data;
+      console.log("");
+
+      const tenderMap = new Map();
+
+      data.forEach(row => {
+        const {description} = row;
+
+        const lookup = Format.toCamelCase(description);
+        const desc = Format.toCapitalized(description);
+
+        if (tenderMap.has(row.group)){
+          const tenders = tenderMap.get(row.group);
+          tenderMap.set(row.group,[...tenders,{...row,lookup,description:desc}]);
+        }else{
+          tenderMap.set(row.group,[{...row,lookup,description:desc}]);
+        }
+      })
+      const t = Object.fromEntries(tenderMap);
+      // debugger;
+      return t;
+    } catch (error) {
+      console.error(`[ERROR] [LocReportReportAdapter] [parseBalanceSheet] - ${error.message}`);
     }
   }
 

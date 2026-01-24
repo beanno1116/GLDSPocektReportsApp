@@ -8,10 +8,7 @@ import FlexRow from "../../../Components/FlexComponents/FlexRow";
 import ScrollView from "../../../Components/ScrollView/ScrollView";
 import View from "../../Templates/View/View";
 import ReportHero from "../Components/ReportHero/ReportHero";
-import HeaderNav from "../../Templates/View/Components/HeaderNav";
-import KpiGrid from "../../../Components/Grids/KpiGrid";
-import { Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
-import Card from "../../Templates/Components/Cards/Card";
+import { Bar, BarChart, Cell, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
 import SplitButton from "../../../Components/Buttons/SplitButton";
 import { useQueries, useQueryClient } from "@tanstack/react-query";
 import Format from "../../../Utils/Format";
@@ -20,10 +17,18 @@ import LocDataAdapter from "../../../Models/LocReportAdapter";
 import { useApiClient } from "../../../Api/Api";
 import { useCallback } from "react";
 import FullScreenLoader from "../../../Components/Loader/FullScreenLoader";
-import Sort from "../../../Utils/Sort";
 import TrendCard from "../../Templates/Components/Cards/TrendCard";
-import LineLabel from "../../../Components/Labels/LineLabel";
 import PrimaryButton from "../../../Components/Buttons/PrimaryButton";
+import salesViewAdapter from "./Adapters/SalesViewDataAdapter";
+import HourlyLineChart from "./Components/Charts/Hourly/HourlyLineChart";
+import TenderPieChart from "./Components/Charts/Tender/TenderPieChart";
+import DepartmentRadarChart from "./Components/Charts/Department/DepartmentRadarChart";
+import styles from './storeReportsView.module.css';
+import WEAccordion from "../../../Components/WEAccordion/WEAccordion";
+import HeaderLabel from "../../../Components/Labels/HeaderLabel";
+import KpiGrid from "../../../Components/Grids/KpiGrid";
+import SecondaryButton from "../../../Components/Buttons/SecondaryButton";
+import StoreIcon from "../../../assets/icons/StoreIcon";
 
 const data = [
   {
@@ -159,28 +164,6 @@ const BarChartView = () => {
   )
 }
 
-const LineChartView = () => {
-  return (
-    <LineChart
-      style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
-      responsive
-      data={hourData}
-      margin={{
-        top: 0,
-        right: 5,
-        left: 5,
-        bottom: 0,
-      }}
-    >
-       <XAxis dataKey="name" />
-      {/* <YAxis width="auto" /> */}
-      <Tooltip />
-      <Legend />
-      <Line type="monotone" dataKey="total" stroke="#8884d8" isAnimationActive={true} />
-      {/* <Line type="monotone" dataKey="uv" stroke="#82ca9d" isAnimationActive={isAnimationActive} /> */}
-    </LineChart>
-  )
-}
 const viewQueries = [
   {
     action: "HourlySales",
@@ -193,7 +176,55 @@ const viewQueries = [
       const adaptedData = LocDataAdapter.parseHourlySales(data);
       return adaptedData;
     }
-  }
+  },
+  {
+    action: "HourlySales",
+    key: `hourlysales_base`,
+    posFields: {
+      startDate: Format.toRequestDateFormat(DateUtility.setYearBack(new Date(),1)),
+      endDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1))
+    },
+    adapter(data) {      
+      const adaptedData = LocDataAdapter.parseHourlySales(data);
+      return adaptedData;
+    }
+  },
+  {
+    action: "DepartmentTotals",
+    key: `departmenttotals`,
+    posFields: {
+      startDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1)),
+      endDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1))
+    },
+    adapter(data) {      
+      const adaptedData = LocDataAdapter.parseDepartmentTotals(data);
+      return adaptedData;
+    }
+  },
+  {
+    action: "DepartmentTotals",
+    key: `departmenttotals_base`,
+    posFields: {
+      startDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1)),
+      endDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1))
+    },
+    adapter(data) {      
+      const adaptedData = LocDataAdapter.parseDepartmentTotals(data);
+      return adaptedData;
+    }
+  },
+  {
+    action: "BalanceSheet",
+    key: `balancesheet`,
+    posFields: {
+      startDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1)),
+      endDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1))
+    },
+    adapter(data) {      
+      const adaptedData = LocDataAdapter.parseBalanceSheet(data);
+      return adaptedData;
+    }
+  },
 ]
 
 
@@ -207,14 +238,14 @@ const useStoreSalesDetailsView = () => {
       queryKey: [`${query.action}_${query.key}`,"dfdd44e8-be22-43ef-8313-95f2d1904566"],
       queryFn: async () => {   
         
-        // debugger;
+        // 
         const paramObj = {
           action: query.action,
           agentString: "dfdd44e8-be22-43ef-8313-95f2d1904566",
           posFields: query.posFields
         }  
         const response = await api.post("data",paramObj,{...api.headers.applicationJson});
-        // debugger;
+        // 
         if (response.success){
           const adaptedData = query.adapter(response.data);
           
@@ -265,54 +296,111 @@ const StoreSalesDetails = ({ ...props }) => {
       <div>ERROR!!</div>
     )
   }
+  const {hourlyData,balanceSheet,departmentSales} = salesViewAdapter(results.viewData);
+  // debugger;
 
-  const data = results.viewData[0];
 
-  const unSortedHourlySales = data.totalSales;
-  const sortedHourlySales = Sort.hourlySales(data.totalSales);
-  const hour = parseInt(sortedHourlySales[0].hour) - 12;
-  const hourConstraint = hour + 1;
-  debugger;
-
+  
+  
   return (
     <View>
       {/* <HeaderNav title="Store Loyalty" /> */}
-      <FlexColumn height="100%">
+      <FlexColumn height="100%">        
 
         <ReportHero title={"Store Sales Report"} badge={"Store Sales"} period={"Jan 2026"} description={"View your store sales data from all angles and gather insite about trends and store performance"} />
 
         <FlexRow flex="1">
           <ScrollView type="absolute">
 
-            <Card>
+
+            <View.SectionTitle id="details" m='.5rem 0'>Sales Details</View.SectionTitle>
+            <TrendCard>
               <FlexRow p="0 0 1rem 0">
                 <FlexRow hAlign="space-between" vAlign="center" p="0 0 0 .5rem">
                   <span style={{fontSize:"18px",fontWeight:"700"}}>Total Sales</span>
-                  <SplitButton label={"Today"} items={["Today","Week","Month","YTD"]} />
+                  <SplitButton label={"Today"} items={["Today","Week","Month","YTD"]} mode="select"/>
                 </FlexRow>
               </FlexRow>
               <BarChartView />
-            </Card>
-
-            <View.SectionTitle m='.5rem 0'>Sales Trends</View.SectionTitle>
-            <TrendCard>
-              <FlexRow hAlign="space-between" vAlign="center" p="0 0 1.5rem .5rem">
-                <FlexRow flex="1">
-                  <h2>Hourly</h2>
-                </FlexRow>
-                <FlexRow flex="1" hAlign="flex-end">
-                  <SplitButton label="Sales" items={["Sales","Items","Transactions","Basket"]} />
-                </FlexRow>
-              </FlexRow>
-              {/* <FlexRow hAlign="center">Overall</FlexRow> */}
-              <LineChartView />
-              <LineLabel label={"Busiest Period"} value={"4pm-5pm"} />
-              <LineLabel label={"Slowest Period"} value={"4pm-5pm"} type="negative"/>
+              <WEAccordion>
+                <WEAccordion.Panel>
+                  <WEAccordion.Panel.Header>
+                    <h3>View Sales Totals</h3>
+                    {/* <HeaderLabel text={"View Sales Totals"} /> */}
+                    {/* <SubLabel text={subtitle === "" ? "" : `Ending: $${handleZeroValue(subtitle)}`} /> */}
+                  </WEAccordion.Panel.Header>
+                  <WEAccordion.Panel.Content>
+                    <div className={styles.sub_item}>
+                      <span>💵 Total Sales</span>
+                      <span>$342,000</span>
+                    </div>
+                    <div className={styles.sub_item}>
+                      <span>🏦  Net Sales</span>
+                      <span>$128,500</span>
+                    </div>
+                    <div className={styles.sub_item}>
+                      <span>🏦  Hash Sales</span>
+                      <span>$85,000</span>
+                    </div>
+                    <div className={styles.sub_item}>
+                      <span>🏦  Discountable Sales</span>
+                      <span>$45,000</span>
+                    </div>
+                    <div className={styles.sub_item}>
+                      <span>🏦  Foodstampable Sales</span>
+                      <span>$45,000</span>
+                    </div>
+                    <div className={styles.sub_item}>
+                      <span>🏦  Wicable Sales</span>
+                      <span>$45,000</span>
+                    </div>
+                    <div className={styles.sub_item}>
+                      <span>🏦  Cost of Goods Sold</span>
+                      <span>$299,000</span>
+                    </div>
+                    {/* <div className={`${styles.sub_item} ${styles.sub_item_total}`}>
+                      <span>🏦  Total</span>
+                      <span>$299,000</span>
+                    </div> */}
+                  </WEAccordion.Panel.Content>
+                </WEAccordion.Panel>
+              </WEAccordion>
               <FlexRow p="1rem 0 0 0">
-                <PrimaryButton>Generate Hourly Report</PrimaryButton>
+                <PrimaryButton>Create Sales Report</PrimaryButton>
               </FlexRow>
             </TrendCard>
+            
 
+            <View.SectionTitle id="trends" m='.5rem 0'>Sales Trends</View.SectionTitle>
+            <HourlyLineChart chartData={hourlyData} />
+
+
+            <View.SectionTitle id="tender" m='.5rem 0'>Sales Tenders</View.SectionTitle>
+            <TenderPieChart chartData={balanceSheet.Tendered} />
+
+            <View.SectionTitle id="department" m='.5rem 0'>Department Sales</View.SectionTitle>
+            <DepartmentRadarChart chartData={departmentSales} />
+
+            <View.SectionTitle id="department" m='.5rem 0'>Other</View.SectionTitle>
+            <TrendCard>
+              {[...balanceSheet.Plus,...balanceSheet.RBSLynkISO].map(data => {
+                return (
+                  <div className={styles.sub_item}>
+                      <span>💵 {data.description}</span>
+                      <span>${data.total}</span>
+                    </div>
+                )
+              })}
+            </TrendCard>
+
+
+            <View.SectionTitle id="reportActions" m='.5rem 0'>Create Reports</View.SectionTitle>
+            <KpiGrid>
+              <SecondaryButton>Balance Sheet</SecondaryButton>
+              <SecondaryButton>Store</SecondaryButton>
+              <SecondaryButton>Hourly</SecondaryButton>
+              <SecondaryButton>Tender</SecondaryButton>
+            </KpiGrid>
 
             <div style={{height:"75px",width:"100%"}}></div>
           </ScrollView>
@@ -321,7 +409,7 @@ const StoreSalesDetails = ({ ...props }) => {
 
       <View.BottomNav>
         <View.BottomNav.Button action="/report/stores" onClick={onNavClick} icon={<BackIcon size={36} />}>Back</View.BottomNav.Button>
-        <View.BottomNav.Button action="/report/stores" onClick={onNavClick} icon={<ExportIcon size={36} />}>Export</View.BottomNav.Button>
+        <View.BottomNav.Button action="/report/stores" onClick={onNavClick} icon={<StoreIcon size={36} />}>Export</View.BottomNav.Button>
         <View.BottomNav.Button action="/report/stores" onClick={onNavClick} icon={<SolidDownloadIcon size={40} />}>Download</View.BottomNav.Button>
         <View.BottomNav.Button action="/report/stores" onClick={onNavClick} icon={<SettingsIcon size={40} />}>Settings</View.BottomNav.Button>
       </View.BottomNav>

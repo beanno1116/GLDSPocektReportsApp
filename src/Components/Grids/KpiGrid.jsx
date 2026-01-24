@@ -55,7 +55,7 @@ const SummaryGridItem = ({icon,label,value,subValue,change,type="shortNumber",op
       return status ? styles.negative : styles.positive;
     }
   return (
-    <div className={styles.summary_card} onclick="viewDetails('revenue')">
+    <div className={styles.summary_card} onClick={()=>{}}>
       <div className={styles.summary_icon}>{icon}</div>
       <div className={styles.summary_label}>{label}</div>
       <div className={`${styles.summary_value} ${isValueNegative ? styles.negative : styles.positive}`}>{`${Format.string(value,type)}`}</div>
@@ -71,7 +71,7 @@ const ActionGridItem = ({icon,label,onClick}) => {
   }
 
   return (
-    <div className={styles.action_card} onclick={onGritItemClick}>
+    <div className={styles.action_card} onClick={onGritItemClick}>
       <div className={styles.action_icon}>{icon}</div>
       <div className={styles.action_label}>{label}</div>
     </div>

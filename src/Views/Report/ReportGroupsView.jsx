@@ -53,8 +53,14 @@ const useReportGroupsView = () => {
     })
   }
 
+  const onNavButtonClick = useCallback((route) => (e) => {
+    
+    navigate(route,{viewTransition:true});
+  },[navigate])
+  
   return {
     onReportGroupClick,
+    onNavButtonClick,
     render: {
       storeSelections: renderStoreSelections
     }
@@ -63,13 +69,7 @@ const useReportGroupsView = () => {
 
 
 const ReportGroupsView = ({ ...props }) => {
-  const {render,onReportGroupClick} = useReportGroupsView();
-  const navigate = useNavigate();
-
-  const onHomeButtonClick = (e) => {
-    navigate("/")
-  }
-
+  const {render,onReportGroupClick,onNavButtonClick} = useReportGroupsView();
   return (
     <View>
       <View.Header showDate={false} title={"Report Groups"} />
@@ -156,7 +156,7 @@ const ReportGroupsView = ({ ...props }) => {
               
 
         <View.BottomNav>
-          <View.BottomNav.Button action="/" onClick={onHomeButtonClick} icon={<HomeIcon size={36} />}>Home</View.BottomNav.Button>
+          <View.BottomNav.Button action="/" onClick={onNavButtonClick} icon={<HomeIcon size={36} />}>Home</View.BottomNav.Button>
           {/* <View.BottomNav.Button icon={<StoreIcon size={32}/>}>Stores</View.BottomNav.Button> */}
           <View.BottomNav.Button>Analytics</View.BottomNav.Button>
           <View.BottomNav.Button>Forcasts</View.BottomNav.Button>

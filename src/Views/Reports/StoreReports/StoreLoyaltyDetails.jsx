@@ -17,6 +17,7 @@ import PrimaryButton from '../../../Components/Buttons/PrimaryButton';
 import SettingsIcon from '../../../assets/icons/SettingsIcon';
 import ReportHero from '../Components/ReportHero/ReportHero';
 import FlexColumn from '../../../Components/FlexComponents/FlexColumn';
+import { useCallback } from 'react';
 
 
 const viewQueries = [
@@ -42,9 +43,9 @@ const viewQueries = [
 const StoreLoyaltyDetails = ({ ...props }) => {
   const navigate = useNavigate();
 
-  const onBottomNavClick = (e,action) => {
+  const onBottomNavClick = useCallback((action) => (e) => {
     navigate(action,{viewTransition:true});
-  }
+  },[navigate])
 
 
   return (

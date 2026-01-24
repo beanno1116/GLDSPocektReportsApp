@@ -221,7 +221,7 @@ const transactionStatsTileData = (statSelector,baseStatSelector) => {
 
 export const viewAdapter = (currentData,baseData) => {
   try {
-    debugger;
+    
     // if (!Array.isArray(currentData) || !Array.isArray(baseData)) throw new TypeError("parameter not of type array");
     const statSelector = selectStatGroup(currentData);
     const baseStatSelector = selectStatGroup(baseData);

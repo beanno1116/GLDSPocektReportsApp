@@ -84,8 +84,26 @@
             font-family: 'Space Mono', monospace;
         }
 
-
-
+.sub_item {
+  padding: 10px 12px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  transition: all 0.3s ease;
+  margin-top: .5rem;
+}
+.sub_item:hover {
+  border-color: var(--accent-blue);
+}
+.sub_item_total {
+  font-size: 1.2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 212, 255, 0.15));
+  border: 2px solid var(--accent-green);
+}
 
 /* Report details hero css styles */
 .report_hero {

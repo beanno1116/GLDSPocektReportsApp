@@ -8,7 +8,7 @@
   overflow-y: hidden;
   animation: fadeIn 0.8s ease 0.2s both;
   scrollbar-width: none;
-  padding: .5rem 0 1.5rem 0;
+  padding: .25rem 0 .25rem 0;
   mask-image: linear-gradient(to left, transparent 0%, black 10%, black 90%, transparent 100%);
   -webkit-mask-image: linear-gradient(to left, transparent 0%, black 10%, black 90%, transparent 100%);
 }
@@ -46,4 +46,26 @@
     color: var(--bg-primary);
     font-weight: 700;
     box-shadow: 0 8px 24px rgba(0, 255, 136, 0.3);
+}
+
+
+
+/* Scroll badge css styles */
+.meta_badge {
+  padding: 6px 12px;
+  background: rgba(0, 212, 255, 0.15);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  color: var(--accent-blue);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  /* color: var(--accent-green); */
+  letter-spacing: 0.5px;
+  text-decoration: none;
+}
+.meta_badge.active {
+  background: rgba(0, 255, 136, 0.15);
+  border: 1px solid rgba(0, 255, 136, 0.975);
+  color: var(--accent-green);
 }

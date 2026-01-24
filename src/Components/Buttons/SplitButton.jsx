@@ -1,34 +1,36 @@
 
 import { useEffect, useRef, useState } from 'react';
 import styles from './button.module.css';
+import useClickOutside from '../../hooks/useClickOutside';
 
-const SplitButton = ({ label, icon, onPrimaryClick, items }) => {
+const SplitButton = ({ label, icon, onButtonClick,onSelection,mode="button", items }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
   const labelRef = useRef(label);
+  useClickOutside(dropdownRef,() => setIsOpen(false));
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const onItemButtonClick = (e) => {
+  const onPrimaryButtonClick = (e) => {
     e.stopPropagation();
-    e.preventDefault();
-    labelRef.current = e.currentTarget.dataset.action;
-    setIsOpen(false);
+    if (mode === "select"){
+      setIsOpen(!isOpen);
+      return;
+    }
+    onButtonClick && onButtonClick(e,labelRef.current);
   }
+
+  const onItemSelectClick = (e,action) => {
+    e.stopPropagation();
+    labelRef.current = action
+    setIsOpen(false);
+    onSelection && onSelection(e,action);
+  }
+
+
 
   return (
     <div className={styles.split_button} ref={dropdownRef}>
       <div className={styles.split_button_group}>
-        <button className={styles.split_button_main} onClick={onPrimaryClick}>
+        <button className={styles.split_button_main} onClick={onPrimaryButtonClick}>
           {icon && <span className={styles.button_icon}>{icon}</span>}
           <span>{labelRef.current}</span>
         </button>
@@ -43,7 +45,7 @@ const SplitButton = ({ label, icon, onPrimaryClick, items }) => {
             item.divider ? (
               <div key={index} className={styles.divider} />
             ) : (
-              <button key={index} data-action={item} className={styles.split_button_menu_item} onClick={onItemButtonClick}>
+              <button key={index} data-action={item} className={styles.split_button_menu_item} onClick={(e) => onItemSelectClick(e,item)}>
                 {/* {item.icon && <span style={styles.menuItemIcon}>{item.icon}</span>} */}
                 <span>{item}</span>
               </button>

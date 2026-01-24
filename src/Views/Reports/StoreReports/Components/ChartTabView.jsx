@@ -87,7 +87,7 @@ const ChartTabView = ({ ...props }) => {
 
   const renderTabView = (tab) => {
     switch (tab) {
-      case "all":        
+      case "revenue":        
         return (        <div className={styles.chart_section}>
           <div className={styles.chart_header}>
             <div className={styles.chart_title}>All Sales</div>
@@ -113,7 +113,7 @@ const ChartTabView = ({ ...props }) => {
                 <div className={styles.chart_label}>SUN</div>
             </div>
         </div>);        
-      case "revenue":
+      case "net sales":
         // return (<WeeklySalesChart />);
         return (<BarChartView />)
       default:
@@ -123,7 +123,7 @@ const ChartTabView = ({ ...props }) => {
 
   return (
     <TabView 
-      tabs={["all","revenue"]}
+      tabs={["revenue","net sales"]}
       getTab={getTab}
       renderTabView={renderTabView}
     />

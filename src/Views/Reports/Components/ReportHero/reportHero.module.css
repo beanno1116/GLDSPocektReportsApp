@@ -2,11 +2,16 @@
 .report_hero {
   background: var(--bg-card);
   border: 2px solid var(--border-color);
-  border-radius: 24px;
+  border-radius: 1.5rem;
   padding: 28px;
+  max-width: 100%;
   /* margin-bottom: 24px; */
   position: relative;
   overflow: hidden;  
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  animation: fadeIn 0.8s ease 0.2s both;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 .report_hero::before {
   content: '';
@@ -19,7 +24,14 @@
 }
 .report_meta {
   display: flex;
-  gap: 12px;
+
+  gap: 8px;
+  align-items: center;  
+  overflow-x: auto;    
+  overflow-y: hidden;
+  scrollbar-width: none;
+   /* mask-image: linear-gradient(to left, transparent 0%, black 10%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to left, transparent 0%, black 10%, black 90%, transparent 100%); */
   margin-bottom: 16px;
 }
 .meta_badge {
@@ -56,4 +68,10 @@
   margin-top: 16px;
   padding-top: 16px;
   border-top: 1px solid var(--border-color);
+}
+
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }

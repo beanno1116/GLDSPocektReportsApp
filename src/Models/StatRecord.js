@@ -2,14 +2,15 @@
 
 class StatRecord {
   description = "";
-  #group = "";
-  quantity = 0;
-  weight = 0.00;
-  total = 0.00;
   hour = "";
+  #group = "";
   #lookup = "";
-  #periodStart = "";
+  number = "";
   #periodEnd = "";
+  #periodStart = "";
+  quantity = 0;
+  total = 0.00;
+  weight = 0.00;
 
   constructor(recordObj){
     if (recordObj){
@@ -30,6 +31,14 @@ class StatRecord {
   }
   get lookup(){
     return this.#lookup;
+  }
+}
+
+class DepartmentStatRecord extends StatRecord {
+  number = "";
+  constructor(recordObj){
+    super(recordObj);
+    this.number = recordObj?.number || "";
   }
 }
 

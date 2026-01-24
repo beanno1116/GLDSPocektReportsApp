@@ -10,6 +10,12 @@ const ScrollItem = ({text,active,id,onClick}) => {
   )
 }
 
+const ScrollBadge = ({text,active=false,link}) => {
+  return (
+    <a className={`${styles.meta_badge} ${active ? styles.active : ""}`} href={link}>{text}</a>
+  )
+}
+
 const ScrollSelector = ({ items,children }) => {
   return (
     <div className={styles.scroll_selector}>
@@ -19,5 +25,6 @@ const ScrollSelector = ({ items,children }) => {
 }
 
 ScrollSelector.Item = ScrollItem;
+ScrollSelector.BadgeItem = ScrollBadge;
 
 export default ScrollSelector;

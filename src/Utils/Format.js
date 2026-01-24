@@ -208,6 +208,39 @@ class FormatUtil {
     }
   }
 
+  toCamelCase(string=""){
+    try {
+      if (string === "") return string;
+      const lowerCaseString = string.replace(/[\/,._\-;'""]/g, ' ').toLowerCase();
+      const stringArray = lowerCaseString.split(" ");
+      let camelString = "";
+      if (stringArray.length > 0){
+        stringArray.forEach((str,index) => {
+          if (index === 0){
+            camelString += str;
+            return;
+          }
+          camelString += str.charAt(0).toUpperCase() + str.slice(1)
+        })
+      }
+      return camelString;
+    } catch (error) {
+      console.error(error.message);
+      return "";
+    }
+  }
+
+  toCapitalized(string=""){
+    try {
+      if (string === "") return string;   
+      const lowerCaseString = string.toLowerCase();
+      return lowerCaseString.split(" ").map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(" ");
+    } catch (error) {
+      console.error(error.message);
+      return "";
+    }
+  }
+
   string(value,format){
     switch (format) {
       case "currency":

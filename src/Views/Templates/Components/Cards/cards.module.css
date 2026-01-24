@@ -2,8 +2,8 @@
 .card,
 .trend_card {
   background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 20px;
+  border: 2px solid var(--border-color);
+  border-radius: 1.5rem;
   padding: 1rem;
   position: relative;
   overflow: hidden;
@@ -20,7 +20,7 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 3px;
+  height: 4px;
   background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
   transform: scaleX(0);
   transform-origin: left;
