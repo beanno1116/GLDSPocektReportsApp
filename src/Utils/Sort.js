@@ -89,7 +89,31 @@ class SortUtility {
       })
       return sortedSales;
     } catch (error) {
-      
+      console.error(error.message);
+    }
+  }
+  bySales(sales,direction="desc"){
+    try {
+      if (!Array.isArray(sales)) throw new TypeError("parameter sales not of type array");
+      const sortedSales = sales.sort((a,b) => {
+        
+        if (a.total < b.total){
+          if (direction === "asc"){
+            return -1;
+          }
+          return 1;
+        }
+        if (a.total > b.total){
+          if (direction === "asc"){
+            return 1;
+          }
+          return -1;
+        }
+        return 0;
+      })
+      return sortedSales;
+    } catch (error) {
+      console.error(error.message);
     }
   }
 }

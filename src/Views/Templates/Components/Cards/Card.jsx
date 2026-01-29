@@ -12,9 +12,9 @@ const Label = ({text,size="md"}) => {
   )
 }
 
-const Card = ({ full=false,m="0 0 1.5rem 0",children  }) => {
+const Card = ({ full=false,m="0 0 1.5rem 0",width="100%",children  }) => {
   return (
-    <div className={`${styles.card} ${full ? styles.card_full : ""}` } style={{margin:m}}>
+    <div className={`${styles.card} ${full ? styles.card_full : ""}` } style={{margin:m,width}}>
       {children}
     </div>
   );

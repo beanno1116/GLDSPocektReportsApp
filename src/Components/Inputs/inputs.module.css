@@ -44,7 +44,7 @@ textarea,
     inset 0 -1px 0 rgba(255, 255, 255, 0.1),
     inset 0 0 2px 1px rgba(255, 255, 255, 0.1);  
   overflow: hidden;
-  border-radius: 1rem; 
+  border-radius: .75rem; 
   font-family: 'DM Sans', sans-serif;
   /* -webkit-appearance: none; */
 	box-sizing: border-box;
@@ -138,6 +138,107 @@ input.text_field_input:-webkit-autofill:focus {
   font-size: 1.75rem;
 }
 
+
+
+/* Select css styles */
+.form_group {
+  width: 100%;
+  margin-bottom: 4px;
+}
+.select {
+  position: relative;
+}
+.select_label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #ffffff;
+}
+.select_button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: #1a2147;
+  border: 2px solid #2a3463;
+  border-radius: 12px;
+  color: #ffffff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+  text-transform: capitalize;
+}
+.options_container {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: #1a2147;
+  border: 2px solid #2a3463;
+  border-radius: 16px;
+  padding: 8px;
+  z-index: 1000;
+  max-height: 320px;
+  overflow-y: auto;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+.option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  color: #ffffff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  text-transform: capitalize;
+}
+.option_selected {
+  background: rgba(0, 255, 136, 0.1);
+  color: #00ff88;
+}
+.checkmark {
+  margin-left: auto;
+  font-size: 16px;
+  color: #00ff88;
+  }
+  .selected_text {
+  color: #ffffff;
+  font-weight: 600;
+}
+.placeholder_text {
+  color: #8b9cc5;
+}
+.chevron {
+
+}
+
+.sm {
+  padding: 10px 14px;
+  font-size: 13px;
+}
+.md {
+  padding: 14px 18px;
+  font-size: 15px;
+}
+.lg {
+  padding: 18px 22px;
+  font-size: 17px;
+}
+
+
+
 .label.sm {
   font-size: 1.2rem;
 }
@@ -147,7 +248,10 @@ input.text_field_input:-webkit-autofill:focus {
 .label.lg {
   font-size: 1.7rem;
 }
-
+.text_field_input.sm {
+  font-size: 1rem;
+  height: 2.5em;
+}
 @keyframes shake-horizontal {
   0%,
   100% {

@@ -29,6 +29,10 @@ import HeaderLabel from "../../../Components/Labels/HeaderLabel";
 import KpiGrid from "../../../Components/Grids/KpiGrid";
 import SecondaryButton from "../../../Components/Buttons/SecondaryButton";
 import StoreIcon from "../../../assets/icons/StoreIcon";
+import WEModal from "../../../Components/WEModal/WEModal";
+import ModalViewManager from "../Components/ModalViewManager";
+import useModal from "../../../Components/WEModal/hooks/useModal";
+import Sort from "../../../Utils/Sort";
 
 const data = [
   {
@@ -169,8 +173,8 @@ const viewQueries = [
     action: "HourlySales",
     key: `hourlysales`,
     posFields: {
-      startDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1)),
-      endDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1))
+      startDate: Format.toRequestDateFormat(new Date()),
+      endDate: Format.toRequestDateFormat(new Date())
     },
     adapter(data) {      
       const adaptedData = LocDataAdapter.parseHourlySales(data);
@@ -274,6 +278,10 @@ const useStoreSalesDetailsView = () => {
     navigate(route,{viewTransition:true});
   },[navigate])
 
+  const onCreateButtonClick = (e) => {
+
+  }
+
   return {
     results,
     onNavClick
@@ -284,6 +292,7 @@ const useStoreSalesDetailsView = () => {
 
 const StoreSalesDetails = ({ ...props }) => {
   const {results,onNavClick} = useStoreSalesDetailsView();
+  const {modalState,toggleModal} = useModal();
 
   if (results.isLoading){
     return (
@@ -300,14 +309,15 @@ const StoreSalesDetails = ({ ...props }) => {
   // debugger;
 
 
-  
+  const onCreateButtonClick = (e) => {
+    toggleModal();
+  }
   
   return (
     <View>
-      {/* <HeaderNav title="Store Loyalty" /> */}
       <FlexColumn height="100%">        
 
-        <ReportHero title={"Store Sales Report"} badge={"Store Sales"} period={"Jan 2026"} description={"View your store sales data from all angles and gather insite about trends and store performance"} />
+        <ReportHero title={"Store Sales Report"} badge={"Store Sales"} period={"Jan 2026"}  />
 
         <FlexRow flex="1">
           <ScrollView type="absolute">
@@ -330,43 +340,19 @@ const StoreSalesDetails = ({ ...props }) => {
                     {/* <SubLabel text={subtitle === "" ? "" : `Ending: $${handleZeroValue(subtitle)}`} /> */}
                   </WEAccordion.Panel.Header>
                   <WEAccordion.Panel.Content>
-                    <div className={styles.sub_item}>
-                      <span>💵 Total Sales</span>
-                      <span>$342,000</span>
-                    </div>
-                    <div className={styles.sub_item}>
-                      <span>🏦  Net Sales</span>
-                      <span>$128,500</span>
-                    </div>
-                    <div className={styles.sub_item}>
-                      <span>🏦  Hash Sales</span>
-                      <span>$85,000</span>
-                    </div>
-                    <div className={styles.sub_item}>
-                      <span>🏦  Discountable Sales</span>
-                      <span>$45,000</span>
-                    </div>
-                    <div className={styles.sub_item}>
-                      <span>🏦  Foodstampable Sales</span>
-                      <span>$45,000</span>
-                    </div>
-                    <div className={styles.sub_item}>
-                      <span>🏦  Wicable Sales</span>
-                      <span>$45,000</span>
-                    </div>
-                    <div className={styles.sub_item}>
-                      <span>🏦  Cost of Goods Sold</span>
-                      <span>$299,000</span>
-                    </div>
-                    {/* <div className={`${styles.sub_item} ${styles.sub_item_total}`}>
-                      <span>🏦  Total</span>
-                      <span>$299,000</span>
-                    </div> */}
+                    {Sort.bySales(balanceSheet.Sales).map(sale => {
+                      return (
+                        <div className={styles.sub_item}>
+                          <span>💵 {sale.description}</span>
+                          <span>{Format.string(sale.total,"currency")}</span>
+                        </div>
+                      )
+                    })}
                   </WEAccordion.Panel.Content>
                 </WEAccordion.Panel>
               </WEAccordion>
               <FlexRow p="1rem 0 0 0">
-                <PrimaryButton>Create Sales Report</PrimaryButton>
+                <PrimaryButton action="sales" onClick={onCreateButtonClick}>Create Sales Report</PrimaryButton>
               </FlexRow>
             </TrendCard>
             
@@ -413,6 +399,10 @@ const StoreSalesDetails = ({ ...props }) => {
         <View.BottomNav.Button action="/report/stores" onClick={onNavClick} icon={<SolidDownloadIcon size={40} />}>Download</View.BottomNav.Button>
         <View.BottomNav.Button action="/report/stores" onClick={onNavClick} icon={<SettingsIcon size={40} />}>Settings</View.BottomNav.Button>
       </View.BottomNav>
+
+      <WEModal config={{showCloseButton:false}} isOpen={modalState} toggle={() => toggleModal()}>
+        <ModalViewManager view={"sales"} close={toggleModal} data={{hourlyData,balanceSheet,departmentSales}}/>
+      </WEModal>
 
     </View>
   );

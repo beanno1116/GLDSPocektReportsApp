@@ -28,6 +28,7 @@ import ViewModalManager from './Components/ViewModalManager';
 import StatRecord from '../../../Models/StatRecord';
 import { viewAdapter } from './viewDataAdapter';
 import StoreIcon from '../../../assets/icons/StoreIcon';
+import SecondaryButton from '../../../Components/Buttons/SecondaryButton';
 
 
 
@@ -38,6 +39,7 @@ const viewQueries = [
     key: "current",
     adapter(data) {      
       const adaptedData = LocDataAdapter.parseStoreStatsData(data);
+      // const adaptedData = LocDataAdapter.parseStoreStatsData(data);
       return adaptedData;
     }
   },
@@ -46,6 +48,14 @@ const viewQueries = [
     key: "past",
     adapter(data) {      
       const adaptedData = LocDataAdapter.parseStoreStatsData(data);
+      return adaptedData;
+    }
+  },
+  {
+    action: "CurrentVsLastWeek",
+    key: "current",
+    adapter(data) {      
+      const adaptedData = LocDataAdapter.parseWeekData(data);
       return adaptedData;
     }
   },
@@ -76,14 +86,11 @@ const useStoreReportsView = () => {
     if (key === "past"){
       if (selectedPeriod === "prevWeek"){
         selectedPeriod = "week";
-      }
-      if (selectedPeriod === "today"){
+      } else if (selectedPeriod === "today"){
         selectedPeriod = "prevDay";
-      }
-      if (selectedPeriod === "prevDay"){
+      } else if (selectedPeriod === "prevDay"){
         selectedPeriod = "today";
-      }
-      if (selectedPeriod === "prevMonth"){
+      } else if (selectedPeriod === "prevMonth"){
         selectedPeriod = "month";
       }
     }
@@ -97,7 +104,7 @@ const useStoreReportsView = () => {
   
   const results = useQueries({
     queries: viewQueries.map(query => ({
-      queryKey: [`${query.action}_${query.key}`,getPeriodDateRange(query.key),"dfdd44e8-be22-43ef-8313-95f2d1904566"],
+      queryKey: [`${query.action}_${query.key}`,"dfdd44e8-be22-43ef-8313-95f2d1904566",getPeriodDateRange(query.key).startDate,getPeriodDateRange(query.key).endDate],
       queryFn: async () => {   
         
         const paramObj = {
@@ -198,8 +205,9 @@ const StoreReportsView = ({ ...props }) => {
   }
 
   
-  const {coupon,sales,tax,exceptions,loyalty,transaction} = viewAdapter(results.viewData[0],results.viewData[1]);
-
+  const {coupon,sales,tax,exceptions,loyalty,markdowns,transaction} = viewAdapter(results.viewData[0],results.viewData[1]);
+  const weekData = results.viewData[2];
+  debugger;
   const onViewAllClick = (e,action) => {
     navigate(action,{viewTransition:true});
   }
@@ -215,7 +223,7 @@ const StoreReportsView = ({ ...props }) => {
         <ScrollView>
 
           {/* Store sales chart */}
-          <ChartTabView />
+          <ChartTabView chartData={weekData} />
 
           {/* Store sales KPI grid */}
           <View.SectionHeader m='.5rem 0' title={"Sales"} viewAll={onViewAllClick} action="/report/stores/sales"/>
@@ -224,14 +232,24 @@ const StoreReportsView = ({ ...props }) => {
             {sales.map(stat => {
               return (
                 <KpiGrid.SummaryItem 
-                  icon={stat.format === "percentage" ? <PerentSignIcon size={20} /> : <DollarSignIcon size={24} />} 
-                  label={stat.title} 
-                  value={stat.value} 
-                  type={stat.format} 
-                  subValue={stat.delta}/>
+                icon={stat.format === "percentage" ? <PerentSignIcon size={20} /> : <DollarSignIcon size={24} />} 
+                label={stat.title} 
+                value={stat.value} 
+                type={stat.format} 
+                subValue={stat.delta}/>
               )
             })}
           </KpiGrid>
+
+          <View.SectionHeader m='.5rem 0' title={"Markdowns"} viewAll={onViewAllClick} action="/report/stores/sales"/>
+          {markdowns.length === 0 && <div>No data found</div>}
+          {
+            markdowns.map(item => {
+              return (
+                <TopCategorySection.Item name={item.title} subtitle={`${item.quantity} items`} delta={Format.string(item.delta,"percentage")} value={Format.string(item.value,item.format)} />
+              )
+            })
+          }
 
           {/* Store loyalty KPI grid */}
           <View.SectionHeader m='.5rem 0' title={"Loyalty"} viewAll={onViewAllClick} action="/report/stores/loyalty"/>
@@ -251,7 +269,7 @@ const StoreReportsView = ({ ...props }) => {
           {
             coupon.map(item => {
               return (
-                <TopCategorySection.Item name={item.title} subtitle={`${item.quantity}`} value={item.value} />
+                <TopCategorySection.Item name={item.title} subtitle={`${item.quantity} redeemed`} delta={Format.string(item.delta,"percentage")} value={Format.string(item.value,item.format)} />
               )
             })
           }
@@ -268,7 +286,7 @@ const StoreReportsView = ({ ...props }) => {
           {
             tax.map(item => {
               return (
-                <TopCategorySection.Item name={item.title} subtitle={item.quantity === 0 ? "" : `${item.quantity} items`} value={item.value} />
+                <TopCategorySection.Item name={item.title} subtitle={item.quantity === 0 ? "" : `${item.quantity} items`} delta={Format.string(item.delta,"percentage")} value={Format.string(item.value,item.format)} />
               )
             })
           }
@@ -280,7 +298,8 @@ const StoreReportsView = ({ ...props }) => {
             {
               exceptions.map(item => {
                 return (
-                  <KpiGrid.Item title={item.title} value={Format.string(item.value,item.format)}/>
+                  <KpiGrid.Item title={item.title} opposite={true} value={item.value} subValue={item.delta} format={item.format} type={item.format} />
+                  // <KpiGrid.Item title={item.title} value={Format.string(item.value,item.format)}/>
                 )
               })
             }            
@@ -292,17 +311,19 @@ const StoreReportsView = ({ ...props }) => {
             {
               transaction.map(item => {
                 return (
-                  <KpiGrid.Item title={item.title} value={item.value} type={item.format} />
+                  <KpiGrid.Item title={item.title} value={item.value} subValue={item.delta} format={item.format} type={item.format} />
                 )
               })
             }      
           </KpiGrid>
 
           {/* Store report tool buttons */}
-          <View.SectionTitle m='1rem 0 .5rem 0'>Tools</View.SectionTitle>
+          <View.SectionTitle m='1rem 0 .5rem 0'>Tools</View.SectionTitle>          
           <KpiGrid>
-            <KpiGrid.ActionItem icon={<SolidSafeIcon size={32} />} label={"Export"} />
-            <KpiGrid.ActionItem icon={<DrawerIcon size={32} />} label={"Send"} />
+            <SecondaryButton>Summary</SecondaryButton>
+            <SecondaryButton>Targets</SecondaryButton>
+            <SecondaryButton>Alerts</SecondaryButton>
+            <SecondaryButton>Tender</SecondaryButton>
           </KpiGrid>
 
           <div style={{height:"75px",width:"100%"}}></div>

@@ -3,7 +3,9 @@
   background: var(--bg-card);
   border: 2px solid var(--border-color);
   border-radius: 1.5rem;
-  padding: 28px;
+  padding: 1.5rem;
+  padding-bottom: 1.5rem;
+  padding-top: 1.5rem;
   max-width: 100%;
   /* margin-bottom: 24px; */
   position: relative;
@@ -32,7 +34,7 @@
   scrollbar-width: none;
    /* mask-image: linear-gradient(to left, transparent 0%, black 10%, black 90%, transparent 100%);
   -webkit-mask-image: linear-gradient(to left, transparent 0%, black 10%, black 90%, transparent 100%); */
-  margin-bottom: 16px;
+  margin-top: 1.5rem;
 }
 .meta_badge {
   padding: 6px 12px;

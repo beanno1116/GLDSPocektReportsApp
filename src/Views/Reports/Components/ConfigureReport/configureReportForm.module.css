@@ -1,0 +1,11 @@
+.scroll_list {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  /* background-color: green; */
+}
+.scroll_list_item {
+  display: flex;
+  gap: 1rem;
+  padding: .5rem;
+}

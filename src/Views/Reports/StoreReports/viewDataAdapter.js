@@ -89,8 +89,8 @@ const loyaltyStatsTileData = (statSelector,baseStatSelector) => {
         title: "Items",
         format: "shortNumber",
         property: "quantity",
-        value: itemStat.total,
-        delta: Calculate.percentChange(baseItemStat.total,itemStat.total)
+        value: itemStat.quantity,
+        delta: Calculate.percentChange(baseItemStat.quantity,itemStat.quantity)
       },
       {
         title: "Points Given",
@@ -119,7 +119,7 @@ const couponListItemsData = (currentData,baseData) => {
     return currentData.map(data => {
       return {
         title: data.description,
-        format: "shortCurrency",
+        format: "shortNumber",
         value: data.total,
         quantity: data.quantity,
         delta: data.total
@@ -136,7 +136,7 @@ const taxListItemsData = (currentData,baseData) => {
     return currentData.map(data => {
       return {
         title: data.description,
-        format: "shortCurrency",
+        format: "shortNumber",
         value: data.total,
         quantity: data.quantity,
         delta: data.total
@@ -162,25 +162,25 @@ const exceptionStatsTileData = (statSelector,baseStatSelector) => {
     return [
       {
         title: "Cancel Prev Item",
-        format: "shortNumber",
+        format: "number",
         value: cancelPrevItemStat.quantity,
         delta: Calculate.percentChange(baseCancelPrevItemStat.quantity,cancelPrevItemStat.quantity)
       },
       {
         title: "Refunds",
-        format: "shortNumber",        
+        format: "number",        
         value: refundsStat.quantity,
         delta: Calculate.percentChange(baseRefundsStat.quantity,refundsStat.quantity)
       },
       {
         title: "No Sales",
-        format: "shortNumber",
+        format: "number",
         value: noSalesStat.quantity,
         delta: Calculate.percentChange(baseNoSalesStat.quantity,noSalesStat.quantity)
       },
       {
         title: "Canceled Orders",
-        format: "shortNumber",
+        format: "number",
         value: cancelOrderStat.quantity,
         delta: Calculate.percentChange(baseCancelOrderStat.quantity,cancelOrderStat.quantity)
       }
@@ -195,24 +195,54 @@ const transactionStatsTileData = (statSelector,baseStatSelector) => {
     if (!statSelector || !baseStatSelector) throw new Error("expected parameter of function, receieved undefined");
     const transactionCountStat = statSelector("transaction","customers");
     const baseTransactionCountStat = baseStatSelector("transaction","customers");
+    const timeCompleteTrans = statSelector("transaction","timeCompleteTrans");
+    const transIdleTime = statSelector("transaction","timeIdle");
     const itemsStat = statSelector("transaction","items");
     const baseItemsStat = baseStatSelector("transaction","items");
-
 
     return [
       {
         title: "Count",
-        format: "shortNumber",
+        format: "number",
         value: transactionCountStat.quantity,
         delta: Calculate.percentChange(baseTransactionCountStat.quantity,transactionCountStat.quantity)
       },
       {
         title: "Items",
-        format: "shortNumber",
+        format: "number",
         value: itemsStat.quantity,
         delta: Calculate.percentChange(baseItemsStat.quantity,itemsStat.quantity)
       },
+      {
+        title: "Time",
+        format: "shortNumber",
+        value: timeCompleteTrans.quantity,
+        delta: Calculate.percentChange(timeCompleteTrans.quantity,timeCompleteTrans.quantity)
+      },
+      {
+        title: "Idle Time",
+        format: "shortNumber",
+        value: transIdleTime.quantity,
+        delta: Calculate.percentChange(transIdleTime.quantity,transIdleTime.quantity)
+      },
     ]
+  } catch (error) {
+    
+  }
+}
+
+const markDownStatsData = (currentData,baseData) => {
+  try {
+     if (!currentData) return [];
+    return currentData.map(data => {
+      return {
+        title: data.description,
+        format: "shortNumber",
+        value: data.total,
+        quantity: data.quantity,
+        delta: data.total
+      }
+    })
   } catch (error) {
     
   }
@@ -221,7 +251,7 @@ const transactionStatsTileData = (statSelector,baseStatSelector) => {
 
 export const viewAdapter = (currentData,baseData) => {
   try {
-    
+    debugger;
     // if (!Array.isArray(currentData) || !Array.isArray(baseData)) throw new TypeError("parameter not of type array");
     const statSelector = selectStatGroup(currentData);
     const baseStatSelector = selectStatGroup(baseData);
@@ -231,6 +261,9 @@ export const viewAdapter = (currentData,baseData) => {
     const transactionGridData = transactionStatsTileData(statSelector,baseStatSelector);
     const couponListData = couponListItemsData(currentData?.coupon,baseData?.coupon);
     const taxListData = taxListItemsData(currentData?.tax,baseData?.tax);
+    const markdowns = markDownStatsData(currentData?.markdown,baseData?.markdown);
+
+    const weekData = statSelector()
 
     const viewData = {
       sales: salesGridData,
@@ -238,7 +271,8 @@ export const viewAdapter = (currentData,baseData) => {
       loyalty: loyaltyGridData,
       coupon: couponListData,
       tax: taxListData,
-      transaction: transactionGridData
+      transaction: transactionGridData,
+      markdowns
     }
 
     return viewData;

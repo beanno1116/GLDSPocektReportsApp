@@ -7,9 +7,9 @@ import SectionHeader from './Components/SectionHeader';
 import SectionTitle from './Components/SectionTitle';
 import styles from './view.module.css';
 
-const View = ({ direction="column", children }) => {
+const View = ({ direction="column",solid=false, children }) => {
   return (
-  <div className={styles.view_template} style={{display:"flex",flexDirection:direction}}>
+  <div className={`${styles.view_template} ${solid ? styles.solid : ""}`} style={{display:"flex",flexDirection:direction}}>
     {children}
   </div>
   );

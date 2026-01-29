@@ -504,6 +504,25 @@ gap: .5rem;
 }
 
 
+/* Toggle Button css styles */
+.toggle_btn {
+  padding: 6px 12px;
+  background: rgba(0, 212, 255, 0.15);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  color: var(--accent-blue);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+}
+.toggle_btn.active {
+  color: var(--accent-green);
+  background: rgba(0, 255, 136, 0.15);
+  border: 1px solid rgba(0, 255, 136, 0.975);
+}
+
 
 
 

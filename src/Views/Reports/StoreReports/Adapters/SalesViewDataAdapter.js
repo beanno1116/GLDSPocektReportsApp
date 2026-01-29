@@ -46,7 +46,6 @@ const formatHourlySales = (salesObj,baseSalesObj) => {
         total: baseObjMax.total / 365,
         format: "shortCurrency"
       };
-      debugger;
       return retObj;
     }
     
@@ -91,7 +90,6 @@ const formatHourlySales = (salesObj,baseSalesObj) => {
         total: baseObjMax.quantity / 365,
         format: "shortNumber"
       };
-      debugger;
       return retObj;
     }
     
@@ -136,7 +134,6 @@ const formatHourlySales = (salesObj,baseSalesObj) => {
         total: baseObjMax.quantity / 365,
         format: "shortNumber"
       };
-      debugger;
       return retObj;
     }
     
@@ -180,8 +177,7 @@ const formatHourlySales = (salesObj,baseSalesObj) => {
         hour: baseObjMax.hour,
         total: baseObjMax.total / baseObjMax.quantity,
         format: "currency"
-      };
-      debugger;
+      };      
       return retObj;
     }
 
@@ -215,7 +211,7 @@ const salesViewAdapter = (data) => {
     const departmentTotals = data[2];
     const baseDepartmentTotals = data[3];
     const balanceSheet = data[4];
-    debugger;
+    
 
     const hourlySalesData = formatHourlySales(hourlySales,baseHourlySales);
     const departmentSalesData = formatDepartmentSales(departmentTotals,baseDepartmentTotals);

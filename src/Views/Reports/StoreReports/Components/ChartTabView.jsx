@@ -41,14 +41,14 @@ const data = [
   },
 ];
 
-const BarChartView = () => {
+const BarChartView = ({chartData}) => {
   const barColors = [ '#4c5f7c', '#dc2424', '#fcda00', '#8383ba', '#23dbbd' ];
 
   return (
     <BarChart
       style={{ width: '100%', maxWidth: '700px', maxHeight: '80vh', aspectRatio: 1.618 }}
       responsive
-      data={data}
+      data={chartData}
       barGap={0}
       barCategoryGap={4}
       margin={{
@@ -62,7 +62,7 @@ const BarChartView = () => {
       <YAxis width="auto"  mirror={true} yAxisId={1} stroke="snow" hide={false} tickLine={false} axisLine={false}/>
       <Tooltip />
       {/* <Legend /> */}
-      <Bar type="monotone" dataKey="total" fill="#8884d8" radius={[10, 10, 0, 0]}>
+      <Bar type="monotone" dataKey="thisWeekSales" fill="#8884d8" radius={[10, 10, 0, 0]}>
         {data.map((entry, index) => (
   <>
    <defs>
@@ -80,7 +80,7 @@ const BarChartView = () => {
 }
 
 
-const ChartTabView = ({ ...props }) => {
+const ChartTabView = ({ chartData,...props }) => {
   const getTab = (tab) => {
     return tab[0].toUpperCase() + tab.slice(1);
   }
@@ -88,34 +88,10 @@ const ChartTabView = ({ ...props }) => {
   const renderTabView = (tab) => {
     switch (tab) {
       case "revenue":        
-        return (        <div className={styles.chart_section}>
-          <div className={styles.chart_header}>
-            <div className={styles.chart_title}>All Sales</div>
-            <div className={styles.chart_period}>Weekly Sales</div>
-          </div>
-          <div className={styles.chart_bars}>
-            <div className={styles.chart_bar} style={{height:" 58%"}}></div>
-            <div className={styles.chart_bar} style={{height:" 72%"}}></div>
-            <div className={styles.chart_bar} style={{height:" 65%"}}></div>
-            <div className={styles.chart_bar} style={{height:" 88%"}}></div>
-            <div className={styles.chart_bar} style={{height:" 94%"}}></div>
-            <div className={styles.chart_bar} style={{height:" 100%"}}></div>
-            <div className={styles.chart_bar} style={{height:" 76%"}}></div>
-          </div>
-
-          <div className={styles.chart_labels}>
-                <div className={styles.chart_label}>MON</div>
-                <div className={styles.chart_label}>TUE</div>
-                <div className={styles.chart_label}>WED</div>
-                <div className={styles.chart_label}>THU</div>
-                <div className={styles.chart_label}>FRI</div>
-                <div className={styles.chart_label}>SAT</div>
-                <div className={styles.chart_label}>SUN</div>
-            </div>
-        </div>);        
+        return (<BarChartView chartData={chartData}/>)
       case "net sales":
         // return (<WeeklySalesChart />);
-        return (<BarChartView />)
+        return (<BarChartView chartData={chartData}/>)
       default:
         return (<div style={{color:"snow"}}>Information tab view</div>);
     }

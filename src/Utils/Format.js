@@ -150,6 +150,16 @@ class FormatUtil {
     }
   }
 
+  stringAsInteger(value){
+    try {
+      if (this.#isRealNumber(parseFloat(value))) {
+        return `${parseInt(value)}`;
+      }
+    } catch (error) {
+      
+    }
+  }
+
   /*
     millions: >=7 1000000
     hundred thousands: >=6 100000
@@ -179,7 +189,7 @@ class FormatUtil {
           return `${valueAsString.substring(0,2).slice(0,1) + "." + valueAsString.substring(0,2).slice(1)}K`;
         }
         if (valueLength <= 3){
-          return `${valueAsString}`
+          return `${parseFloat(value).toFixed(2)}`
         }
         if (valueLength < 6 && valueLength > 3){
           return `$${displayNumber}K`
@@ -246,7 +256,7 @@ class FormatUtil {
       case "currency":
         return `$${this.stringAsMoney(value)}`;
       case "number":
-        return this.stringAsNumber(value);
+        return this.stringAsInteger(value);
       case "shortNumber":
         return this.moneyAbbreviation(value);
       case "shortCurrency":

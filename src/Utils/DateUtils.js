@@ -14,6 +14,68 @@ const monthAbrv = [
   "dec"
 ]
 
+const months = [
+  {
+    number: 0,
+    short: "jan",
+    full: "january"
+  },
+  {
+    number: 1,
+    short: "feb",
+    full: "february"
+  },
+  {
+    number: 2,
+    short: "mar",
+    full: "march"
+  },
+  {
+    number: 3,
+    short: "apr",
+    full: "april"
+  },
+  {
+    number: 4,
+    short: "may",
+    full: "may"
+  },
+  {
+    number: 5,
+    short: "jun",
+    full: "june"
+  },
+  {
+    number: 6,
+    short: "jul",
+    full: "july"
+  },
+  {
+    number: 7,
+    short: "aug",
+    full: "august"
+  },
+  {
+    number: 8,
+    short: "sep",
+    full: "september"
+  },
+  {
+    number: 9,
+    short: "oct",
+    full: "october"
+  },
+  {
+    number: 10,
+    short: "nov",
+    full: "november"
+  },
+  {
+    number: 11,
+    short: "dec",
+    full: "december"
+  }
+]
 
 class DateUtils {
   TODAY_PERIOD = "today";
@@ -167,6 +229,8 @@ class DateUtils {
       const now = new Date(date);
       switch (period) {
         case this.TODAY_PERIOD:
+          dateRange.startDate = date;
+          dateRange.endDate =  date;  
           break;
         case this.PREV_DAY_PERIOD:
           dateRange.startDate = this.setDateBack(now,1);
@@ -241,6 +305,26 @@ class DateUtils {
       }
     } catch (error) {
       
+    }
+  }
+
+  get thisYear(){
+    const date = new Date();
+    return date.getFullYear();
+  }
+  get thisMonth(){
+    const date = new Date();
+    return date.getMonth();
+  }
+
+  today(format){
+    const date = new Date();
+    switch (format) {
+      case "input":
+        return `${date.getFullYear}-${date.getMonth+1}-${date.getDate()}`;        
+    
+      default:
+        break;
     }
   }
 

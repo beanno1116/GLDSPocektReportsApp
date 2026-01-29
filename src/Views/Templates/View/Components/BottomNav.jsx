@@ -21,7 +21,7 @@ const NavButton = ({icon,label,action,onClick,children}) => {
   }
 
   return (
-    <button data-action={action} className={`${styles.nav_item} ${styles.active}`} onClick={onClick && onClick(action)}>          
+    <button data-action={action} className={`${styles.nav_item} ${styles.active}`} onClick={onClick && onClick(action)}>      
       <div className={styles.nav_icon}>{icon}</div>          
       <div className={styles.nav_label}>{label}</div>
     </button>
@@ -33,7 +33,10 @@ const NavButton = ({icon,label,action,onClick,children}) => {
 const BottomNav = ({ fixed=true,children }) => {
   return (
     <div className={`${styles.bottom_nav} ${fixed ? styles.fixed : ""}`}>
-      {children}      
+      <div>
+        <div className={styles.bottom_nav_menu_container}></div>        
+        {children}      
+      </div>
     </div>
   );
 }
