@@ -1,0 +1,180 @@
+.date_picker {
+    position: absolute;
+  top: calc(100% + .5rem);
+  right: 0;
+  width: 100%;
+  /* width: 400px; */
+  /* height: 500px; */
+  background-color: red;
+  z-index: 1;
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: 1.5rem;
+  padding: 1rem;
+  overflow: hidden;
+  transform-origin: top right;
+  transform: scale(0);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  cursor: pointer;
+   animation: fadeIn 0.8s ease 0.2s both;
+   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+.date_picker::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
+}
+.date_picker.open {
+  transform: scale(1);
+  opacity: 1;
+}
+
+
+.month_picker {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 1rem;
+  place-items: center;
+  margin: .5rem 0;
+}
+
+.date_picker_header {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+.month_button {
+  width: 100%;
+  padding: 2rem 0rem;
+  border-radius: .75rem;
+    background: rgba(0, 212, 255, 0.15);
+  border-color: rgba(0, 212, 255, 0.3);
+}
+.month_button.active {
+
+  background: rgba(0, 212, 255, 0.3);
+  border: 1px solid rgba(0, 213, 255, 0.645);;
+  color: var(--accent-blue);
+  font-weight: 800;
+  text-decoration: underline;
+}
+.month_button.selected {
+
+  background: rgba(0, 255, 136, 0.15);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  color: var(--accent-green);
+}
+
+
+
+/* Month header css styles */
+.month_header {
+  display: flex;
+  justify-content: center;
+}
+.month_header_button {
+  padding: .5rem;
+}
+.month_header_title {
+  flex: 1;
+  font-size: 1rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 800;
+  text-align: center;
+  padding: .5rem;
+}
+
+
+/* Day name header css styles */
+.day_name_header {
+  display: flex;
+}
+.day_name_header > div {
+  flex: 1;
+  text-align: center;
+  padding: 0 0 .5rem 0;
+}
+
+
+
+
+
+.month {
+  width: 100%;
+  margin: .5rem 0;
+}
+.week {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+}
+.day {
+  flex: 1;
+  text-align: center;
+  width: calc(100% / 7);
+  aspect-ratio: 1 / 1;
+  /* background-color: red; */
+}
+span.selected {
+  background-color: var(--accent-green);
+  /* border-bottom: 2px solid var(--accent-green); */
+  color: var(--accent-green);
+  border-radius: .25rem;
+  color: black;
+  font-weight: 800;
+}
+/* span.selected::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left:  -3rem;
+  height: 100%;
+  width: 3rem;
+  background-color: var(--accent-green);
+  border-bottom: 2px solid var(--accent-green);
+  color: var(--accent-green);
+  border-radius: .25rem;
+  color: black;
+  font-weight: 800;
+}
+span.selected::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 100%;
+  height: 100%;
+  width: 2rem;
+  background-color: var(--accent-green);
+  border-bottom: 2px solid var(--accent-green);
+  color: var(--accent-green);
+  border-radius: .25rem;
+  color: black;
+  font-weight: 800;
+} */
+.day > span {
+  position: relative;
+  height: 100%;
+  padding: .5rem;  
+  overflow: visible;
+  /* background-color: blue; */
+  /* border-radius: 50%; */
+}
+span.today {  
+  border-bottom: 1px solid rgb(0, 213, 255);
+  background:  rgba(0, 213, 255, 0.512);
+  /* color: rgb(0, 213, 255); */
+  border-radius: 50%;
+  font-weight: 800;
+}
+.out {
+  color: var(--text-secondary);
+}
+
