@@ -7,6 +7,6 @@
 .flex_row {
   position: relative;
   display: flex;
-  flex-direction: row;
+  flex-direction: row;  
   width: 100%;
 }

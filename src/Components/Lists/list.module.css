@@ -1,0 +1,126 @@
+.list_container {
+  position: relative;
+  background: #1a2147;
+  border: 2px solid #2a3463;
+  border-radius: 20px;
+  padding: 20px;
+  overflow: hidden;
+  height: 100%;
+}
+
+.list_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* margin-bottom: 16px; */
+}
+.list_title {
+  font-size: 18px;
+  font-weight: 700;
+}
+.selection_badge {
+  padding: 4px 12px;
+  background: linear-gradient(135deg, #00ff88, #00d4ff);
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Space Mono;' monospace;
+  color: #0a0e27;
+}
+.scrollable_list {
+    max-height: 200px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-right: 4px;
+}
+
+.select_all {
+  /* margin-bottom: 12px; */
+  /* padding-bottom: 12px; */
+  border-bottom: 1px solid #2a3463;
+}
+.select_all_button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.checkbox {
+  width: 24px;
+  height: 24px;
+  background: #0a0e27;
+  border: 2px solid #2a3463;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #00ff88;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+.checked {
+  background: linear-gradient(135deg, #00ff88, #00d4ff);
+  border-color: transparent;
+  color: #0a0e27;
+}
+.partial_checked {
+  background: linear-gradient(135deg, #00ff88, #00d4ff);
+  border-color: transparent;
+  color: #0a0e27;
+}
+.select_all_label {
+  flex: 1;
+  text-align: left;
+}
+
+
+
+.checkbox_list_item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 12px;
+  background: #141a3d;
+  border: 1px solid #2a3463;
+  border-radius: 12px;
+  color: #ffffff;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+.item_content {
+  flex: 1;
+  min-width: 0;
+}
+.item_title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.item_description {
+  font-size: 13px;
+  color: #8b9cc5;
+  line-height: 1.4;
+}
+.status_dot {
+  width: 8px;
+  height: 8px;
+  background: #00ff88;
+  border-radius: 50%;
+  flex-shrink: 0;
+}

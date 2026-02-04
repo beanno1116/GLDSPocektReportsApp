@@ -5,7 +5,7 @@ const flexValues = {
 }
 
 
-const FlexRow = ({ children,flex="unset",p="0",m="0",g="0",vAlign="flex-start",hAlign="flex-start",name,height="",width="" }) => {
+const FlexRow = ({ children,flex="unset",p="0",m="0",g="0",vAlign="flex-start",hAlign="flex-start",name,height="",wrap=false,width="" }) => {
 
   const componentStyles = () => {    
     return {
@@ -15,7 +15,8 @@ const FlexRow = ({ children,flex="unset",p="0",m="0",g="0",vAlign="flex-start",h
       gap: g,
       alignItems: vAlign,
       justifyContent: hAlign,
-      height: height === "" ? "unset" : height,      
+      height: height === "" ? "unset" : height,     
+      flexWrap: wrap ? "wrap" : "nowrap" 
     }
   }
 

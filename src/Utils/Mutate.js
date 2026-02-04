@@ -185,7 +185,7 @@ class MutateObj {
       for (const [key,value] of tempObj){
         dataArray.push(value);
       }
-      debugger;
+      
       return dataArray;
     } catch (error) {
       console.error(error.message);
@@ -405,6 +405,20 @@ class MutateObj {
     } catch (error) {
       console.error(error.message);
     }
+  }
+
+  departmentTotals(data){
+    if (!Array.isArray(data)) throw new TypeError("data not of type array");
+    const sortedArray = data.sort((a,b) => {
+      if (a.total > b.total){
+        return -1;
+      }
+      if (a.total < b.total){
+        return 1;
+      }
+      return 0;
+    })    
+    return sortedArray;
   }
 
 }

@@ -1,0 +1,48 @@
+
+import styles from '../view.module.css';
+
+const NavButtonIcon = ({children}) => {
+  return (
+    <div className={styles.nav_icon}>{children}</div>   
+  )
+}
+
+const NavButtonLabel = ({children}) => {
+  return (
+    <div className={styles.nav_label}>{children}</div>
+  )
+}
+
+const NavButton = ({icon,label,action,onClick,children}) => {
+
+  const onButtonClick = (e) => {
+    const action = e.currentTarget.dataset.action;
+    onClick && onClick(e,action);
+  }
+
+  return (
+    <button data-action={action} className={`${styles.nav_item} ${styles.active}`} onClick={onClick && onClick(action)}>      
+      <div className={styles.nav_icon}>{icon}</div>          
+      <div className={styles.nav_label}>{label}</div>
+    </button>
+  )
+}
+
+
+
+const BottomNav = ({ fixed=true,children }) => {
+  return (
+    <div className={`${styles.bottom_nav} ${fixed ? styles.fixed : ""}`}>
+      <div>
+        <div className={styles.bottom_nav_menu_container}></div>        
+        {children}      
+      </div>
+    </div>
+  );
+}
+
+BottomNav.Button = NavButton;
+BottomNav.Button.Icon = NavButtonIcon;
+BottomNav.Button.Label = NavButtonLabel;
+
+export default BottomNav;

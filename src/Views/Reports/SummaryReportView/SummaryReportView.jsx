@@ -202,7 +202,7 @@ const SummaryReportView = ({ report,closeView,...props }) => {
     safe: viewData[0],
     stats: viewData[1]
   }
-  debugger;
+  
 
   const onCardViewButtonClick = (e,action) => {
     setPanelShowing(!panelShowing);

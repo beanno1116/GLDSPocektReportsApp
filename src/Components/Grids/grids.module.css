@@ -1,0 +1,188 @@
+/* KPI Cards */
+.kpi_grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 24px;
+}
+
+.kpi_card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    animation: scaleIn 0.6s ease both;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.kpi_card:nth-child(1) { animation-delay: 0.1s; }
+.kpi_card:nth-child(2) { animation-delay: 0.2s; }
+.kpi_card:nth-child(3) { animation-delay: 0.3s; }
+.kpi_card:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.kpi_card:active {
+    transform: scale(0.98);
+}
+
+.kpi_card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.kpi_card:hover::before {
+    opacity: 1;
+}
+
+.kpi_label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.kpi_value {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.kpi_change {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+
+
+/* Summary card css styles */
+.summary_card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: 20px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  animation: scaleIn 0.6s ease both;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.summary_card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: radial-gradient(at top left, var(--accent-green), var(--accent-blue));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.summary_card:nth-child(1) { animation-delay: 0.1s; }
+.summary_card:nth-child(2) { animation-delay: 0.2s; }
+.summary_card:nth-child(3) { animation-delay: 0.3s; }
+.summary_card:nth-child(4) { animation-delay: 0.4s; }
+.summary_icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 212, 255, 0.2));
+  background: linear-gradient(135deg, rgba(255, 0, 255, 0.482), rgba(169, 85, 247, 0.473));
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+.summary_label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.summary_value {
+  font-size: 28px;
+  font-weight: 800;
+  font-family: 'Space Mono', monospace;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.summary_change {
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+
+/* Action card css styles */
+.action_card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  cursor: pointer;
+  animation: scaleIn 0.6s ease both;
+  transition: all 0.3s ease;
+}
+.action_card:nth-child(1) { animation-delay: 0.1s; }
+.action_card:nth-child(2) { animation-delay: 0.2s; }
+.action_card:nth-child(3) { animation-delay: 0.3s; }
+.action_card:nth-child(4) { animation-delay: 0.4s; }
+.action_icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+  background: linear-gradient(135deg, rgba(255, 0, 255, 0.482), rgba(169, 85, 247, 0.473));
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+}
+.action_label {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+
+
+.kpi_change.positive,
+.summary_change.positive {
+    color: var(--accent-green);
+}
+
+.kpi_change.negative,
+.summary_change.negative {
+    color: var(--accent-orange);
+}

@@ -37,3 +37,16 @@ export const take = function* (n,iterable){
     yield item;
   }
 }
+
+export const calculatePercentChange = (value,changeValue) => {
+  
+  let pct = ((changeValue - value) / value) * 100;
+  
+  return ((changeValue - value) / value) * 100;
+}
+
+
+
+export const removeAllSpaces = (string) => {
+  return string.replace(/ /g, '');
+}

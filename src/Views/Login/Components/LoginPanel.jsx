@@ -72,21 +72,16 @@ const useLoginPanel = (navigation) => {
       if (loginDataResponse.success){
         
         const payloadData = parseGetOrganizationResponse(loginDataResponse);
-
-        ;
-        if (authUser.stores.length > 1){
-          navigate("/stores/selector");
-        }else{
-          let storeId = authUser.stores[0];
-          const store = Filter.storeById(payloadData.stores,storeId);
-          payloadData.agentString = store.agentString;
+        payloadData.authorizedStores = authUser.stores;        
+        if (payloadData.authorizedStores.length > 0){
+          const autStoreId = payloadData.authorizedStores[1];
+          const store = Filter.storeById(payloadData.stores,autStoreId);
           payloadData.activeStore = store.id;
-
+          payloadData.agentString = store.agentString;
+          localStorage.set("org",JSON.stringify(payloadData));
+          dispatch({type:"all",payload:payloadData});
           navigate("/");
-        }
-        localStorage.set("org",JSON.stringify(payloadData));
-        
-        dispatch({action:"all",payload:payloadData});
+        }       
         loader.loaded();      
       }
       return;

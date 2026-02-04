@@ -125,6 +125,15 @@ class FilterObj {
       console.error(error.message);
     }
   }
+
+  lookupStat(stats,lookup){
+    try {
+      if (!Array.isArray(stats)) throw new TypeError("stats parameter not of type array");
+      return stats.filter(stat => stat.lookup === lookup)[0];
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
 }
 
 const Filter = new FilterObj();

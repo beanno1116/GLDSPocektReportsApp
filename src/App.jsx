@@ -12,7 +12,13 @@ import ProtectedRoute from "./Views/ProtectedRoute";
 import ItemReportsView from "./Views/ItemReports/ItemReportsView";
 import { AppContextProvider } from "./Contexts/AppContext";
 import StoreSelectorView from "./Views/StoreSelector/StoreSelectorView";
-import StoreReportsView from "./Views/StoreReports/StoreReportsView";
+// import StoreReportsView from "./Views/StoreReports/StoreReportsView";
+import ManageUserView from "./Views/ManageUserUpdate/ManageUserView";
+import ReportGroupsView from "./Views/ReportGroups/ReportGroupsView";
+import StoreReportsView from "./Views/Reports/StoreReports/StoreReportsView";
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import StoreLoyaltyDetails from "./Views/Reports/StoreReports/StoreLoyaltyDetails";
+import StoreSalesDetails from "./Views/Reports/StoreReports/StoreSalesDetails";
 
 // import Api, { ApiClient, ApiClientProvider, getApiEndpoint } from "./Api/Api";
 
@@ -20,7 +26,13 @@ import StoreReportsView from "./Views/StoreReports/StoreReportsView";
 // register username password accessCode
 // users post 
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000
+    }
+  }
+});
 const apiClient = new ApiClient(getApiEndpoint(false));
 
 const AppViewOutlet = ({children}) => {
@@ -40,34 +52,58 @@ const App = () => {
       children: [
         {
           path: "/",
-          element: <HomeView />
+          element: <HomeView />,
+        },
+        {
+          path: "/manage/users",
+          element: <ManageUserView />
         },
         {
           path:"/stores/selector",
           element: <StoreSelectorView />
         },
         {
-          path: "/reports/item",
+          path: "/report/items",
           element: <ItemReportsView />
         },
         {
-          path: "/reports/store",
+          path: "/report/stores",
           element: <StoreReportsView />
         },
         {
-          path: "/reports/customer",
+          path: "/report/stores/loyalty",
+          element: <StoreLoyaltyDetails />
+        },
+        {
+          path: "/report/stores/sales",
+          element: <StoreSalesDetails /> 
+        },
+        {
+          path: "/report/groups",
+          element: <ReportGroupsView />
+        },
+        {
+          path: "/stores",
+          element: <div style={{color:"snow"}}>Stores View</div>
+        },
+        {
+          path: "/settings",
+          element: <div style={{color:"snow"}}>Settings View</div>
+        },
+        {
+          path: "/reports/customers",
           element: <StoreReportsView />
         },
         {
-          path: "/reports/cashier",
+          path: "/reports/cashiers",
           element: <StoreReportsView />
         },
         {
-          path: "/reports/favorites",
+          path: "/report/favorites",
           element: <StoreReportsView />
         },
         {
-          path: "/reports/builder",
+          path: "/report/builder",
           element: <StoreReportsView />
         }
       ]
@@ -85,12 +121,11 @@ const App = () => {
           <AuthProvider>
             <AuthActionsProvider>          
                 <QueryClientProvider client={queryClient}>
+                   <ReactQueryDevtools initialIsOpen={false} />
                   <div className="App">
                     <div className='app__main__view'>
                       <RouterProvider router={router} />
-                      <LoaderModal />                      
-                      {/* <LoginView /> */}
-                      {/* <MainView /> */}
+                      <LoaderModal />
                     </div>      
                   </div>
                 </QueryClientProvider>

@@ -18,10 +18,57 @@ import { useApiClient } from '../../Api/Api';
 import { loader } from '../../Components/Loader/LoaderModal';
 import Heading from '../../Components/Labels/Heading';
 import BGImageAddUser from './Components/BGImageAddUser';
+import PrimaryButton from '../../Components/Buttons/PrimaryButton';
+import KpiGrid from '../../Components/Grids/KpiGrid';
+import SectionTitle from '../../Views/Templates/View/Components/SectionTitle';
+import Card from '../../Views/Templates/Components/Cards/Card';
+import FlexColumn from '../../Components/FlexComponents/FlexColumn';
+import TabView from '../../Components/TabView/TabView';
+import AddUserConfirmPanel from './Components/AddUserConfirmPanel';
 
 const initialFormData = {
   email: "",
+  name: "",
   isAdmin: false
+}
+
+const NewUserInformationForm = ({registerFormInput}) => {
+  return (
+  
+      <FlexColumn g='2rem' p='1rem'>
+        <TextField  label={"Email"} size={'sm'} {...registerFormInput("email",{required:true})} />   
+        <TextField  label={"Name"} size={'sm'} {...registerFormInput("name")} />   
+        <FlexRow vAlign='center' hAlign='center' g='1rem'>
+          <InputLabel text={"Make Admin"}/>
+          <WECheckbox size="lg" {...registerFormInput("isAdmin")} />
+        </FlexRow>   
+      </FlexColumn>
+
+  )
+}
+
+const AddUserFormTabView = ({registerFormInput,onRowClick,currentUser}) => {
+  const getTab = (tab) => {
+    return tab[0].toUpperCase() + tab.slice(1);
+  }
+
+  const renderTabView = (tab) => {
+    switch (tab) {
+      case "information":        
+        return (<NewUserInformationForm registerFormInput={registerFormInput}/>);        
+      case "store access":
+        return (<ManageUserStoreList currentUser={currentUser} onClick={onRowClick}/>);
+      default:
+        return (<div style={{color:"snow"}}>Information tab view</div>);
+    }
+  }
+  return (
+    <TabView 
+      tabs={["information","store access"]}
+      getTab={getTab}
+      renderTabView={renderTabView}
+    />
+  )
 }
 
 
@@ -44,8 +91,9 @@ const AddUserForm = ({ handleSubmit }) => {
   }
 
   const onSaveUserChanges = async ({data,isValid}) => {
-    loader.loading();
-    ;
+    // loader.loading();
+    
+    let temp = currentUser;
     if (!isValid){
       loader.loaded();
       return;
@@ -60,70 +108,51 @@ const AddUserForm = ({ handleSubmit }) => {
       storeIds: currentUser.stores
     }
     console.log(fd);
+    resetForm()
+    setShowSuccessModal(true)
+    // const createUserResponse = await api.post("users",fd,api.headers.applicationJson);
 
-    const createUserResponse = await api.post("users",fd,api.headers.applicationJson);
-
-    if (createUserResponse.success){      
-      setShowSuccessModal(true);
-      setNewAccessCode(createUserResponse.data);
-      loader.loaded();
-      return;
-    }
+    // if (createUserResponse.success){      
+    //   setShowSuccessModal(true);
+    //   setNewAccessCode(createUserResponse.data);
+    //   loader.loaded();
+    //   return;
+    // }
     loader.loaded();
 
+  }
+
+  const closeDropdown = () => {
+    setShowSuccessModal(false);
   }
 
   const onCloseButtonClick = (e) => {
     handleSubmit && handleSubmit();
   }
 
+  const renderButton = () => {
+    if (formData?.email !== ""){
+      return (
+        <PrimaryButton action={"next"} size='lg' color='black' onClick={(e) => onSubmit(e,onSaveUserChanges)}>Create User</PrimaryButton>
+      )
+    }
+    return (
+      <PrimaryButton action={"cancel"} size='lg' color='black' onClick={onCloseButtonClick}>Close</PrimaryButton>
+    )
+  }
+
   return (
     <>
+      <AddUserConfirmPanel when={showSuccessModal} close={closeDropdown} accessCode={"afs0-3e-1sg"} email={formData.email}/>
 
-      {showSuccessModal && (
-        <div className={styles.access_code_modal}>        
-        <div className={styles.access_code_modal_container}>
-          <div style={{fontSize:"3.25rem",fontWeight:"800",color:"snow",textAlign:"center",lineHeight:"1.5"}}>Success!</div>
-          <p className={styles.sub_heading_p}>The user was successfully created!</p>
-          <FlexRow p="0 1rem" hAlign='center'>
-          <div className={styles.access_code_display_panel}>
-            <div>Access Code</div>
-            <div>{newAccessCode}</div>
-          </div>
-          </FlexRow>
-          <p style={{textAlign:"center"}}>An email was sent with an access code to {formData.email}. You will be alerted once the user has completed the registration</p>          
-          <FlexRow p='0 1rem 1.5rem 1rem '>
-            <Button onClick={(e) => {
-              handleSubmit();
-              resetForm(e);
-              setShowSuccessModal(false)}
-              }>Done</Button>
-          </FlexRow>
-        </div>
+      <AddUserFormTabView registerFormInput={registerFormInput} onRowClick={onStoreRowClick} currentUser={currentUser} />
 
-      </div>
-      )}
+      <FlexColumn flex='1'></FlexColumn>
 
-      <BGImageAddUser />
-
-      <Heading size='lg' mode='lite'>Invite New User</Heading>
-
-      <TextField  label={"Invite Email"} size={'sm'} {...registerFormInput("email",{required:true})} placeholder="Email" />   
-
-      <FlexRow vAlign='center' hAlign='center' g='1rem'>
-        <InputLabel text={"Make Admin"} size='lg'/>
-        <WECheckbox size="lg" {...registerFormInput("isAdmin")} />
-      </FlexRow>   
-
-
-      <ManageUserStoreList stores={state.stores} currentUser={currentUser} onClick={onStoreRowClick} />
-
+      {/* <ManageUserStoreList stores={state.stores} currentUser={currentUser} onClick={onStoreRowClick} /> */}
 
       <FlexRow g='1rem'>
-        <Button action={"save"} color='black' onClick={(e) => onSubmit(e,onSaveUserChanges)}>Create</Button>
-        <IconButton action="close" onClick={onCloseButtonClick}>
-          <XIcon size={20} />
-        </IconButton> 
+        {renderButton()}
       </FlexRow>
     </>
   );

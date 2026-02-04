@@ -86,6 +86,7 @@ const useGetStoresForOrg = () => {
 const getOrgUsers = async ({api,signal,token,orgId}) => {
   const response = await api.get("/users",{params:{token,orgId},signal});   
   if (response.success){    
+    
     return response.data.map(rd => new User(rd));
   } 
   return [];
@@ -151,6 +152,7 @@ const useGetStoreConnectionStatus = (agentString) => {
 
 
 const getReportData = async (api,params,signal,mutate) => {  
+  
   const response = await api.post("data",params,{...api.headers.applicationJson,signal}); 
 
   if (response.success){
@@ -236,7 +238,7 @@ export const useFetchAllReportData = ({queries=testQueries}) => {
   }
 }
 
-const useFetchReportData = ({action,agentString="",enabled=true,mutate}) => {  
+const useFetchReportData = ({action,agentString="dfdd44e8-be22-43ef-8313-95f2d1904566",enabled=true,mutate}) => {  
   const auth = useAuth();
   const api = useApiClient();
   

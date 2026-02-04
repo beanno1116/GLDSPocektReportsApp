@@ -1,0 +1,71 @@
+/* Store Selector */
+.scroll_selector {
+  position: relative;
+  display: flex;
+  gap: 8px;
+  align-items: center;  
+  overflow-x: auto;    
+  overflow-y: hidden;
+  animation: fadeIn 0.8s ease 0.2s both;
+  scrollbar-width: none;
+  padding: .25rem 0 .25rem 0;
+  /* mask-image: linear-gradient(to left, transparent 0%, black 10%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to left, transparent 0%, black 10%, black 90%, transparent 100%); */
+}
+
+.scroll_selector::-webkit-scrollbar {
+    display: none;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.scroll_selector_chip {
+    flex-shrink: 0;
+    padding: 12px 20px;
+    background: var(--bg-card);
+    border: 2px solid var(--border-color);
+    border-radius: 24px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+}
+
+.scroll_selector_chip:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent-green);
+}
+
+.scroll_selector_chip.active {
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+    border-color: transparent;
+    color: var(--bg-primary);
+    font-weight: 700;
+    box-shadow: 0 8px 24px rgba(0, 255, 136, 0.3);
+}
+
+
+
+/* Scroll badge css styles */
+.meta_badge {
+  padding: 6px 12px;
+  background: rgba(0, 212, 255, 0.15);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  color: var(--accent-blue);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  /* color: var(--accent-green); */
+  letter-spacing: 0.5px;
+  text-decoration: none;
+}
+.meta_badge.active {
+  background: rgba(0, 255, 136, 0.15);
+  border: 1px solid rgba(0, 255, 136, 0.975);
+  color: var(--accent-green);
+}

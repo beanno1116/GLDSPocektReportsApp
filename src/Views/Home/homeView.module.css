@@ -1,0 +1,192 @@
+
+
+
+
+
+
+
+
+/* Bottom Navigation */
+.bottom_nav {
+    position: fixed;
+    width: calc(100% - 5rem);
+    bottom: .5rem;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    border-radius: 1rem;    
+    background: rgba(20, 26, 61, 0.417);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border-color);
+    padding: .75rem 0;
+    display: flex;
+    justify-content: space-around;
+    z-index: 100;
+    animation: slideUpNav 0.6s ease 1.5s both;
+    margin-bottom: calc(env(safe-area-inset-bottom) + 1rem);
+}
+
+@keyframes slideUpNav {
+    from { transform: translateY(150%); }
+    to { transform: translateY(0); }
+}
+
+.nav_item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 8px 0;
+    border-radius: 12px;
+}
+
+.nav_item:active {
+    transform: scale(0.9);
+}
+
+.nav_item.active {
+    /* background: rgba(0, 255, 136, 0.1); */
+}
+
+.nav_icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 8px;
+    /* background: var(--bg-card); */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+.nav_icon svg {
+  fill: var(--accent-green);
+}
+
+.nav_item.active .nav_icon {
+    /* background: linear-gradient(135deg, var(--accent-green), var(--accent-blue)); */
+}
+
+.nav_label {
+    font-size: .9rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    display: none;
+}
+
+.nav_item.active .nav_label {
+    color: var(--accent-green);
+    font-weight: 700;
+}
+
+/* Pulse animation for active elements */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.live_indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: var(--accent-green);
+    border-radius: 50%;
+    margin-left: 8px;
+    animation: pulse 2s ease infinite;
+    box-shadow: 0 0 8px var(--accent-green);
+}
+
+
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* Chart Section */
+        .chart_section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+            animation: slideUp 0.8s ease 0.5s both;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chart_header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart_title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .chart_period {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--text-secondary);
+            background: var(--bg-secondary);
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+
+        .chart_bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 180px;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .chart_bar {
+            flex: 1;
+            background: linear-gradient(180deg, var(--accent-blue), var(--accent-green));
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            transition: all 0.3s ease;
+            animation: barGrow 1s ease both;
+        }
+
+        .chart_bar:nth-child(1) { animation-delay: 0.6s; }
+        .chart_bar:nth-child(2) { animation-delay: 0.7s; }
+        .chart_bar:nth-child(3) { animation-delay: 0.8s; }
+        .chart_bar:nth-child(4) { animation-delay: 0.9s; }
+        .chart_bar:nth-child(5) { animation-delay: 1s; }
+        .chart_bar:nth-child(6) { animation-delay: 1.1s; }
+        .chart_bar:nth-child(7) { animation-delay: 1.2s; }
+
+        @keyframes barGrow {
+            from { transform: scaleY(0); }
+            to { transform: scaleY(1); }
+        }
+
+        .chart_bar:active {
+            filter: brightness(1.2);
+            box-shadow: 0 4px 16px rgba(0, 255, 136, 0.4);
+        }
+
+        .chart_labels {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .chart_label {
+            flex: 1;
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-family: 'Space Mono', monospace;
+        }

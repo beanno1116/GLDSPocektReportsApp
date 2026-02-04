@@ -1,0 +1,166 @@
+/* Chart Section */
+        .chart_section {
+            /* background: var(--bg-card); */
+            /* border: 1px solid var(--border-color); */
+            /* border-radius: 20px; */
+            height: 100%;
+            padding: 0 1rem 1rem 1rem;
+            animation: slideUp 0.8s ease 0.5s both;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chart_header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart_title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .chart_period {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--text-secondary);
+            background: var(--bg-secondary);
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+
+        .chart_bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 180px;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .chart_bar {
+            flex: 1;
+            background: linear-gradient(180deg, var(--accent-blue), var(--accent-green));
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            transition: all 0.3s ease;
+            animation: barGrow 1s ease both;
+        }
+
+        .chart_bar:nth-child(1) { animation-delay: 0.6s; }
+        .chart_bar:nth-child(2) { animation-delay: 0.7s; }
+        .chart_bar:nth-child(3) { animation-delay: 0.8s; }
+        .chart_bar:nth-child(4) { animation-delay: 0.9s; }
+        .chart_bar:nth-child(5) { animation-delay: 1s; }
+        .chart_bar:nth-child(6) { animation-delay: 1.1s; }
+        .chart_bar:nth-child(7) { animation-delay: 1.2s; }
+
+        @keyframes barGrow {
+            from { transform: scaleY(0); }
+            to { transform: scaleY(1); }
+        }
+
+        .chart_bar:active {
+            filter: brightness(1.2);
+            box-shadow: 0 4px 16px rgba(0, 255, 136, 0.4);
+        }
+
+        .chart_labels {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .chart_label {
+            flex: 1;
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-family: 'Space Mono', monospace;
+        }
+
+.sub_item {
+  padding: 10px 12px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  transition: all 0.3s ease;
+  margin-top: .5rem;
+}
+.sub_item:hover {
+  border-color: var(--accent-blue);
+}
+.sub_item_total {
+  font-size: 1.2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 212, 255, 0.15));
+  border: 2px solid var(--accent-green);
+}
+
+/* Report details hero css styles */
+.report_hero {
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: 24px;
+  padding: 28px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;  
+}
+.report_hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+}
+.report_meta {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.meta_badge {
+  padding: 6px 12px;
+  background: rgba(0, 255, 136, 0.15);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--accent-green);
+  letter-spacing: 0.5px;
+}
+.meta_badge.period {
+  background: rgba(0, 212, 255, 0.15);
+  border-color: rgba(0, 212, 255, 0.3);
+  color: var(--accent-blue);
+}
+.report_title {
+  font-size: 26px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+.report_subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.report_date {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-family: 'Space Mono', monospace;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+}

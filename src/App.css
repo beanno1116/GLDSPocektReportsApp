@@ -8,8 +8,8 @@
     width: 100dvw;
     height: 100vh; /* Fallback */
     height: 100dvh;
-    overflow: hidden;
-        background: #2e394b;
+    /* overflow: hidden;
+        background: #2e394b; */
     /* background: #1D1C21 */
     /* background: hsla(252, 8%, 12%, 1);
     background: linear-gradient(45deg, hsla(252, 8%, 12%, 1) 67%, hsla(252, 8%, 12%, 1) 84%, hsla(50, 14%, 16%, 1) 98%);

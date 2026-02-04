@@ -17,7 +17,7 @@ class User {
       this.username = userObj.username || "";
       this.orgId = userObj.orgId || "";
       this.isAdmin = userObj.isAdmin || false;
-      this.stores = userObj.stores || [];
+      this.stores = [...new Set(userObj.stores)];
       this.firstName = userObj.firstName || "";
       this.lastName = userObj.lastName || "";
       this.email = userObj.email || "";

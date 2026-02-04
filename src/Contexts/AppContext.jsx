@@ -5,12 +5,14 @@ export const AppContext = createContext();
 
 let initialState = {};
 let localData = localStorage.getItem("org");
+
 if (localData){
   localData = JSON.parse(localData);
   initialState = {
     seats: localData.seats,
     organization: localData.organization,
     stores: localData.stores,
+    authorizedStores: localData.authorizedStores,
     users: localData.users,
     activeStore: localData.activeStore,
     agentString: localData.agentString,
@@ -20,6 +22,7 @@ if (localData){
   initialState = {
     organization: "",
     stores: [],
+    authorizedStores: [],
     users: [],
     seats: 0,
     activeStore: 0,

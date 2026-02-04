@@ -6,7 +6,8 @@
 }
 
 .input_label {
-  color: var(--lite-color);
+  font-size: 1rem;
+  color: var(--text-secondary);
   padding-left: .25rem;
 }
 
@@ -49,6 +50,51 @@
 
 
 
+
+.line_item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.line_item:hover {
+  border-color: var(--accent-green);
+  /* transform: translateX(4px); */
+}
+.line_item.total {
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 212, 255, 0.15));
+  border: 2px solid var(--accent-green);
+  margin-top: 12px;
+  font-weight: 800;
+}
+.line_item.total.negative {
+  border: 2px solid var(--accent-orange);
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.15), rgba(105, 29, 2, 0.15));
+}
+.line_item.total .line_value {
+  font-size: 18px;
+  color: var(--accent-green);
+}
+.line_item.total.negative .line_value {
+  font-size: 18px;
+  color: var(--accent-orange);
+}
+.line_label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+}
+.line_value {
+  font-family: 'Space Mono', monospace;
+  font-size: 15px;
+  font-weight: 700;
+}
 
 
 

@@ -9,7 +9,7 @@ const Header = ({ showIcon="true",children }) => {
       <button className={styles.trigger} aria-expanded="false">
         {children}
       </button>
-      {showIcon && <span className={styles.header_icon}><ChevronIcon width={48} height={48} /></span>}
+      {showIcon && <span className={styles.header_icon}><ChevronIcon width={34} height={34} /></span>}
     </span>
   )
 }

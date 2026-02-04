@@ -9,6 +9,24 @@ class FormatUtil {
       console.error(error.message);
     }
   }
+  #isInstanceOfDate(value){
+     try {
+      if (!value) throw new Error("paramet value is null or undefined");
+      return (Object.prototype.toString.call(value) === "[object Date]") && !isNaN(value);
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+  #dateElementsAsObject(date,padElements=true){
+    return {
+      month: this.padDateTimeElement(date.getMonth() + 1),
+      day: this.padDateTimeElement(date.getDate()),
+      year: date.getFullYear(),
+      hour: this.padDateTimeElement(date.getHours()),
+      minutes: this.padDateTimeElement(date.getMinutes()),
+      period: (date.getHours() > 12) ? "PM" : "AM"
+    }
+  }
 
   padDateTimeElement(element){
     try {      
@@ -124,6 +142,24 @@ class FormatUtil {
     }
   }
 
+  stringAsNumber(value,locale="en-US"){
+    try {
+      return `${parseFloat(value).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+
+  stringAsInteger(value){
+    try {
+      if (this.#isRealNumber(parseFloat(value))) {
+        return `${parseInt(value)}`;
+      }
+    } catch (error) {
+      
+    }
+  }
+
   /*
     millions: >=7 1000000
     hundred thousands: >=6 100000
@@ -141,30 +177,98 @@ class FormatUtil {
         const valueLength = valueAsString.length;
         let displayNumber = valueAsString.substring(0,2).slice(0,1) + "." + valueAsString.substring(0,2).slice(1);
         if (valueLength >= 7){
-          return `$${displayNumber}M`
+          return `${displayNumber}M`
         }
         if (valueLength >= 6 && valueLength < 7){
-          return `$${valueAsString.substring(0,4).slice(0,3) + "." + valueAsString.substring(0,4).slice(3)}K`;
+          return `${valueAsString.substring(0,4).slice(0,3) + "." + valueAsString.substring(0,4).slice(3)}K`;
         }
         if (valueLength >= 5 && valueLength < 6){
-          return `$${valueAsString.substring(0,3).slice(0,2) + "." + valueAsString.substring(0,3).slice(2)}K`;
+          return `${valueAsString.substring(0,3).slice(0,2) + "." + valueAsString.substring(0,3).slice(2)}K`;
         }
         if (valueLength >= 4 && valueLength < 5){
           return `${valueAsString.substring(0,2).slice(0,1) + "." + valueAsString.substring(0,2).slice(1)}K`;
         }
         if (valueLength <= 3){
-          return `$${valueAsString}`
+          return `${parseFloat(value).toFixed(2)}`
         }
         if (valueLength < 6 && valueLength > 3){
           return `$${displayNumber}K`
         }
-        return `$${displayNumber}`;
+        return `${displayNumber}`;
       }
     } catch (error) {
       
     }
   }
 
+  toRequestDateFormat(date=new Date()){
+    try {
+
+      if (!date) return "";
+      if (!this.#isInstanceOfDate(date)) throw TypeError("date parameter not a valid Date() obj");
+
+      const dateObj = this.#dateElementsAsObject(date);
+
+      const {month,day,year} = dateObj;
+
+      return `${month}/${day}/${year}`;
+
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+
+  toCamelCase(string=""){
+    try {
+      if (string === "") return string;
+      const lowerCaseString = string.replace(/[\/,._\-;'""]/g, ' ').toLowerCase();
+      const stringArray = lowerCaseString.split(" ");
+      let camelString = "";
+      if (stringArray.length > 0){
+        stringArray.forEach((str,index) => {
+          if (index === 0){
+            camelString += str;
+            return;
+          }
+          camelString += str.charAt(0).toUpperCase() + str.slice(1)
+        })
+      }
+      return camelString;
+    } catch (error) {
+      console.error(error.message);
+      return "";
+    }
+  }
+
+  toCapitalized(string=""){
+    try {
+      if (string === "") return string;   
+      const lowerCaseString = string.toLowerCase();
+      return lowerCaseString.split(" ").map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(" ");
+    } catch (error) {
+      console.error(error.message);
+      return "";
+    }
+  }
+
+  string(value,format){
+    switch (format) {
+      case "currency":
+        return `$${this.stringAsMoney(value)}`;
+      case "number":
+        return this.stringAsInteger(value);
+      case "shortNumber":
+        return this.moneyAbbreviation(value);
+      case "shortCurrency":
+        return `$${this.moneyAbbreviation(value)}`;
+      case "percentage":
+        return `${parseInt(value)}%`
+    
+      default:
+        return value;
+    }
+
+  }
 }
 
 const Format = new FormatUtil();
