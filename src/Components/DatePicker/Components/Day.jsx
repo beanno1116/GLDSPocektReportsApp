@@ -12,10 +12,10 @@ const Day = ({ day,selected=false,inMonth,...props }) => {
   }
 
   return (
-    <div className={`${styles.day}`}>
-      <span className={`${isToday ? styles.today : "" }  ${selected ? styles.selected : ""} ${!inMonth ? styles.out : ""}`} onClick={onDayClick}>
+    <div className={`${styles.day} ${isToday ? styles.today : "" }  ${selected ? styles.selected : ""} ${!inMonth ? styles.out : ""}`} onClick={onDayClick}>
        {day.getDate()}
-      </span>
+      {/* <span className={`${isToday ? styles.today : "" }  ${selected ? styles.selected : ""} ${!inMonth ? styles.out : ""}`} onClick={onDayClick}>
+      </span> */}
     </div>
   );
 }

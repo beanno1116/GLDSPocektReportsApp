@@ -15,6 +15,7 @@ const Week = ({ startDate,month,selected,showWeekNumber,...props }) => {
       
       days.push(
         <Day 
+          key={currentDay.getDate()}
           day={currentDay}
           inMonth={currentDay.getMonth() === month}
           selected={selected.length > 0 && selected.filter(s => DateUtility.isEqual(s,currentDay))[0]}

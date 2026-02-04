@@ -117,17 +117,20 @@
   width: 100%;
 }
 .day {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   flex: 1;
   text-align: center;
   width: calc(100% / 7);
   aspect-ratio: 1 / 1;
   /* background-color: red; */
 }
-span.selected {
+.day.selected {
   background-color: var(--accent-green);
   /* border-bottom: 2px solid var(--accent-green); */
   color: var(--accent-green);
-  border-radius: .25rem;
+  border-radius: .5rem;
   color: black;
   font-weight: 800;
 }
@@ -167,11 +170,11 @@ span.selected::after {
   /* background-color: blue; */
   /* border-radius: 50%; */
 }
-span.today {  
-  border-bottom: 1px solid rgb(0, 213, 255);
-  background:  rgba(0, 213, 255, 0.512);
-  /* color: rgb(0, 213, 255); */
-  border-radius: 50%;
+.day.today {  
+  border: 1px solid rgb(0, 213, 255);
+  /* background:  rgba(0, 213, 255, 0.512); */
+  color: rgb(0, 213, 255);
+  border-radius: .5rem;
   font-weight: 800;
 }
 .out {

@@ -55,10 +55,12 @@ const Month = ({ date=new Date(),selected,monthHeader,dayNameHeader,multiSelect,
 
     let i = 0;
     
+    let weekNumber = DateUtility.getWeekNumber(date);
 
     while(true){
       weeks.push(
-        <Week 
+        <Week
+          key={weekNumber + i}
           startDate={currentStartOfWeek}
           month={DateUtility.monthObj(date).number}
           multiSelect={multiSelect}
