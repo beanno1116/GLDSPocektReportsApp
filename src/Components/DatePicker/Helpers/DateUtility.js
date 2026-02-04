@@ -57,7 +57,7 @@ class DateHelper {
 
   isEqual(date1,date2){
     try {
-      debugger;
+      
       if (!this.#isInstanceOfDate(date1) || !this.#isInstanceOfDate(date2)) throw new TypeError("paramater is not of type Date");
       let temp = (date1.getDate() === date2.getDate()) && (date1.getMonth() === date2.getMonth()) && (date1.getFullYear() === date2.getFullYear());
       return (date1.getDate() === date2.getDate()) && (date1.getMonth() === date2.getMonth()) && (date1.getFullYear() === date2.getFullYear());
@@ -93,6 +93,7 @@ class DateHelper {
 
   }
 
+  // Date addition
   addDays(date,days=0){
     try {
       if (!this.#isInstanceOfDate(date)) throw new TypeError("paramater is not of type Date");
@@ -117,6 +118,7 @@ class DateHelper {
     }
   }
 
+  // Date subtraction
   setDateBack(date,days=1){
     try {      
       if (!this.#isInstanceOfDate(date)) throw new TypeError("paramater is not of type Date");
@@ -160,6 +162,7 @@ class DateHelper {
     }
   }
 
+  // Start date calculations
   getStartOfWeek(date=new Date(),day=0){
     try {
       if (!this.#isInstanceOfDate(date)) throw new TypeError("paramater is not of type Date");
@@ -221,6 +224,19 @@ class DateHelper {
       console.error(error.message);
     }
   }
+  getWeekNumber(date=new Date()){
+    try {
+      if (!this.#isInstanceOfDate(date)) throw new TypeError("paramater is not of type Date");
+      let dateCopy = new Date(date.getTime());
+      dateCopy.setHours(0,0,0,0);
+      dateCopy.setDate(dateCopy.getDate() + 3 - (dateCopy.getDay() + 6) % 7);
+      let week1 = new Date(dateCopy.getFullYear(), 0, 4);
+      week1.setDate(week1.getDate() + 3 - (week1.getDay() + 6) % 7);
+      return 1 + Math.round(((dateCopy.getTime() - week1.getTime()) / 86400000) / 7);
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
 
   monthObj(date){
     try {
@@ -233,7 +249,7 @@ class DateHelper {
         abrv: monthNames[dateCopy.getMonth()].slice(0,3)
       }
     } catch (error) {
-      
+      console.error(error.message);
     }
   }
 
@@ -321,7 +337,7 @@ class DateHelper {
           break;
       }
     } catch (error) {
-      
+       console.error(error.message);
     }
   }
 
@@ -358,7 +374,7 @@ class DateHelper {
       }
       return monthNames;
     } catch (error) {
-      
+       console.error(error.message);
     }
   }
 }
