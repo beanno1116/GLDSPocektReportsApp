@@ -255,7 +255,7 @@ const HomeView = () => {
             return (
               <TopCategorySection.Item 
                 name={cat.description.toLowerCase()}
-                subtitle={`${Format.moneyAbbreviation(parseFloat(cat.quantity))} units sold`}
+                subtitle={`${Format.string(cat.quantity,Format.NUMBER_FORMAT)} units sold`}
                 value={Format.moneyAbbreviation(parseFloat(cat.total))} 
                 delta={Format.string(cat.totalDelta,"percentage")}/>
 
@@ -269,7 +269,7 @@ const HomeView = () => {
         <KpiGrid>
           {exceptions.map(exception => {
             return (
-              <KpiGrid.Item title={exception.title} value={Format.moneyAbbreviation(exception.value)} subValue={exception.delta} opposite={true} />              
+              <KpiGrid.Item title={exception.title} value={Format.string(parseInt(exception.value),Format.NUMBER_FORMAT)} subValue={exception.delta} opposite={true} />              
             )
           })}
         </KpiGrid>

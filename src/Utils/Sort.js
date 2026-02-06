@@ -72,7 +72,7 @@ class SortUtility {
       const sortedSales = sales.sort((a,b) => {
         const aBasket = a.total / a.quantity;
         const bBasket = b.total / b.quantity;
-        // debugger;
+        // 
         if (aBasket < bBasket){
           if (direction === "asc"){
             return -1;

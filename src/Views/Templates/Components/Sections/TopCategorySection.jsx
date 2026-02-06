@@ -2,9 +2,25 @@
 import { Children } from 'react';
 import styles from './sections.module.css';
 import Card from '../Cards/Card';
+import { del } from 'motion/react-client';
 
 
 const CategorySectionItem = ({name,subtitle="",value,delta="",...props}) => {
+
+  const deltaComponentClassName = () => {
+    if (delta === "") return "";
+    if (parseInt(delta.replace('%','')) === 0) return "";
+    if (parseInt(delta.replace('%','')) < 0) return styles.down;
+    return styles.up;
+  }
+
+  const renderDelta = () => {
+    if (delta === "") return delta;
+    if (parseInt(delta.replace('%','')) === 0) return delta;
+    if (parseInt(delta.replace('%','')) < 0) return `↓ ${delta}`;
+    return `↑ ${delta}`
+  }
+
   return (
     <div className={styles.category_item}>
       <div className={styles.category_info}>
@@ -13,7 +29,7 @@ const CategorySectionItem = ({name,subtitle="",value,delta="",...props}) => {
       </div>
       <div className={styles.category_metric}>
           <div className={styles.category_value}>${value}</div>
-          <div className={`${styles.category_change} ${delta < 0 ? styles.down : styles.up}`}>{delta < 0 ? `↓ ${delta}` : `↑ ${delta}`}</div>
+          <div className={`${styles.category_change} ${deltaComponentClassName()}`}>{renderDelta()}</div>
       </div>
     </div>
   )

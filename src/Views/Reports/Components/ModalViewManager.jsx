@@ -1,21 +1,7 @@
-
-import PrimaryButton from "../../../Components/Buttons/PrimaryButton"
-import FlexColumn from "../../../Components/FlexComponents/FlexColumn";
-import FlexRow from "../../../Components/FlexComponents/FlexRow"
-import DateTimePicker from "../../../Components/Inputs/DateTimePicker/DateTimePicker";
-import Card from "../../Templates/Components/Cards/Card"
-import View from "../../Templates/View/View"
-import { useState } from "react";
-import ConfigureReportForm from "./ConfigureReport/ConfigureReportForm";
 import SalesReportBuilder from "../Forms/SalesReportBuilder";
 
 
-const ModalView = ({close,data,...props}) => {
-  
-  return (
-    <ConfigureReportForm data={data}  close={close}/>
-  )
-}
+
 
 
 const style = {
@@ -26,22 +12,28 @@ const style = {
 }
 
 
-const ModalViewManager = ({ view,data,close }) => {
+const ModalViewManager = ({ view,views,data,close }) => {
 
   const renderView = (view) => {
     let temp = data;
-    // debugger;
+    let tempView = view;
+    let View = views[view];
+    
+    // 
+    // 
     switch (view) {
       case "sales":
-        return <SalesReportBuilder data={data.balanceSheet.Sales} close={close}/>
+        return <View data={data.balanceSheet.Sales} close={close}/>
       case "hourly":
-        return <div>Create Hourly Report <button onClick={(e) => close()}>Close</button></div>
+        return <View data={data.hourlyData} close={close} />
       case "tender":
-        return <div>Create Tender Report <button onClick={(e) => close()}>Close</button></div>
+        return <View data={data.balanceSheet.Tendered} close={close} />
       case "balance":
         return <div>Create Balance Sheet <button onClick={(e) => close()}>Close</button></div>
       case "store":
         return <div>Create Store Report <button onClick={(e) => close()}>Close</button></div>
+      case "stores":
+        return <View close={close} />
       default:
         return <SalesReportBuilder data={data.balanceSheet.Sales} close={close}/>
     }

@@ -14,67 +14,39 @@ const monthAbrv = [
   "dec"
 ]
 
-const months = [
-  {
-    number: 0,
-    short: "jan",
-    full: "january"
-  },
-  {
-    number: 1,
-    short: "feb",
-    full: "february"
-  },
-  {
-    number: 2,
-    short: "mar",
-    full: "march"
-  },
-  {
-    number: 3,
-    short: "apr",
-    full: "april"
-  },
-  {
-    number: 4,
-    short: "may",
-    full: "may"
-  },
-  {
-    number: 5,
-    short: "jun",
-    full: "june"
-  },
-  {
-    number: 6,
-    short: "jul",
-    full: "july"
-  },
-  {
-    number: 7,
-    short: "aug",
-    full: "august"
-  },
-  {
-    number: 8,
-    short: "sep",
-    full: "september"
-  },
-  {
-    number: 9,
-    short: "oct",
-    full: "october"
-  },
-  {
-    number: 10,
-    short: "nov",
-    full: "november"
-  },
-  {
-    number: 11,
-    short: "dec",
-    full: "december"
-  }
+const dayNames = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday"
+]
+const monthNames = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December"
+]
+const datePeriods = [
+  "custom",
+  "today",
+  "week",
+  "month",
+  "year",
+  "prevDay",
+  "prevWeek",
+  "prevMonth",
+  "prevYear"
 ]
 
 class DateUtils {
@@ -115,6 +87,74 @@ class DateUtils {
 
   }
 
+  isEqual(date1,date2){
+    try {
+      
+      if (!this.#isInstanceOfDate(date1) || !this.#isInstanceOfDate(date2)) throw new TypeError("paramater is not of type Date");
+      let temp = (date1.getDate() === date2.getDate()) && (date1.getMonth() === date2.getMonth()) && (date1.getFullYear() === date2.getFullYear());
+      return (date1.getDate() === date2.getDate()) && (date1.getMonth() === date2.getMonth()) && (date1.getFullYear() === date2.getFullYear());
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+
+  isWeekInMonth(date){
+    try {
+      if (!this.#isInstanceOfDate(date)) throw new TypeError("paramater is not of type Date");
+      const startOfWeek = this.getStartOfWeek(date);
+      const endOfWeek = this.addDays(startOfWeek,6);
+      return this.isSameMonth(startOfWeek,date) || this.isSameMonth(endOfWeek,date);
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+  isSameMonth(date1,date2){
+    try {      
+      if (!this.#isInstanceOfDate(date1) || !this.#isInstanceOfDate(date2)) throw new TypeError("paramater is not of type Date");
+      return date1.getMonth() === date2.getMonth() && date1.getFullYear() === date2.getFullYear();
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+
+  // Date addition
+  addDays(date,days=0){
+    try {
+      if (!this.#isInstanceOfDate(date)) throw new TypeError("paramater is not of type Date");
+      const dateCopy = new Date(date);
+
+      dateCopy.setDate(dateCopy.getDate() + days);
+
+      return dateCopy;
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+  addWeeks(date,weeks=0){
+    try {
+      if (!this.#isInstanceOfDate(date)) throw new TypeError("paramater is not of type Date");
+      const dateCopy = new Date(date);
+      const daysToAdd = weeks * 7;
+      dateCopy.setDate(dateCopy.getDate() + daysToAdd);
+      return dateCopy;
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+
+  // Date subtraction
+  subtractDays(date,days=1){
+    try {      
+      if (!this.#isInstanceOfDate(date)) throw new TypeError("paramater is not of type Date");
+      const dateCopy = new Date(date);
+
+      dateCopy.setDate(date.getDate() - days);
+      
+      return dateCopy;
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
   setDateBack(date,days=1){
     try {      
       if (!this.#isInstanceOfDate(date)) throw new TypeError("paramater is not of type Date");
@@ -158,6 +198,7 @@ class DateUtils {
     }
   }
 
+  // Start date calculations
   getStartOfWeek(date=new Date(),day=0){
     try {
       if (!this.#isInstanceOfDate(date)) throw new TypeError("paramater is not of type Date");
@@ -172,6 +213,26 @@ class DateUtils {
       console.error(error.message);
     }
   }
+  getStartOfMonth(date=new Date()){
+    try {
+      if (!this.#isInstanceOfDate(date)) throw new TypeError("paramater is not of type Date");
+      const year = date.getFullYear();
+      const month = date.getMonth();
+      return new Date(year,month,1,0,0,0,0);
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+  getFirstOfYear(date=new Date()){
+    try {
+      const fullYear = date.getFullYear();
+      return new Date(fullYear,0,1,0,0,0,0);
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+
+    // End date calculations
   getEndOfWeek(date= new Date(),day=0){
     try {
       const endOfWeek = new Date(date);
@@ -180,16 +241,6 @@ class DateUtils {
       endOfWeek.setDate(endOfWeek.getDate() + daysUntilSaturday + day);
       endOfWeek.setHours(0,0,0,0);
       return endOfWeek;
-    } catch (error) {
-      
-    }
-  }
-  getStartOfMonth(date=new Date()){
-    try {
-      if (!this.#isInstanceOfDate(date)) throw new TypeError("paramater is not of type Date");
-      const year = date.getFullYear();
-      const month = date.getMonth();
-      return new Date(year,month,1,0,0,0,0);
     } catch (error) {
       console.error(error.message);
     }
@@ -203,23 +254,28 @@ class DateUtils {
       console.error(error.message);
     }
   }
-  getFirstOfYear(date=new Date()){
-    try {
-      const fullYear = date.getFullYear();
-      return new Date(fullYear,1,1,0,0,0,0);
-    } catch (error) {
-      console.error(error.message);
-    }
-  }
   getEndOfYear(date=new Date()){
     try {
       const fullYear = date.getFullYear();
-      return new Date(fullYear,12,31,0,0,0,0);
+      return new Date(fullYear,11,31,0,0,0,0);
     } catch (error) {
       console.error(error.message);
     }
   }
 
+  getWeekNumber(date=new Date()){
+    try {
+      if (!this.#isInstanceOfDate(date)) throw new TypeError("paramater is not of type Date");
+      let dateCopy = new Date(date.getTime());
+      dateCopy.setHours(0,0,0,0);
+      dateCopy.setDate(dateCopy.getDate() + 3 - (dateCopy.getDay() + 6) % 7);
+      let week1 = new Date(dateCopy.getFullYear(), 0, 4);
+      week1.setDate(week1.getDate() + 3 - (week1.getDay() + 6) % 7);
+      return 1 + Math.round(((dateCopy.getTime() - week1.getTime()) / 86400000) / 7);
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
   getDateForPeriod(period,date=new Date()){
     try {      
       const dateRange = {
@@ -245,7 +301,7 @@ class DateUtils {
           dateRange.endDate = this.getEndOfMonth(this.setMonthBack(now));
           break;
         case this.PREV_YEAR_PERIOD:
-          dateRange.startDate = this.getStartOfYear(this.setYearBack(now));
+          dateRange.startDate = this.getFirstOfYear(this.setYearBack(now));
           dateRange.endDate = this.getEndOfYear(this.setYearBack(now));
           break;
         case this.WEEK_PERIOD:
@@ -304,10 +360,88 @@ class DateUtils {
           break;
       }
     } catch (error) {
+       console.error(error.message);
+    }
+  }
+  getDayName(date=new Date(),style="abrv"){
+    try {
+      if (style === "full"){
+        return dayNames[date.getDay()];
+      }
+      const dayName = dayNames[date.getDay()].slice(0,3);
+      return dayName;
+    } catch (error) {
       
     }
   }
 
+  calculateDateRange(date=new Date,period="day"){
+    try {
+      const dateRange = {
+        base: {
+          startDate: this.setDateBack(new Date(),1),
+          endDate: this.setDateBack(new Date(),1),
+        },
+        current: {
+          startDate: new Date(),
+          endDate: new Date(),
+        }
+      }
+      switch (period) {
+        case "today":
+          break;
+        case "week":
+          dateRange.base.startDate = this.setWeekBack(this.getStartOfWeek(date),1);
+          dateRange.base.endDate = this.setWeekBack(this.getEndOfWeek(date),1);
+          dateRange.current.startDate = this.getStartOfWeek(date);
+          dateRange.current.endDate = this.getEndOfWeek(date);
+          break;
+        case "month":
+          dateRange.base.startDate = this.setMonthBack(this.getStartOfMonth(date),1);
+          dateRange.base.endDate = this.setMonthBack(this.getEndOfMonth(date),1);
+          dateRange.current.startDate = this.getStartOfMonth(date);
+          dateRange.current.endDate = this.getEndOfMonth(date);
+          break;
+        case "year":
+          dateRange.base.startDate = this.setYearBack(this.getStartOfYear(date),1);
+          dateRange.base.endDate = this.setYearBack(this.getEndOfYear(date),1);
+          dateRange.current.startDate = this.getStartOfYear(date);
+          dateRange.current.endDate = this.getEndOfYear(date);
+          break;
+        case "prevDay":
+          dateRange.base.startDate = this.setDateBack(date,2);
+          dateRange.base.endDate = this.setDateBack(date,2);
+          dateRange.current.startDate = this.setDateBack(date,1);
+          dateRange.current.endDate = this.setDateBack(date,1);
+          break;
+        case "prevWeek":
+          dateRange.base.startDate = this.setDateBack(this.getStartOfWeek(date),14);
+          dateRange.base.endDate = this.setDateBack(this.getStartOfWeek(date),8);
+          dateRange.current.startDate = this.setDateBack(this.getStartOfWeek(date),7);
+          dateRange.current.endDate = this.setDateBack(this.getStartOfWeek(date),1);
+          break;
+        case "prevMonth":
+          dateRange.base.startDate = this.getStartOfMonth(this.setMonthBack(date,2));
+          dateRange.base.endDate = this.getEndOfMonth(this.setMonthBack(date,2));
+          dateRange.current.startDate = this.getStartOfMonth(this.setMonthBack(date));
+          dateRange.current.endDate = this.getEndOfMonth(this.setMonthBack(date));
+          break;
+        case "prevYear":
+          dateRange.base.startDate = this.getFirstOfYear(this.setYearBack(date,2));
+          dateRange.base.endDate = this.getEndOfYear(this.setYearBack(date,2));
+          dateRange.current.startDate = this.setYearBack(this.getFirstOfYear(date),1);
+          dateRange.current.endDate = this.setYearBack(this.getEndOfYear(date),1);
+          break;
+        default:
+          break;
+      }
+      return dateRange;
+    } catch (error) {
+       console.error(error.message);
+    }
+  }
+
+  // Getters for todays date
   get thisYear(){
     const date = new Date();
     return date.getFullYear();
@@ -315,6 +449,10 @@ class DateUtils {
   get thisMonth(){
     const date = new Date();
     return date.getMonth();
+  }
+  get thisWeekNumber(){
+    const date = new Date();
+    return this.getWeekNumber(date);
   }
 
   today(format){
@@ -328,6 +466,18 @@ class DateUtils {
     }
   }
 
+  getMonthNames(style="full"){
+    try {
+      if (style === "abrv"){
+        return monthNames.map(name => {
+          return name.slice(0,3);
+        })
+      }
+      return monthNames;
+    } catch (error) {
+       console.error(error.message);
+    }
+  }
 }
 
 const DateUtility = new DateUtils();

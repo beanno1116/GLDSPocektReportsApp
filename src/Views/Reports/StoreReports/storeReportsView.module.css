@@ -124,11 +124,7 @@
   height: 4px;
   background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
 }
-.report_meta {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 16px;
-}
+
 .meta_badge {
   padding: 6px 12px;
   background: rgba(0, 255, 136, 0.15);
@@ -163,4 +159,44 @@
   margin-top: 16px;
   padding-top: 16px;
   border-top: 1px solid var(--border-color);
+}
+
+.report_meta {
+  display: flex;
+  gap: 8px;
+  align-items: center;  
+  overflow-x: auto;    
+  overflow-y: hidden;
+  padding: .5rem 0;
+  margin-bottom: .5rem;
+  scrollbar-width: none;
+   /* mask-image: linear-gradient(to left, transparent 0%, black 10%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to left, transparent 0%, black 10%, black 90%, transparent 100%); */
+
+}
+
+
+
+.dateRangeLabelWrapper {
+  padding: 0 0;
+}
+.dateRangeLableSeperator {
+  font-weight: 900;
+  font-size: 1.5rem;
+  color: var(--text-secondary);
+}
+.dateRangeLabel {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  font-weight: 800;
+  flex-shrink: 0;
+  padding: 12px 20px;
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
 }

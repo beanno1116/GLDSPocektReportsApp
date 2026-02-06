@@ -1,5 +1,6 @@
 
 import CheckboxListItem from './Components/CheckboxListItem';
+import DragableListItem from './Components/DragableListItem';
 import ListHeader from './Components/ListHeader';
 import styles from './list.module.css';
 
@@ -40,5 +41,6 @@ List.Header = ListHeader;
 List.ScrollView = ScrollList;
 List.SelectAll = SelectAll;
 List.CheckboxListItem = CheckboxListItem;
+List.DraggableListItem = DragableListItem;
 
 export default List;

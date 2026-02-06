@@ -1,5 +1,4 @@
 
-import { useNavigate } from 'react-router';
 import SettingsIcon from '../../../assets/icons/SettingsIcon';
 import View from '../../Templates/View/View';
 import ScrollView from '../../../Components/ScrollView/ScrollView';
@@ -7,7 +6,6 @@ import KpiGrid from '../../../Components/Grids/KpiGrid';
 import TopCategorySection from '../../Templates/Components/Sections/TopCategorySection';
 import SolidSafeIcon from '../../../assets/icons/SolidSafeIcon';
 import DrawerIcon from '../../../assets/icons/DrawerIcon';
-import LocDataAdapter from '../../../Models/LocReportAdapter';
 import Format from '../../../Utils/Format';
 import DateUtility from '../../../Utils/DateUtils';
 import { useApiClient } from '../../../Api/Api';
@@ -18,99 +16,47 @@ import DollarSignIcon from '../../../assets/icons/DollarSignIcon';
 import ChartTabView from './Components/ChartTabView';
 import { useCallback, useRef, useState } from 'react';
 import RefreshIndicator from '../../../Components/Loader/RefreshIndicator';
-import Calculate from '../../../Utils/Caclulate';
 import WEModal from '../../../Components/WEModal/WEModal';
 import useModal from '../../../Components/WEModal/hooks/useModal';
-import DatePickerModal from '../../../Modals/DatePickerModal';
 import PeriodSelector from '../../../Components/PeriodSelector/PeriodSelector';
 import PerentSignIcon from '../../../assets/icons/PercentSignIcon';
 import ViewModalManager from './Components/ViewModalManager';
-import StatRecord from '../../../Models/StatRecord';
 import { viewAdapter } from './viewDataAdapter';
 import StoreIcon from '../../../assets/icons/StoreIcon';
 import SecondaryButton from '../../../Components/Buttons/SecondaryButton';
+import ViewHeading from '../../../Components/Headings/ViewHeading';
+import { viewQueries } from '../../../Api/Queries/StoreReportsViewQueries';
+import useNavigateView from '../../../hooks/useNavigateView';
+import DateRangeLabel from './Components/DateRangeLabel';
+import Show from '../../../Components/Show/Show';
+import useGlobalDate from '../../../hooks/useGlobalDate';
 
 
-
-
-const viewQueries = [
-  {
-    action: "Stats",
-    key: "current",
-    adapter(data) {      
-      const adaptedData = LocDataAdapter.parseStoreStatsData(data);
-      // const adaptedData = LocDataAdapter.parseStoreStatsData(data);
-      return adaptedData;
-    }
-  },
-  {
-    action: "Stats",
-    key: "past",
-    adapter(data) {      
-      const adaptedData = LocDataAdapter.parseStoreStatsData(data);
-      return adaptedData;
-    }
-  },
-  {
-    action: "CurrentVsLastWeek",
-    key: "current",
-    adapter(data) {      
-      const adaptedData = LocDataAdapter.parseWeekData(data);
-      return adaptedData;
-    }
-  },
-]
 
 
 
 const useStoreReportsView = () => {
   const api = useApiClient();
-  const navigate = useNavigate();
+  const navigate = useNavigateView();
   const queryClient = useQueryClient();
   const {modalState,toggleModal} = useModal();
-  const [currentPeriod,setCurrentPeriod] = useState("today");
+  const {dateRanges,setDateRanges,getDateRange} = useGlobalDate(DateUtility.calculateDateRange(new Date(),"today"));
+  
 
   const dateLockRef = useRef(false);
+  const period = useRef("today");
+  const viewRef = useRef();
 
-  const getPeriodDateRange = (key) => {
-    const isDateLocked = dateLockRef.current;
-    let selectedPeriod = currentPeriod;
-
-    if (isDateLocked) {
-      const lockedDateRange = DateUtility.getDateAtPeriodInterval(selectedPeriod,new Date());
-      lockedDateRange.startDate = DateUtility.toRequestDateFormat(lockedDateRange.startDate);
-      lockedDateRange.endDate = DateUtility.toRequestDateFormat(lockedDateRange.endDate);
-      return lockedDateRange;
-    }
-
-    if (key === "past"){
-      if (selectedPeriod === "prevWeek"){
-        selectedPeriod = "week";
-      } else if (selectedPeriod === "today"){
-        selectedPeriod = "prevDay";
-      } else if (selectedPeriod === "prevDay"){
-        selectedPeriod = "today";
-      } else if (selectedPeriod === "prevMonth"){
-        selectedPeriod = "month";
-      }
-    }
-
-    const dateRange = DateUtility.getDateForPeriod(selectedPeriod);
-    dateRange.startDate = Format.toRequestDateFormat(dateRange.startDate);
-    dateRange.endDate = Format.toRequestDateFormat(dateRange.endDate);
-    // 
-    return dateRange;
-  }
   
   const results = useQueries({
-    queries: viewQueries.map(query => ({
-      queryKey: [`${query.action}_${query.key}`,"dfdd44e8-be22-43ef-8313-95f2d1904566",getPeriodDateRange(query.key).startDate,getPeriodDateRange(query.key).endDate],
+    queries: viewQueries(dateRanges,["dfdd44e8-be22-43ef-8313-95f2d1904566"]).map(query => ({
+      queryKey: query.key,
       queryFn: async () => {   
         
         const paramObj = {
           action: query.action,
           agentString: "dfdd44e8-be22-43ef-8313-95f2d1904566",
-          posFields: getPeriodDateRange(query.key)
+          posFields: query.dateRange
         }  
         const response = await api.post("data",paramObj,{...api.headers.applicationJson});
 
@@ -130,8 +76,8 @@ const useStoreReportsView = () => {
         isFetching: results.some((result) => result.isFetching),
         isError: results.some(r => r.isError),
         refetchAll: () => {
-          viewQueries.forEach(query => {
-            queryClient.invalidateQueries({queryKey:[`${query.action}_${query.key}`,getPeriodDateRange(query.key),"dfdd44e8-be22-43ef-8313-95f2d1904566"]})
+          viewQueries(dateRanges,["dfdd44e8-be22-43ef-8313-95f2d1904566"]).forEach(query => {
+            queryClient.invalidateQueries({queryKey:query.key})
           })
         }
       };
@@ -139,56 +85,128 @@ const useStoreReportsView = () => {
   })
 
   const onNavbarClick = useCallback((route) => (e) => {
-    navigate(route,{viewTransition:true});
+    navigate(route);
   },[navigate])
+
+  const showModalView = useCallback((route) => (e) => {
+    viewRef.current = route;
+    toggleModal();
+  },[toggleModal])
 
   const onDateLockClick = (e,isLocked) => {
     dateLockRef.current = isLocked;
   }
 
-  const onPeriodChange = useCallback((e,period) => {  
-    e.stopPropagation();
-    e.preventDefault(); 
-    if (period === "custom"){
-      toggleModal();
-      setCurrentPeriod(period);        
+  const onDateRangeChange = useCallback((dates) => {
+
+    period.current = "custom";
+
+    if (dates.length === 2){
+      const dateRanges = {
+        base: {
+          startDate: dates[0],
+          endDate: dates[1]
+        },
+        current: {
+          startDate: dates[0],
+          endDate: dates[1]
+        }
+      }
+      setDateRanges(dateRanges);
       return;
     }
+
+    if (dates.length > 2 && dates.length <= 7){
+      const dateRanges = {
+        base: {
+          startDate: DateUtility.setWeekBack(dates[0],1),
+          endDate: DateUtility.setWeekBack(dates[dates.length - 1],1)
+        },
+        current: {
+          startDate: dates[0],
+          endDate: dates[dates.length - 1]
+        }
+      }
+      setDateRanges(dateRanges);
+      return;
+    }
+
+    const dateRanges = {
+      base: {
+        startDate: DateUtility.setDateBack(dates[0],1),
+        endDate: DateUtility.setDateBack(dates[0],1)
+      },
+      current: {
+        startDate: dates[0],
+        endDate: dates[0]
+      }
+    }
+
+    setDateRanges(dateRanges);
+    
+  },[setDateRanges])
+
+  const onPeriodChange = useCallback((e,newPeriod) => {  
+    e.stopPropagation();
+    e.preventDefault(); 
+    if (newPeriod === "custom") return;
     e.currentTarget.scrollIntoView({
       block: 'start',
       inline: 'center',
       behavior: 'smooth' 
     });    
-    setCurrentPeriod(period);
-    // results.refetchAll();
-    currentPeriod.current = period;    
-   },[results,toggleModal,setCurrentPeriod])
+
+    const dateRange = DateUtility.calculateDateRange(new Date(),newPeriod);
+
+    period.current = newPeriod;
+    setDateRanges(dateRange);
+
+      
+   },[setDateRanges])
 
 
   return {
-    navigate,
-    period: currentPeriod,
-    results,
+    dateRange: dateRanges.current,
     modalState,
-    toggleModal,
+    modalView: viewRef.current,
+    navigate,
     onDateLockClick,
+    onDateRangeChange,
     onNavbarClick,
-    onPeriodChange
+    onPeriodChange,
+    period: period.current,
+    results,
+    showModalView,
+    toggleModal,
   }
 }
 
 
 
 const StoreReportsView = ({ ...props }) => {
-  const {navigate,results,onNavbarClick,modalState,toggleModal,onPeriodChange,onDateLockClick,period} = useStoreReportsView();
+  const {
+    dateRange,
+    modalState,
+    modalView,
+    navigate,
+    onDateLockClick,
+    onDateRangeChange,
+    onNavbarClick,
+    onPeriodChange,
+    period,
+    results,
+    showModalView,
+    toggleModal,
+  } = useStoreReportsView();
 
+  
 
   if (results.isFetching){
     return (
       <View>
         <RefreshIndicator when={results.isFetching} />   
-      
-        <View.Header showDate={true} title={"Store Report"} onClick={onDateLockClick}/>
+        <ViewHeading title={"Store Report"} onClick={onDateRangeChange} />
+        
 
         <PeriodSelector currentPeriod={period} onClick={onPeriodChange}/>
         <FullScreenLoader text={"Loading Store Report Data"} />
@@ -207,52 +225,63 @@ const StoreReportsView = ({ ...props }) => {
   
   const {coupon,sales,tax,exceptions,loyalty,markdowns,transaction} = viewAdapter(results.viewData[0],results.viewData[1]);
   const weekData = results.viewData[2];
-  debugger;
+
+
+  
   const onViewAllClick = (e,action) => {
+    e.stopPropagation();
     navigate(action,{viewTransition:true});
   }
 
   return (
     <View>
       <RefreshIndicator when={results.isFetching} />   
-      
-      <View.Header showDate={true} title={"Store Report"} onClick={onDateLockClick}/>
 
-        <PeriodSelector currentPeriod={period} onClick={onPeriodChange}/>
+      <ViewHeading title={"Store Report"} onClick={onDateRangeChange} />
 
-        <ScrollView>
+      <PeriodSelector currentPeriod={period} onClick={onPeriodChange}/>
 
-          {/* Store sales chart */}
-          <ChartTabView chartData={weekData} />
+      <DateRangeLabel start={dateRange.startDate} end={dateRange.endDate}/>
 
-          {/* Store sales KPI grid */}
-          <View.SectionHeader m='.5rem 0' title={"Sales"} viewAll={onViewAllClick} action="/report/stores/sales"/>
+      <ScrollView>
+
+        {/* Store sales chart */}
+        <ChartTabView chartData={weekData} />
+
+        {/* Store sales KPI grid */}
+        <View.SectionHeader m='.5rem 0' title={"Sales"} viewAll={onViewAllClick} action="/report/stores/sales"/>
+        <Show when={sales.length > 0} fallback={<div>No data found!</div>}>
           <KpiGrid>
-            {sales.length === 0 && <div>No data found</div>}
             {sales.map(stat => {
               return (
                 <KpiGrid.SummaryItem 
-                icon={stat.format === "percentage" ? <PerentSignIcon size={20} /> : <DollarSignIcon size={24} />} 
-                label={stat.title} 
-                value={stat.value} 
-                type={stat.format} 
-                subValue={stat.delta}/>
-              )
-            })}
+                  icon={stat.format === "percentage" ? <PerentSignIcon size={20} /> : <DollarSignIcon size={24} />} 
+                  label={stat.title} 
+                  value={stat.value} 
+                  type={stat.format} 
+                  subValue={stat.delta}/>
+                )
+              })}
           </KpiGrid>
+        </Show>
+     
 
-          <View.SectionHeader m='.5rem 0' title={"Markdowns"} viewAll={onViewAllClick} action="/report/stores/sales"/>
-          {markdowns.length === 0 && <div>No data found</div>}
+        <View.SectionHeader m='.5rem 0' title={"Markdowns"} viewAll={onViewAllClick} action="/report/stores/sales"/>
+        <Show when={markdowns?.length && markdowns.length > 0} fallback={<div>No data found!</div>}>
           {
-            markdowns.map(item => {
+            markdowns?.map(item => {
               return (
                 <TopCategorySection.Item name={item.title} subtitle={`${item.quantity} items`} delta={Format.string(item.delta,"percentage")} value={Format.string(item.value,item.format)} />
               )
             })
           }
+        </Show>
+        
+        
 
-          {/* Store loyalty KPI grid */}
-          <View.SectionHeader m='.5rem 0' title={"Loyalty"} viewAll={onViewAllClick} action="/report/stores/loyalty"/>
+        {/* Store loyalty KPI grid */}
+        <View.SectionHeader m='.5rem 0' title={"Loyalty"} viewAll={onViewAllClick} action="/report/stores/loyalty"/>
+        <Show when={loyalty?.length && loyalty.length > 0} fallback={<div>No data found!</div>}>
           <KpiGrid>
             {loyalty.length === 0 && <div>No data found!</div>}
             {
@@ -263,40 +292,47 @@ const StoreReportsView = ({ ...props }) => {
               })
             }
           </KpiGrid>
+        </Show>
 
-          {/* Store coupon totals list  */}
-          <View.SectionHeader m='.5rem 0' title={"Coupons"} />
+        {/* Store coupon totals list  */}
+        <View.SectionHeader m='.5rem 0' title={"Coupons"} />
+        <Show when={coupon.length > 1} fallback={<div>No data found!</div>}>
+        {
+          coupon?.map(item => {
+            return (
+              <TopCategorySection.Item name={item.title} subtitle={`${item.quantity} redeemed`} delta={Format.string(item.delta,"percentage")} value={Format.string(item.value,item.format)} />
+            )
+          })
+        }
+        </Show>
+        
+
+        {/* Store report safe and drawer buttons  */}
+        <View.SectionTitle m='1rem 0 .5rem 0'>Safe & Drawer</View.SectionTitle>
+        <KpiGrid>
+          <KpiGrid.ActionItem icon={<SolidSafeIcon size={32} />} label={"Safe Report"} />
+          <KpiGrid.ActionItem icon={<DrawerIcon size={32} />} label={"Drawer Report"} />
+        </KpiGrid>
+
+        {/* Store taxes totals list  */}
+        <View.SectionHeader m='.5rem 0' title={"Taxes"} />
+        <Show when={tax && tax.length > 0} fallback={<div>No data found!</div>}>
           {
-            coupon.map(item => {
-              return (
-                <TopCategorySection.Item name={item.title} subtitle={`${item.quantity} redeemed`} delta={Format.string(item.delta,"percentage")} value={Format.string(item.value,item.format)} />
-              )
-            })
-          }
-
-          {/* Store report safe and drawer buttons  */}
-          <View.SectionTitle m='1rem 0 .5rem 0'>Safe & Drawer</View.SectionTitle>
-          <KpiGrid>
-            <KpiGrid.ActionItem icon={<SolidSafeIcon size={32} />} label={"Safe Report"} />
-            <KpiGrid.ActionItem icon={<DrawerIcon size={32} />} label={"Drawer Report"} />
-          </KpiGrid>
-
-          {/* Store taxes totals list  */}
-          <View.SectionHeader m='.5rem 0' title={"Taxes"} />
-          {
-            tax.map(item => {
+            tax?.map(item => {
               return (
                 <TopCategorySection.Item name={item.title} subtitle={item.quantity === 0 ? "" : `${item.quantity} items`} delta={Format.string(item.delta,"percentage")} value={Format.string(item.value,item.format)} />
               )
             })
           }
+        </Show>
 
 
-          {/* Store exceptions KPI grid */}
-          <View.SectionHeader m='.5rem 0' title={"Exceptions"} />
+        {/* Store exceptions KPI grid */}
+        <View.SectionHeader m='.5rem 0' title={"Exceptions"} />
+        <Show when={exceptions?.length && exceptions.length > 0} fallback={<div>No data found!</div>}>
           <KpiGrid>
             {
-              exceptions.map(item => {
+              exceptions?.map(item => {
                 return (
                   <KpiGrid.Item title={item.title} opposite={true} value={item.value} subValue={item.delta} format={item.format} type={item.format} />
                   // <KpiGrid.Item title={item.title} value={Format.string(item.value,item.format)}/>
@@ -304,42 +340,43 @@ const StoreReportsView = ({ ...props }) => {
               })
             }            
           </KpiGrid>
+        </Show>
 
-          {/* Store transactions KPI grid */}
-          <View.SectionHeader title={"Transactions"} />
+        {/* Store transactions KPI grid */}
+        <View.SectionHeader title={"Transactions"} />
+        <Show when={transaction?.length && transaction.length > 0} fallback={<div>No data found!</div>}>
           <KpiGrid>
             {
-              transaction.map(item => {
+              transaction?.map(item => {
                 return (
                   <KpiGrid.Item title={item.title} value={item.value} subValue={item.delta} format={item.format} type={item.format} />
                 )
               })
             }      
           </KpiGrid>
+        </Show>
 
-          {/* Store report tool buttons */}
-          <View.SectionTitle m='1rem 0 .5rem 0'>Tools</View.SectionTitle>          
-          <KpiGrid>
-            <SecondaryButton>Summary</SecondaryButton>
-            <SecondaryButton>Targets</SecondaryButton>
-            <SecondaryButton>Alerts</SecondaryButton>
-            <SecondaryButton>Tender</SecondaryButton>
-          </KpiGrid>
+        {/* Store report tool buttons */}
+        <View.SectionTitle m='1rem 0 .5rem 0'>Tools</View.SectionTitle>          
+        <KpiGrid>
+          <SecondaryButton action="summary" onClick={showModalView("summary")}>Summary</SecondaryButton>
+          <SecondaryButton action="targets" onClick={showModalView("targets")}>Targets</SecondaryButton>
+          <SecondaryButton action="alerts" onClick={showModalView("alerts")}>Alerts</SecondaryButton>
+          <SecondaryButton action="saveReport" onClick={showModalView("saveReport")}>Save Report</SecondaryButton>
+        </KpiGrid>
 
-          <div style={{height:"75px",width:"100%"}}></div>
-        </ScrollView>
+      </ScrollView>
 
-       <View.BottomNav>
-          <View.BottomNav.Button action="/report/groups" onClick={onNavbarClick} icon={<SolidReportIcon size={36} />}>Home</View.BottomNav.Button>
-          <View.BottomNav.Button>Analytics</View.BottomNav.Button>
-          <View.BottomNav.Button icon={<StoreIcon size={32}/>}>Stores</View.BottomNav.Button>
-          <View.BottomNav.Button>Forcasts</View.BottomNav.Button>
-          <View.BottomNav.Button icon={<SettingsIcon size={32} />}>Settings</View.BottomNav.Button>
-        </View.BottomNav>
+      <View.BottomNav>
+        <View.BottomNav.Button action="/report/groups" onClick={onNavbarClick} icon={<SolidReportIcon size={36} />}>Home</View.BottomNav.Button>
+        <View.BottomNav.Button>Analytics</View.BottomNav.Button>
+        <View.BottomNav.Button action="stores" icon={<StoreIcon size={32}/>} onClick={showModalView}>Stores</View.BottomNav.Button>
+        <View.BottomNav.Button>Forcasts</View.BottomNav.Button>
+        <View.BottomNav.Button action="settings" icon={<SettingsIcon size={32} />} onClick={showModalView}>Settings</View.BottomNav.Button>
+      </View.BottomNav>
 
       <WEModal config={{showCloseButton:false}} isOpen={modalState} toggle={()=> toggleModal()}>
-       <DatePickerModal onClose={() => toggleModal()}/>
-       {/* <ViewModalManager modal={"loyalty"} /> */}
+        <ViewModalManager view={modalView} viewData={""} close={()=>toggleModal()} />
       </WEModal>
     </View>
   );

@@ -45,6 +45,7 @@
   background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
   color: var(--bg-primary);
   box-shadow: 0 8px 24px rgba(0, 255, 136, 0.3);
+  border-radius: 1rem;
 }
 .btn_primary:hover {
   box-shadow: 0 12px 32px rgba(0, 255, 136, 0.5);
@@ -343,22 +344,25 @@ gap: .5rem;
 
 
 .icon_button {
-  display: flex;  
-  flex-direction: column;
-  gap: .5rem;
-  /* flex: 1; */
+  position: relative;
   height: 100%;
   aspect-ratio: 1 / 1;
-  justify-content: center;
+  /* width: 56px;
+  height: 56px; */
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 212, 255, 0.2));
+  background: linear-gradient(135deg, rgba(255, 0, 255, 0.482), rgba(169, 85, 247, 0.473));
+  /* filter: blur(5px); */
+  border-radius: 14px;
+  display: flex;
   align-items: center;
-  padding: 1rem;
-  border-radius: 8px;  
-  background-color: #ffffff33;
-  backdrop-filter: blur(15px);
-  border: 2px solid rgba(255, 255, 255, 0.3);  
-  box-shadow: rgba(0, 0, 0, 0.18) 0px 2px 4px;
+  justify-content: center;
+  font-size: 28px;
+  flex-shrink: 0;
 }
-
+.icon_button > svg {
+  width: 2rem;
+  height: 2rem;
+}
 .nav_button {
   display: flex;
   flex-direction: column;

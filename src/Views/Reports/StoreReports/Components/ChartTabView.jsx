@@ -88,10 +88,10 @@ const ChartTabView = ({ chartData,...props }) => {
   const renderTabView = (tab) => {
     switch (tab) {
       case "revenue":        
-        return (<BarChartView chartData={chartData}/>)
+        return (<div style={{padding:"0 1rem 0 1rem"}}><BarChartView chartData={chartData}/></div>)
       case "net sales":
         // return (<WeeklySalesChart />);
-        return (<BarChartView chartData={chartData}/>)
+        return (<div style={{padding:"0 1rem 0 1rem"}}><BarChartView chartData={chartData}/></div>)
       default:
         return (<div style={{color:"snow"}}>Information tab view</div>);
     }

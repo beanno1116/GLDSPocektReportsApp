@@ -1,3 +1,5 @@
+import StatRecord from "../../../../Models/StatRecord";
+import DateUtility from "../../../../Utils/DateUtils";
 import Sort from "../../../../Utils/Sort";
 
 
@@ -201,16 +203,53 @@ const formatDepartmentSales = (deptsObj,baseDeptsObj) => {
     console.error(error.message);
   }
 }
+
+const format7DayTotalSales = (salesTotals) => {
+  try {
+    if (!Array.isArray(salesTotals) || !salesTotals) return new Error("data parameter not of type Array or undefined");
+    const totalSales = salesTotals.find(total => total.lookup === "totalSales");
+    if (!totalSales) return [];
+    
+    const weekData = [];
+    let currentDay = undefined;
+    for (let i = 0; i < 7; i++){
+      
+      if (i < totalSales.value.length){
+        const value = totalSales.value[i];
+        currentDay = new Date(value.day);
+        const totalObj = {
+          name: DateUtility.getDayName(currentDay),
+          total: value.total,
+          quantity: value.quantity
+        }
+        weekData.push(totalObj);
+        continue;
+      }
+      currentDay = DateUtility.addDays(currentDay,1);
+      const totalObj = {
+        name: DateUtility.getDayName(currentDay),
+        total: 0.00,
+        quantity: 0
+      }
+      weekData.push(totalObj);
+    }
+    return weekData;
+  } catch (error) {
+    
+  }
+
+}
 const salesViewAdapter = (data) => {
   try {
     if (!Array.isArray(data) || !data) return new Error("data parameter not of type Array or undefined");
 
-    
+
     const hourlySales = data[0];
     const baseHourlySales = data[1];
     const departmentTotals = data[2];
     const baseDepartmentTotals = data[3];
     const balanceSheet = data[4];
+    const salesSevenDay = format7DayTotalSales(data[5].saleTotals);
     
 
     const hourlySalesData = formatHourlySales(hourlySales,baseHourlySales);
@@ -219,7 +258,8 @@ const salesViewAdapter = (data) => {
     return {
       hourlyData: hourlySalesData,
       balanceSheet,
-      departmentSales: departmentSalesData
+      departmentSales: departmentSalesData,
+      sevenDayTotalSales: salesSevenDay
     }
     
   } catch (error) {

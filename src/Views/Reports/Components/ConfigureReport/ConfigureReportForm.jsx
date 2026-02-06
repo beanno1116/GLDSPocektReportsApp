@@ -145,7 +145,7 @@ const ConfigureReportForm = ({ data,close,...props }) => {
     let endDate = dateRangeRef.current.end;
 
     
-    debugger;
+    
     const handleResponse = (response) => {
 
     }
