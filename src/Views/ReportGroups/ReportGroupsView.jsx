@@ -1,22 +1,15 @@
 
 import { useNavigate } from 'react-router';
-import FlexColumn from '../../Components/FlexComponents/FlexColumn';
-import FlexRow from '../../Components/FlexComponents/FlexRow';
 import ScrollView from '../../Components/ScrollView/ScrollView';
 import ReportGroupCard from '../Templates/Components/Cards/ReportGroupCard';
 import View from '../Templates/View/View';
-import styles from './report.module.css';
 import HomeIcon from '../../assets/icons/HomeIcon';
 import StoreIcon from '../../assets/icons/StoreIcon';
 import SolidGoIcon from '../../assets/icons/SolidGoIcon';
 import SettingsIcon from '../../assets/icons/SettingsIcon';
-import ItemReportIcons from '../../assets/icons/ItemReportIcons';
-import CustomerIcon from '../../assets/icons/CustomerIcon';
 import ScrollSelector from '../../Components/ScrollSelector/ScrollSelector';
 import useAppContext from '../../hooks/useAppContext';
 import { useApiClient } from '../../Api/Api';
-import ReceivingIcon from '../../assets/icons/ReceivingIcon';
-import DollarSignIcon from '../../assets/icons/DollarSignIcon';
 import { useCallback } from 'react';
 
 

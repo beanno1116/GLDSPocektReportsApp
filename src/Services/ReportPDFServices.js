@@ -121,13 +121,14 @@ function createSalesReport(creator,storeName,dateRange,data,options){
 
   // pdfMake.createPdf(documentDef).download('StoreSalesReport.pdf');
   // pdfMake.createPdf(documentDef).open();
+  pdfMake.createPdf(documentDef).print();
   // pdfMake.createPdf(documentDef).save('StoreSalesReport.pdf');
-  pdfMake.createPdf(documentDef).getDataUrl().then((blob) => {
-    let tmp = blob;
-    debugger;
-  },err => {
-    console.error(err.message);
-  })
+  // pdfMake.createPdf(documentDef).getDataUrl().then((blob) => {
+  //   let tmp = blob;
+  //   debugger;
+  // },err => {
+  //   console.error(err.message);
+  // })
 }
 
 function createSalesTenderReport(creator,storeName,dateRange,data,options){
