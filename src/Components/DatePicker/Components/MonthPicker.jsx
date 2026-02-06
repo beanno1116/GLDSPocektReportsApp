@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import styles from '../datePicker.module.css';
 import DateUtility from '../Helpers/DateUtility';
+import { publish } from '../../../events';
 
 const YearHeading = ({date,onChange}) => {
   const onButtonClick = (action) => {
@@ -18,26 +19,37 @@ const YearHeading = ({date,onChange}) => {
   )
 }
 
-const MonthButton = ({text,active,onClick}) => {
+const MonthButton = ({text,active,selected,onClick}) => {
   return (
-    <button className={`${styles.month_button} ${active && styles.active}`} onClick={onClick}>{text}</button>
+    <button className={`${styles.month_button} ${active && styles.active} ${selected && styles.selected}`} onClick={onClick}>{text}</button>
   )
 }
 
 const MonthPicker = ({ selected,date=new Date(),...props }) => {
-  const [selectedMonths,setSelectedMonths] = useState(selected);
+  const [currentDate,setCurrentDate] = useState(new Date(date));
+  
 
-  const onMonthButtonClick = (month) => {
-    setSelectedMonths([...selectedMonths,month]);
+  const onMonthButtonClick = (index) => {
+    const startDate = new Date(currentDate.getFullYear(),index,1,0,0,0,0);
+    const endDate = DateUtility.getEndOfMonth(startDate);
+    publish("monthclick",{month:[startDate,endDate]});
+  }
+
+  const onYearChange = (action) => {
+    if (action === "back"){
+      setCurrentDate(DateUtility.setYearBack(currentDate,1));
+    }else{
+      setCurrentDate(DateUtility.setYearBack(currentDate,-1));
+    }    
   }
 
   return (
     <div className={styles.month}>
-      <YearHeading date={date} onChange={() => {}} />
+      <YearHeading date={currentDate} onChange={onYearChange} />
       <div className={styles.month_picker}>
-        {DateUtility.getMonthNames("abrv").map(name => {
+        {DateUtility.getMonthNames("abrv").map((name,index) => {
           return (
-            <MonthButton text={name}  active={DateUtility.monthObj(date).abrv === name} onClick={(e) => onMonthButtonClick(name)}/>
+            <MonthButton text={name} selected={selected.filter(s => s.getMonth() === index).length > 0}  active={DateUtility.monthObj(date).abrv === name} onClick={(e) => onMonthButtonClick(index)}/>
           )
         })}
       </div>

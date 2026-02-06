@@ -34,7 +34,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 32px;
+  margin-bottom: 1.5rem;
   animation: slideDown 0.6s ease;
 }
 

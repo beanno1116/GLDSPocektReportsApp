@@ -56,7 +56,7 @@ const actionMapping = {
 }
 
 const HourlyLineChart = ({ chartData }) => {
-  const [currentData,setCurrentData] = useState(chartData.totalSales);
+  const [currentData,setCurrentData] = useState(chartData?.totalSales ? chartData.totalSales : []);
   const {max,min,data} = currentData;
 
   const onTypeChange = (e,action) => {

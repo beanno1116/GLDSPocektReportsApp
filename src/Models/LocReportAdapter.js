@@ -333,7 +333,7 @@ class LocReportAdapter {
         // Use the row object description as a key to find a mapping removing the 
         // spaces and making it lowercase
         const mapKey = removeAllSpaces(description.toLowerCase());
-// debugger  
+
         /*
           Get mapping for stat. If mapping does not 
           exist, returns {key:"",group:"others"}
@@ -383,7 +383,7 @@ class LocReportAdapter {
       if (!Array.isArray(data)) throw new TypeError("data not of type array");
       // New Map to collect the stat group objects while parsing
       const stateGroupMap = new Map();
-      debugger;
+      
       // Iterating through the data to parse the store stats from LOC POS
       data.forEach(row => {
 
@@ -528,7 +528,7 @@ class LocReportAdapter {
       const transactionCountCompareStat = selectCompareStat("transaction","customers");
       const transactionCountTile = {
         title: "Transactions",
-        format: "shortNumber",
+        format: "number",
         property: "total",
         value: transactionCountStat.quantity,
         delta: Calculate.percentChange(transactionCountCompareStat.quantity,transactionCountStat.quantity)
@@ -538,7 +538,7 @@ class LocReportAdapter {
       const loyaltyTransactionCountCompareStat = selectCompareStat("loyalty","customers");
       const loyaltyTransactionCountTile = {
         title: "Loyalty Trans.",
-        format: "shortNumber",
+        format: "number",
         property: "total",
         value: loyaltyTransactionCountStat.quantity,
         delta: Calculate.percentChange(loyaltyTransactionCountCompareStat.quantity,loyaltyTransactionCountStat.quantity)
@@ -595,7 +595,7 @@ class LocReportAdapter {
               title: statMeta.title,
               format: statMeta.format,
               value: data[statMeta.property],
-              quantity: data.quantity,
+              quantity: parseInt(data.quantity),
               delta: Calculate.percentChange(data.quantity,data.quantity)
             })
           }
@@ -620,7 +620,7 @@ class LocReportAdapter {
         const prevDept = findDepartment(prevDepts,departmentId);
         let arrObj = {
           description: description,
-          quantity: quantity,
+          quantity: parseInt(quantity),
           total: department.total,
           weight: weight,
           weightDelta: weight,
@@ -702,7 +702,7 @@ class LocReportAdapter {
 
   parseBalanceSheet(data){
     try {
-      // debugger;
+      // 
       let temp = data;
       console.log("");
 
@@ -726,7 +726,7 @@ class LocReportAdapter {
         }
       })
       const t = Object.fromEntries(tenderMap);
-      // debugger;
+      // 
       return t;
     } catch (error) {
       console.error(`[ERROR] [LocReportReportAdapter] [parseBalanceSheet] - ${error.message}`);
@@ -735,7 +735,7 @@ class LocReportAdapter {
 
   parseStoreTotals(data){
     try {
-      // debugger;
+      // 
       let temp = data;
       console.log("");
 
@@ -755,7 +755,7 @@ class LocReportAdapter {
         }
       })
       const t = Object.fromEntries(tenderMap);
-      // debugger;
+      // 
       return t;
     } catch (error) {
       console.error(`[ERROR] [LocReportReportAdapter] [parseBalanceSheet] - ${error.message}`);
@@ -765,7 +765,7 @@ class LocReportAdapter {
   parseWeekData(data){
     try {
       if (!data) return [];
-      debugger;
+      
       const tempObj = new Map();
       data.forEach(record => {
         if (record.WeekType.toLowerCase() === "current"){
@@ -792,6 +792,61 @@ class LocReportAdapter {
       }
       
       return dataArray;
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+
+  parse7DayBalanceSheet(data){
+    try {
+      if (!Array.isArray(data)) throw new TypeError("data parameter is not of type arrray");
+      
+      const deptTotalsMap = new Map();
+      const storeTotalsMap = new Map();
+
+      for (let i = 0; i < data.length; i++){
+        const row = data[i];
+        const {description} = row;
+        const lookup = Format.toCamelCase(description);
+        const fDescription = Format.toCapitalized(description);
+        
+        if (row.F03 !== 99999999){
+
+          const newRecord = new StatRecord({...row,lookup,description:fDescription,number:row.F03});
+
+          if (deptTotalsMap.has(newRecord.lookup)){
+            const days = deptTotalsMap.get(newRecord.lookup);
+            deptTotalsMap.set(newRecord.lookup,[...days,newRecord]);
+          }else {
+            deptTotalsMap.set(newRecord.lookup,[newRecord]);
+          }
+          continue;
+        }
+        // 
+        // Use the row object description as a key to find a mapping removing the 
+        // spaces and making it lowercase
+        const mapKey = removeAllSpaces(description.toLowerCase());
+
+        /*
+          Get mapping for stat. If mapping does not 
+          exist, returns {key:"",group:"others"}
+        */
+        const mapping = getMapping(mapKey);
+        const newRecord = new StatRecord({...row,lookup,description:fDescription,group:mapping.group});
+
+        if (storeTotalsMap.has(newRecord.lookup)){
+          const days = storeTotalsMap.get(newRecord.lookup);
+          storeTotalsMap.set(newRecord.lookup,[...days,newRecord]);
+        }else{
+          storeTotalsMap.set(newRecord.lookup,[newRecord])
+        }
+
+      }
+
+      return {
+        departmentTotals: Array.from(deptTotalsMap, ([lookup, value]) => ({ lookup, value })),
+        saleTotals: Array.from(storeTotalsMap, ([lookup, value]) => ({ lookup, value }))
+      }
     } catch (error) {
       console.error(error.message);
     }

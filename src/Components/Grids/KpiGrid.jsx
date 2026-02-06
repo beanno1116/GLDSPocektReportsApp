@@ -1,6 +1,13 @@
 import Format from '../../Utils/Format';
 import MetricCard from '../../Views/Templates/Components/Cards/MetricCard';
+import compareIcon from '../../assets/images/compareIcon.png';
+import dateRange from '../../assets/images/dateRange.png';
 import styles from './grids.module.css';
+
+const pngIcons = {
+  compare: <img className={styles.action_img} src={compareIcon} />,
+  range: <img className={styles.action_img} src={dateRange} />
+}
 
 const KpiGridItem = ({title,value,type="shortNumber",subValue=0,opposite=false}) => {
   const isValueNegative = parseFloat(value) < 0 ? true : false;
@@ -78,6 +85,19 @@ const ActionGridItem = ({icon,label,onClick}) => {
   )
 }
 
+const ButtonGridItem = ({icon,label,onClick}) => {
+    const onGritItemClick = (e) => {
+      onClick && onClick(e);
+    }
+  return (
+    <div className={styles.action_card} onClick={onGritItemClick}>
+      {pngIcons[icon]}
+      {/* <img className={styles.action_img} src={compareIcon} /> */}
+      <div className={styles.action_label}>{label}</div>
+    </div>
+  )
+}
+
 const KpiGrid = ({ children }) => {
   return (
     <div className={styles.kpi_grid}>
@@ -87,6 +107,7 @@ const KpiGrid = ({ children }) => {
 }
 
 KpiGrid.Item = KpiGridItem
+KpiGrid.ButtonItem = ButtonGridItem;
 KpiGrid.SummaryItem = SummaryGridItem;
 KpiGrid.ActionItem = ActionGridItem;
 KpiGrid.MetricItem = MetricCard;

@@ -26,8 +26,16 @@ const DatePicker = ({ when,close,selected,multiSelect,onChange,monthPicker,...pr
   
 
   useEffect(() => {
+    
     const handleDayClick = (e) => {
+
       const {day} = e.detail;
+      const now = new Date();
+
+      if (day.getTime() > now.getTime()){
+        return;
+      }
+
       const filteredDays = selectedDays.filter(sd => DateUtility.isEqual(sd,day));
       let selectedDay = undefined;
       if (filteredDays.length > 0){
@@ -42,14 +50,43 @@ const DatePicker = ({ when,close,selected,multiSelect,onChange,monthPicker,...pr
         setSelectedDays([...selectedDays,e.detail.day]);
         return;
       }
+
+      if (period === "7day"){
+        if (selectedDays.filter(sd => DateUtility.isEqual(sd,day)).length > 0){
+          setSelectedDays([]);
+          return
+        }
+        let weekArr = [];
+        for(let i = 0; i < 7; i++){
+          weekArr.push(DateUtility.addDays(day,i))
+        }
+        setSelectedDays(weekArr)
+        return;
+      }
+
+      if (selectedDay){
+        setSelectedDays(selectedDays.filter(sd => !DateUtility.isEqual(sd,day)));
+        return;
+      }
       setSelectedDays([e.detail.day]);
     }
+
+    const handleMonthClick = (e) => {
+      const {month} = e.detail;
+       if (selectedDays.filter(sd => sd.getMonth() === month[0].getMonth()).length > 0){
+        setSelectedDays([])
+        return;
+       }
+       setSelectedDays([...month]);
+    }
     
-    subscribe("dayclick",handleDayClick)
+    subscribe("dayclick",handleDayClick);
+    subscribe("monthclick",handleMonthClick);
     return () => {
       unsubscribe("dayclick",handleDayClick);
+      unsubscribe("monthclick",handleMonthClick);
     }
-  },[multiSelect,setSelectedDays,selectedDays])
+  },[multiSelect,setSelectedDays,selectedDays,period])
 
   const filterRef = useRef();
   const periodRef = useRef("day");
@@ -60,7 +97,12 @@ const DatePicker = ({ when,close,selected,multiSelect,onChange,monthPicker,...pr
   }
 
   const onApplyDateClick = (e) => {
-    onChange && onChange(selectedDays);
+    const action = e.currentTarget.dataset?.action;
+    let days = selectedDays;
+    if (action && action === "cancel") {
+      days = "close";
+    }
+    onChange && onChange(days);
   }
   return (
     <div className={`${styles.date_picker} ${when ? styles.open : ""}`} ref={filterRef}>
@@ -69,9 +111,13 @@ const DatePicker = ({ when,close,selected,multiSelect,onChange,monthPicker,...pr
         <PeriodSelector onChange={onPeriodChange} />
         <FlexRow flex='1' width='100%'>
           {period === "day" && <Month selected={selectedDays} monthHeader dayNameHeader multiSelect />}
-          {period === "month" && <MonthPicker />}
+          {period === "7day" && <Month selected={selectedDays} monthHeader dayNameHeader weekIncrements/>}
+          {period === "month" && <MonthPicker selected={selectedDays} />}
         </FlexRow>
-        <SecondaryButton onClick={onApplyDateClick}>Apply</SecondaryButton>
+        <FlexRow g='1rem'>
+          <PrimaryButton action="apply" onClick={onApplyDateClick}>Apply</PrimaryButton>
+          <SecondaryButton action="cancel" onClick={onApplyDateClick}>Cancel</SecondaryButton>
+        </FlexRow>
       </FlexColumn>
     </div>
   );

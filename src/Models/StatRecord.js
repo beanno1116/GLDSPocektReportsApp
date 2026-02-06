@@ -3,6 +3,7 @@
 class StatRecord {
   description = "";
   hour = "";
+  day = "";
   #group = "";
   #lookup = "";
   number = "";
@@ -20,6 +21,7 @@ class StatRecord {
       this.weight = recordObj?.weight || 0.00;
       this.total = recordObj?.total || 0.00;
       this.hour = recordObj?.hour || "";
+      this.day = recordObj?.day || "";
       this.#lookup = recordObj?.lookup || "";
       this.#periodStart = recordObj?.periodStart || "";
       this.#periodEnd = recordObj?.periodEnd || "";

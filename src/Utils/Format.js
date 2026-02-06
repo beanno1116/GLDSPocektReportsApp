@@ -1,6 +1,15 @@
+import { form } from "motion/react-client";
 
 
 class FormatUtil {
+
+  CURRENCY_FORMAT = "currency";
+  NUMBER_FORMAT = "number";
+  PERCENTAGE_FORMAT = "percentage";
+  SHORT_CURRENCY_FORMAT = "shortCurrency";
+  SHORT_MINUTE_FORMAT = "shortMinute";
+  SHORT_NUMBER_FORMAT = "shortNumber";
+
 
   #isRealNumber(value){
     try {
@@ -30,7 +39,8 @@ class FormatUtil {
 
   padDateTimeElement(element){
     try {      
-      if (!element) throw new Error("Cannot pad undefined or null date/time element");
+      if (!element) return element;
+      // if (!element) throw new Error("Cannot pad undefined or null date/time element");
       const elementAsString = element.toString();
       if (elementAsString.length > 2) return elementAsString;
       if (elementAsString.length === 2){
@@ -80,6 +90,21 @@ class FormatUtil {
       return phoneNumber.replace("(","").replace(")","").replace("-","").replace("+","");
     } catch (error) {
      console.error(`[ERROR] [FormatUtil] [cleanPhoneNumber] - ${error.message}`);
+    }
+  }
+
+  asLongDate(date=new Date(),locale="en-US"){
+    try {
+      
+      const dateCopy = new Date(date);
+      const formattedDateString = dateCopy.toLocaleDateString(locale,{
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+      return formattedDateString;
+    } catch (error) {
+      console.error(error.message);
     }
   }
 
@@ -150,6 +175,14 @@ class FormatUtil {
     }
   }
 
+  asNumber(value,locale="en-US"){
+    try {
+      return value.toLocaleString(locale);
+    } catch (error) {
+      console.error(`[ERROR] [Format] [asNumber] - ${error.message}`);
+    }
+  }
+
   stringAsInteger(value){
     try {
       if (this.#isRealNumber(parseFloat(value))) {
@@ -176,8 +209,8 @@ class FormatUtil {
         const valueAsString = valueAsInt.toString();
         const valueLength = valueAsString.length;
         let displayNumber = valueAsString.substring(0,2).slice(0,1) + "." + valueAsString.substring(0,2).slice(1);
-        if (valueLength >= 7){
-          return `${displayNumber}M`
+        if (valueLength === 8){
+         return `${valueAsString.substring(0,3).slice(0,2) + "." + valueAsString.substring(0,3).slice(2)}M`;
         }
         if (valueLength >= 6 && valueLength < 7){
           return `${valueAsString.substring(0,4).slice(0,3) + "." + valueAsString.substring(0,4).slice(3)}K`;
@@ -253,17 +286,18 @@ class FormatUtil {
 
   string(value,format){
     switch (format) {
-      case "currency":
+      case this.CURRENCY_FORMAT:
         return `$${this.stringAsMoney(value)}`;
-      case "number":
-        return this.stringAsInteger(value);
-      case "shortNumber":
+      case this.NUMBER_FORMAT:
+        return this.asNumber(value);
+      case this.SHORT_NUMBER_FORMAT:
         return this.moneyAbbreviation(value);
-      case "shortCurrency":
+      case this.SHORT_CURRENCY_FORMAT:
         return `$${this.moneyAbbreviation(value)}`;
-      case "percentage":
+      case this.PERCENTAGE_FORMAT:
         return `${parseInt(value)}%`
-    
+      case this.SHORT_MINUTE_FORMAT:
+        return `${value} min`
       default:
         return value;
     }

@@ -33,12 +33,19 @@ class DocumentService {
     this.#pdfService = pdfService;
   }
 
-  createSalesReport({store,totals}){
+  createSalesReport({store,totals,dateRange}){
     try {
-      debugger;
-      const pdfDocument = this.#pdfService.createDocument({orientation:"portrait"});
-      this.#pdfService.text("Sales Report",{x:210,y:45},{r:0,g:0,b:0},{size:30,style:"bold"});
-      this.#pdfService.text("King Liquor Test",{x:212,y:75},{r:0,g:0,b:0},{size:24,style:"bold"});
+      
+      const pdfDocument = this.#pdfService.createDocument();
+      this.#pdfService.text("Sales Report",{x:15,y:40},{r:0,g:0,b:0},{size:40,style:"bold"});
+      this.#pdfService.text(store,{x:25,y:70},{r:0,g:0,b:0},{size:24,style:"bold"});
+
+      this.#pdfService.text("Start Date:",{x:25,y:95},{r:0,g:0,b:0},{size:16,style:"bold"});
+      this.#pdfService.text("02/04/2026",{x:110,y:95},{r:0,g:0,b:0},{size:16,style:"bold"});
+      
+      this.#pdfService.text("End Date:",{x:25,y:120},{r:0,g:0,b:0},{size:16,style:"bold"});
+      this.#pdfService.text("02/04/2026",{x:110,y:120},{r:0,g:0,b:0},{size:16,style:"bold"});
+
       let temp = pdfDocument.output("bloburl","salesReport.pdf");
       const iframe = document.createElement("iframe");
       iframe.style.position = "fixed";
