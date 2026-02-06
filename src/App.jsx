@@ -1,4 +1,4 @@
-import MainView from "./Views/Main/MainView"
+
 
 import './App.css';
 import LoginView from "./Views/Login/LoginView";
@@ -9,10 +9,7 @@ import HomeView from "./Views/Home/HomeView";
 import AuthProvider, { AuthActionsProvider } from "./hooks/useAuth";
 import { ApiClient, ApiClientProvider, getApiEndpoint } from "./Api/Api";
 import ProtectedRoute from "./Views/ProtectedRoute";
-import ItemReportsView from "./Views/ItemReports/ItemReportsView";
 import { AppContextProvider } from "./Contexts/AppContext";
-import StoreSelectorView from "./Views/StoreSelector/StoreSelectorView";
-// import StoreReportsView from "./Views/StoreReports/StoreReportsView";
 import ManageUserView from "./Views/ManageUserUpdate/ManageUserView";
 import ReportGroupsView from "./Views/ReportGroups/ReportGroupsView";
 import StoreReportsView from "./Views/Reports/StoreReports/StoreReportsView";
@@ -20,11 +17,6 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import StoreLoyaltyDetails from "./Views/Reports/StoreReports/StoreLoyaltyDetails";
 import StoreSalesDetails from "./Views/Reports/StoreReports/StoreSalesDetails";
 
-// import Api, { ApiClient, ApiClientProvider, getApiEndpoint } from "./Api/Api";
-
-// login username password
-// register username password accessCode
-// users post 
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -57,14 +49,6 @@ const App = () => {
         {
           path: "/manage/users",
           element: <ManageUserView />
-        },
-        {
-          path:"/stores/selector",
-          element: <StoreSelectorView />
-        },
-        {
-          path: "/report/items",
-          element: <ItemReportsView />
         },
         {
           path: "/report/stores",

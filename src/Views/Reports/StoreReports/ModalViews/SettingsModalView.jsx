@@ -57,9 +57,7 @@ const SettingsModalView = ({ close }) => {
 
       <ScrollView>
         <View.SectionTitle m='1rem 0 .5rem 0'>Report order</View.SectionTitle>
-        <Card>
-          <List.Header title="Order" countBadge={false} />          
-          
+        <Card>    
             {reportWidgets.map(widget => {
               return (
                 <List.DraggableListItem key={widget} id={widget} title={widget} status={selectedItems.includes(widget) ? true : false} onClick={()=>{}} />
@@ -81,13 +79,8 @@ const SettingsModalView = ({ close }) => {
 
         <View.SectionTitle m='0 0 .5rem 0'>Report Alerts</View.SectionTitle>
         <Card>
-          <List.Header title="Order" countBadge={false} />          
-          
-            {reportWidgets.map(widget => {
-              return (
-                <List.CheckboxListItem key={widget} id={widget} title={widget} status={selectedItems.includes(widget) ? true : false} onClick={()=>{}} />
-              )
-            })}
+          <List.DraggableListItem key={"under"} id={"under"} title={"Under performing sales"}  onClick={()=>{}} />
+          <List.DraggableListItem key={"Upcoming trend"} id={"Upcoming trend"} title={"Upcoming trend"}  onClick={()=>{}} />
         </Card>
 
         <View.SectionTitle m='0 0 .5rem 0'>Help</View.SectionTitle>

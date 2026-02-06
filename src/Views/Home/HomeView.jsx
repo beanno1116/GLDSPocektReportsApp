@@ -32,33 +32,6 @@ import Filter from '../../Utils/Filter';
 
 let renderCount = 0;
 
-const homeViewBottomNavButtons = [
-  {
-    id: 2,
-    name: "",
-    icon: <HomeIcon size={36} color='snow' />,
-    action: "home"
-  },
-  {
-    id: 3,
-    name: "",
-    icon: <StoreIcon size={36} color="snow" />,
-    action: "store"
-  },
-  {
-    id: 4,
-    name: "",
-    icon: <SettingsIcon size={36} color="snow" /> ,
-    action: "setting"
-  },
-    {
-    id: 1,
-    name: "",
-    icon: <ManageUsersIcon size={36} color='snow' />,
-    action: "user"
-  }
-]
-
 
 const homeViewQueries = [
   {
