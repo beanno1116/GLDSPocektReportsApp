@@ -1,10 +1,7 @@
-import { calculatePercentChange, removeAllSpaces } from "../Utils/Utils";
-import DepartmentRecord from './DepartmentRecord';
-import DateUtility from "../Utils/DateUtils";
+import { removeAllSpaces } from "../Utils/Utils";
 import StatRecord from "./StatRecord";
-import Calculate from "../Utils/Caclulate";
-import { title } from "motion/react-client";
 import Format from "../Utils/Format";
+import Sort from "../Utils/Sort";
 
 
 const salesMapping = {
@@ -224,47 +221,6 @@ const markdownMapping = {
   },
 }
 
-const storeReportData = {
-  loyalty: {
-    pointsGiven: {},
-    pointsRedeemed: {},
-    transactions: {},
-    items: {},
-    customers: {},
-  },
-  sales: {
-    totalSales: {},
-    netSales: {},
-    hashSales: {},
-    costOfGoods: {},
-    grandTotal: {},
-    transactions: {}
-  },
-  coupons: {
-    store: {},
-    vendor: {},
-    electronicStore: {},
-    electronicVendor: {}    
-  },
-  tax: {
-    tax: {},
-    taxable: {},
-    nonTaxable: {}
-  },
-  exceptions: {
-    noSale: {},
-    canceled: {},
-    canceledItem: {},
-    cancelPrevItem: {},
-    refund: {},
-    taxRefund: {}
-  },
-  safe: {},
-  drawer: {},
-  stats: {}
-}
-
-
 const getMapping = (key) => {
   const mappings = {...salesMapping,...loyaltyMapping,...couponMapping,...taxMapping,...exceptionMapping,...transactionMapping,...discountMapping,...markdownMapping};
   const map = mappings[key];
@@ -276,10 +232,6 @@ const getMapping = (key) => {
   return mappings[key]
 }
 
-const findDepartment = (depts,id) => {
-  if (!Array.isArray(depts)) throw new TypeError("depts not of type array");
-  return depts.find(dept => parseInt(dept.departmentId) === parseInt(id));
-}
 
 const parseStat = (statCollection,stat) => {
   try {
@@ -297,23 +249,6 @@ const parseStat = (statCollection,stat) => {
   }
 }
 
-const selectStatGroup = (statObj) => {
-  return (group,statName) => {
-    try {
-      if (Object.keys(statObj).length === 0) return new StatRecord();
-      const statGroup = statObj[group];
-      if (statGroup){
-        const filteredStats = statGroup.filter(g => g.lookup === statName);
-        if (filteredStats.length > 0){
-          return filteredStats[0];
-        }
-      }
-      return new StatRecord();
-    } catch (error) {
-      console.error(`[ERROR] [LocReportAdapter] [selectStatGroup] - ${error.message}`);
-    }
-  }
-}
 
 class LocReportAdapter {
 
@@ -492,155 +427,7 @@ class LocReportAdapter {
     }
   }
 
-  parseHomeViewData(data){
-    try {
-      if (!Array.isArray(data)) throw new TypeError("parameter not of type array");
-      
-      const todayStats = data[0];
-      const prevStats = data[1];
-      const todayDepts = data[2].map(d => new DepartmentRecord(d));
-      const prevDepts = data[3].map(d => new DepartmentRecord(d));
-      const selectStat = selectStatGroup(todayStats);
-      const selectCompareStat = selectStatGroup(prevStats);
-
-
-      const totalSalesStat = selectStat("sales","totalSales");
-      const totalSalesCompareStat = selectCompareStat("sales","totalSales");
-      const totalSalesTile = {
-        title: "Revenue",
-        format: "shortCurrency",
-        property: "total",
-        value: totalSalesStat.total,
-        delta: Calculate.percentChange(totalSalesCompareStat.total,totalSalesStat.total)
-      }
-
-      const costOfGoodsSoldStat = selectStat("sales","costOfGoodsSold");
-      const costOfGoodsSoldCompareStat = selectCompareStat("sales","costOfGoodsSold");
-      const costOfGoodsSoldTile = {
-        title: "COG Sold",
-        format: "shortCurrency",
-        property: "total",
-        value: costOfGoodsSoldStat.total,
-        delta: Calculate.percentChange(costOfGoodsSoldCompareStat.total,costOfGoodsSoldStat.total)
-      }
-
-      const transactionCountStat = selectStat("transaction","customers");
-      const transactionCountCompareStat = selectCompareStat("transaction","customers");
-      const transactionCountTile = {
-        title: "Transactions",
-        format: "number",
-        property: "total",
-        value: transactionCountStat.quantity,
-        delta: Calculate.percentChange(transactionCountCompareStat.quantity,transactionCountStat.quantity)
-      }
-
-      const loyaltyTransactionCountStat = selectStat("loyalty","customers");
-      const loyaltyTransactionCountCompareStat = selectCompareStat("loyalty","customers");
-      const loyaltyTransactionCountTile = {
-        title: "Loyalty Trans.",
-        format: "number",
-        property: "total",
-        value: loyaltyTransactionCountStat.quantity,
-        delta: Calculate.percentChange(loyaltyTransactionCountCompareStat.quantity,loyaltyTransactionCountStat.quantity)
-      }
-
-      const averageBasketTile = {
-        title: "Avg Basket",
-        format: "currency",
-        property: "total",
-        value: totalSalesStat.total / totalSalesStat.quantity,
-        delta: Calculate.percentChange(totalSalesCompareStat.total / totalSalesCompareStat.quantity,totalSalesStat.total / totalSalesStat.quantity)
-      }
-
-      const marginTile = {
-        title: "Margin",
-        format: "percentage",
-        property: "total",
-        value: Calculate.margin(totalSalesStat.total,costOfGoodsSoldStat.total),
-        delta: Calculate.percentChange(Calculate.margin(totalSalesCompareStat.total,costOfGoodsSoldCompareStat.total),Calculate.margin(totalSalesStat.total,costOfGoodsSoldStat.total))
-      }
-
-      
-
-      const parseExceptions = (exceptionData,compareData) => {
-        const exceptionFilter = {
-          cancelPrevItem: {
-            title: "Cancel Prev Item",
-            format: "shortNumber",
-            property: "quantity"
-          },
-          refunds: {
-            title: "Refunds",
-            format: "shortNumber",
-            property: "quantity"
-          },
-          noSales: {
-            title:"No Sales",
-            format: "shortNumber",
-            property: "quantity"    
-          },
-          cancelOrder: {
-            title: "Canceled Orders",
-            format: "shortNumber",
-            property: "quantity"
-          }
-        }
-
-        
-        const exceptionStatsArray = [];
-        exceptionData.forEach(data => {
-          const statMeta = exceptionFilter[data.lookup];
-          if (statMeta){
-            exceptionStatsArray.push({
-              title: statMeta.title,
-              format: statMeta.format,
-              value: data[statMeta.property],
-              quantity: parseInt(data.quantity),
-              delta: Calculate.percentChange(data.quantity,data.quantity)
-            })
-          }
-        })
-        return exceptionStatsArray;
-      }
-
-      const homeViewData = {
-        stats: [totalSalesTile,costOfGoodsSoldTile,averageBasketTile,marginTile,transactionCountTile,loyaltyTransactionCountTile],
-        exceptions: parseExceptions(todayStats.exception,prevStats.exception)     
-      }
-      // const homeViewData = {
-      //   stats: parseSales(todayStats.sales,prevStats.sales),
-      //   exceptions: parseExceptions(todayStats.exception,prevStats.exception)     
-      // }
-
-
-      const departmentArray = [];
-
-      todayDepts.forEach((department,index) => {
-        const {departmentId,description,quantity,total,weight} = department;
-        const prevDept = findDepartment(prevDepts,departmentId);
-        let arrObj = {
-          description: description,
-          quantity: parseInt(quantity),
-          total: department.total,
-          weight: weight,
-          weightDelta: weight,
-          prevTotal: prevDept ? prevDept.total : 0.00,
-          prevQuantity: prevDept ? prevDept.quantity : 0,
-          prevWeight: prevDept ? prevDept.weight : 0.00,
-          quantityDelta: prevDept ? calculatePercentChange(prevDept.quantity,quantity) : 0,
-          totalDelta: prevDept ? calculatePercentChange(prevDept.total,total) : 0.00,
-        }
-        departmentArray.push(arrObj);
-      });
-
-      homeViewData.departments = departmentArray;
-      
-      return homeViewData;
-
-    } catch (error) {
-      console.error(error.message)
-    }
-  }
+  
   
   parseHourlySales(data){
     try {
@@ -680,7 +467,7 @@ class LocReportAdapter {
     }
   }
 
-  parseDepartmentTotals(data){
+  parseDepartmentTotals(data,sort){
     try {
       if (!Array.isArray(data)) throw new TypeError("data is not of type array");
       const retTotalsArr = [];
@@ -694,6 +481,9 @@ class LocReportAdapter {
 
         retTotalsArr.push(departmentTotalStat);
       })
+      if (sort){
+        return Sort.bySales(retTotalsArr,sort);
+      }
       return retTotalsArr;
     } catch (error) {
       console.error(`[ERROR] [LocReportReportAdapter] [parseDepartmentTotals] - ${error.message}`);
@@ -702,32 +492,34 @@ class LocReportAdapter {
 
   parseBalanceSheet(data){
     try {
-      // 
       let temp = data;
       console.log("");
 
       const tenderMap = new Map();
-
+      
       data.forEach(row => {
         const {description} = row;
-        let group = row.group;
+        let group = row.group.toLowerCase();
         if (row.group.toLowerCase() === "information"){
           group = "Sales"
         }
 
+        group = removeAllSpaces(group);
+
         const lookup = description === "Coupon Able" ? Format.toCamelCase("couponable") : Format.toCamelCase(description);
-        const desc = description === "Coupon Able" ? Format.toCapitalized("couponable") : Format.toCapitalized(description);
+        const desc = description === "Coupon Able" ? removeAllSpaces(Format.toCapitalized("couponable")) : removeAllSpaces(Format.toCapitalized(description));
+
+        const newStatRecord = new StatRecord({...row,description:desc,lookup,group})
 
         if (tenderMap.has(group)){
           const tenders = tenderMap.get(group);
-          tenderMap.set(group,[...tenders,{...row,lookup,description:desc}]);
+          tenderMap.set(group,[...tenders,newStatRecord]);
         }else{
-          tenderMap.set(group,[{...row,lookup,description:desc}]);
+          tenderMap.set(group,[newStatRecord]);
         }
       })
-      const t = Object.fromEntries(tenderMap);
-      // 
-      return t;
+      // const t = Object.fromEntries(tenderMap);
+      return Object.fromEntries(tenderMap);;
     } catch (error) {
       console.error(`[ERROR] [LocReportReportAdapter] [parseBalanceSheet] - ${error.message}`);
     }
@@ -842,7 +634,7 @@ class LocReportAdapter {
         }
 
       }
-
+      
       return {
         departmentTotals: Array.from(deptTotalsMap, ([lookup, value]) => ({ lookup, value })),
         saleTotals: Array.from(storeTotalsMap, ([lookup, value]) => ({ lookup, value }))

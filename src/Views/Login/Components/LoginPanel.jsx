@@ -1,20 +1,19 @@
 
 import styles from '../loginView.module.css';
-import buttonStyles from '../../../Components/Buttons/button.module.css';
 import FlexColumn from '../../../Components/FlexComponents/FlexColumn';
 import { loader } from '../../../Components/Loader/LoaderModal';
 import TextField from '../../../Components/Inputs/TextField';
 import LinkButton from '../../../Components/Buttons/LinkButton';
 import PasswordTextField from '../../../Components/Inputs/PasswordTextField';
-import { useNavigate } from 'react-router';
 import useWEForm from '../../../hooks/useWEForm';
 import { useApiClient } from '../../../Api/Api';
 import { useAuth, useAuthActions } from '../../../hooks/useAuth';
-import { useContext } from 'react';
-import { AppContext } from '../../../Contexts/AppContext';
 import useLocalStorage from '../../../hooks/useLocalStorage';
-import Organization from '../../../Models/Organization';
+import useNavigateView from '../../../hooks/useNavigateView';
 import Filter from '../../../Utils/Filter';
+import PrimaryButton from '../../../Components/Buttons/PrimaryButton';
+import OutlineButton from '../../../Components/Buttons/OutlineButton';
+import useAppContext from '../../../hooks/useAppContext';
 
 
 const createFormData = (data) => {
@@ -29,24 +28,42 @@ const createFormData = (data) => {
   }
 }
 
-const parseGetOrganizationResponse = (response) => {
+const parseGetOrganizationResponse = (resData,authorizedStores) => {
   try {
-    // const organization = new Organization(response.data);
+    if (!resData) throw new Error("Response data cannot be null or undefined!");
 
-    const {id,stores,users,seats} = response.data;        
+    const {id,stores,users,seats} = resData;  
+
+    if (authorizedStores.length > 0){
+      const autStoreId = authorizedStores[0];
+      const initialStore = Filter.storeById(stores,autStoreId);
+      const authdStores = Filter.authorizedStores(stores,authorizedStores);
+      return {
+        activeStore: initialStore.id,
+        agentString: initialStore.agentString,
+        didInit: true,
+        organization: id,
+        seats,        
+        stores:authdStores,
+        users: users,
+      }
+    }
+    
     return {
       activeStore: 0,
       agentString: "",
-      didInit: true,
+      didInit: false,
       organization: id,
       seats,
-      stores:stores,
+      stores:[],
       users: users,
     }
   } catch (error) {
     console.error(error.message);
   }
 }
+
+
 
 const initialFormData = {
   userName: "",
@@ -59,9 +76,10 @@ const useLoginPanel = (navigation) => {
   const api = useApiClient();
   const auth = useAuth();
   const localStorage = useLocalStorage();
-  const {dispatch} = useContext(AppContext);
+  const {dispatch} = useAppContext();
   const {registerFormInput,resetForm,onSubmit} = useWEForm(initialFormData);
-  const navigate = useNavigate();
+  const navigate = useNavigateView();
+  
 
   const handleLoginResponse = async (response) => {    
     if (response){  
@@ -70,21 +88,15 @@ const useLoginPanel = (navigation) => {
       const loginDataResponse = await api.get("organizations",{params:{userId:auth.getAuthUser().id,token:auth.token}});
 
       if (loginDataResponse.success){
-        
-        const payloadData = parseGetOrganizationResponse(loginDataResponse);
-        payloadData.authorizedStores = authUser.stores;        
-        if (payloadData.authorizedStores.length > 0){
-          const autStoreId = payloadData.authorizedStores[1];
-          const store = Filter.storeById(payloadData.stores,autStoreId);
-          payloadData.activeStore = store.id;
-          payloadData.agentString = store.agentString;
-          localStorage.set("org",JSON.stringify(payloadData));
-          dispatch({type:"all",payload:payloadData});
-          navigate("/");
-        }       
-        loader.loaded();      
+        // 
+        const payloadData = parseGetOrganizationResponse(loginDataResponse.data,authUser.stores);
+        localStorage.set("org",JSON.stringify(payloadData));
+        dispatch({type:"all",payload:payloadData});
+        navigate("/");
+        loader.loaded();
+        return;
       }
-      return;
+      // loader.loaded();      
     }
     throw new TypeError("Invalid response data");
   }
@@ -136,15 +148,15 @@ const LoginPanel = ({ when,navigation }) => {
       </FlexColumn>
 
       <FlexColumn vAlign='center' g='1rem' p='0 2rem'>
-        <TextField {...registerFormInput("userName",{required:true})} placeholder="User name" label={"User name"}/> 
+        <TextField {...registerFormInput("userName",{required:true})} size='sm' placeholder="User name" label="Username" /> 
         <div></div>
-        <PasswordTextField {...registerFormInput("password",{required:true})} placeholder="Password" label={"Password"}/>
+        <PasswordTextField {...registerFormInput("password",{required:true})} placeholder="Password" size='sm'  label="Password" />
         <LinkButton>Forgot password?</LinkButton>          
       </FlexColumn>
 
       <div className={styles.login_view_button_panel}>
-        <button className={buttonStyles.button} type='button' onClick={(e) => onSubmit(e,onLoginButtonClick)}>Login</button>
-        <button className={`${buttonStyles.button} ${buttonStyles.secondary}`} type='button' onClick={onBackButtonClick}>Back</button>
+        <PrimaryButton onClick={(e) => onSubmit(e,onLoginButtonClick)} size='md'>Login</PrimaryButton>
+        <OutlineButton action={"/manage/users"} size='md' onClick={onBackButtonClick}>Back</OutlineButton>
       </div>
 
       <div></div>

@@ -9,6 +9,7 @@ import { useState } from 'react';
 import FlexColumn from '../../../../Components/FlexComponents/FlexColumn';
 import ScrollView from '../../../../Components/ScrollView/ScrollView';
 import WEAccordion from '../../../../Components/WEAccordion/WEAccordion';
+import DragableList from '../../../../Components/Lists/DragableList';
 
 
 const reportWidgets = [
@@ -36,6 +37,8 @@ const defaultReportOrder = [
 
 const SettingsModalView = ({ close }) => {
   const [selectedItems,setSelectedItems] = useState([...reportWidgets.map(d=>d.toLowerCase())]);
+
+  const reportWidgetArr = [...reportWidgets.map(d=>d.toLowerCase())];
   
     const isAllSelected = selectedItems.length === reportWidgets.length;
   const isSomeSelected = selectedItems.length > 0 && selectedItems.length < reportWidgets.length;
@@ -57,8 +60,9 @@ const SettingsModalView = ({ close }) => {
 
       <ScrollView>
         <View.SectionTitle m='1rem 0 .5rem 0'>Report order</View.SectionTitle>
-        <Card>    
-            {reportWidgets.map(widget => {
+        <Card>  
+          {/* <DragableList initialItems={reportWidgetArr} />   */}
+            {reportWidgetArr.map(widget => {
               return (
                 <List.DraggableListItem key={widget} id={widget} title={widget} status={selectedItems.includes(widget) ? true : false} onClick={()=>{}} />
               )

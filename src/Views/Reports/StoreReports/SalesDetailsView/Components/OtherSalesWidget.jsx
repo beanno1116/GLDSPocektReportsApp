@@ -1,4 +1,5 @@
 
+import Show from '../../../../../Components/Show/Show';
 import TrendCard from '../../../../Templates/Components/Cards/TrendCard';
 import View from '../../../../Templates/View/View';
 import styles from '../../storeReportsView.module.css';
@@ -7,9 +8,10 @@ const OtherSalesWidget = ({ balanceSheet,...props }) => {
   
   const renderOtherData = (data) => {
     if (!data) return <div>No data found!</div>
-    const itemDiscounts = data["Item Discount"] || [];
-    const received = data["Received"] || [];
-    const rbsLynk = data["RBSLynkISO"] || [];
+    debugger;
+    const itemDiscounts = data["itemdiscount"] || [];
+    const received = data["received"] || [];
+    const rbsLynk = data["rbslynkiso"] || [];
 
     const otherDataArr = [...itemDiscounts,...received,...rbsLynk];
 
@@ -27,9 +29,11 @@ const OtherSalesWidget = ({ balanceSheet,...props }) => {
   return (
     <>
       <View.SectionTitle id="department" m='.5rem 0'>Other</View.SectionTitle>
-      <TrendCard>
-      {renderOtherData(balanceSheet)}
-      </TrendCard>
+      <Show when={balanceSheet?.sales} fallback={<div>No data found!</div>}>
+        <TrendCard>
+        {renderOtherData(balanceSheet)}
+        </TrendCard>
+      </Show>
     </>
   );
 }

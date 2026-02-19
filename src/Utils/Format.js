@@ -9,6 +9,8 @@ class FormatUtil {
   SHORT_CURRENCY_FORMAT = "shortCurrency";
   SHORT_MINUTE_FORMAT = "shortMinute";
   SHORT_NUMBER_FORMAT = "shortNumber";
+  INTEGER_FORMAT = "intFormat";
+  DECIMAL_FORMAT = "floatFormat";
 
 
   #isRealNumber(value){
@@ -161,6 +163,9 @@ class FormatUtil {
 
   stringAsMoney(value,locale = "en-US") {
     try {
+      if (parseFloat(value) < 0){
+        return `${parseFloat(value * -1).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`; 
+      }
       return `${parseFloat(value).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
     } catch (error) {
       console.error(error.message);
@@ -186,7 +191,7 @@ class FormatUtil {
   stringAsInteger(value){
     try {
       if (this.#isRealNumber(parseFloat(value))) {
-        return `${parseInt(value)}`;
+        return `${parseFloat(this.asNumber(value)).toFixed(0)}`;
       }
     } catch (error) {
       
@@ -287,7 +292,9 @@ class FormatUtil {
   string(value,format){
     switch (format) {
       case this.CURRENCY_FORMAT:
-        return `$${this.stringAsMoney(value)}`;
+        return `${value < 0 ? "-" : ""}$${this.stringAsMoney(value)}`;
+      case this.INTEGER_FORMAT:
+        return this.stringAsInteger(value);
       case this.NUMBER_FORMAT:
         return this.asNumber(value);
       case this.SHORT_NUMBER_FORMAT:

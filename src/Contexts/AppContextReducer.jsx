@@ -1,4 +1,4 @@
-import { UPDATE_ACTIVE_STORE, UPDATE_AGENT_STRING, UPDATE_ORG_ID, UPDATE_SEATS, UPDATE_STORES, UPDATE_USERS } from "./actions"
+import { UPDATE_ACTIVE_STORE, UPDATE_AGENT_STRING, UPDATE_ORG_ID, UPDATE_SEATS, UPDATE_STORE_CHANGE, UPDATE_STORES, UPDATE_USERS } from "./actions"
 
 const syncLocalStorage = {
   getLocalStorageData() {
@@ -35,6 +35,8 @@ export const appContextReducer = (state,action) => {
       syncLocalStorage.update("activeStore",action.payload);
       
       return {...state,activeStore:action.payload}
+    case UPDATE_STORE_CHANGE:
+      return {...state,...action.payload};
     case UPDATE_AGENT_STRING:
       return {...state,agentString:action.payload}
     case UPDATE_SEATS:

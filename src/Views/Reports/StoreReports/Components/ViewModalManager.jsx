@@ -1,11 +1,6 @@
-import PrimaryButton from "../../../../Components/Buttons/PrimaryButton"
-import FlexColumn from "../../../../Components/FlexComponents/FlexColumn"
-import FlexRow from "../../../../Components/FlexComponents/FlexRow"
 import StoreSelector from "../../../../Modals/StoreSelector"
-import Card from "../../../Templates/Components/Cards/Card"
-import View from "../../../Templates/View/View"
-import knowledgeIcon from "../../../../assets/images/knowledgeIcon.png";
 import SettingsModalView from "../ModalViews/SettingsModalView"
+
 
 const SummaryView = ({close}) => {
   return (
@@ -29,13 +24,14 @@ const SaveReportView = ({close}) => {
 }
 
 
+
 const subViews = {
   stores: StoreSelector,
   summary: SummaryView,
   targets: TargetsView,
   alerts: AlertsView,
   saveReport: SaveReportView,
-  settings: SettingsModalView
+  settings: SettingsModalView,
 }
 
 const ViewModalManager = ({ views=subViews,view,viewData,close }) => {

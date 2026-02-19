@@ -88,6 +88,7 @@
   gap: 16px;
   align-items: center;
   margin-bottom: 1rem;
+  border-radius: 1rem;
 }
 .card_list_item:hover {
   /* border-color: var(--accent-green);
@@ -511,10 +512,89 @@
 }
 
 
+/* Tier card css styles */
+.tier_card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: 18px;
+  padding: 20px;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+}
+.tier_card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-yellow), var(--accent-orange));
+}
+.tier_card.platinum::before {
+  background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+}
+.tier_card.gold::before {
+  background: linear-gradient(90deg, var(--accent-yellow), var(--accent-orange));
+}
+.tier_card.silver::before {
+  background: linear-gradient(90deg, var(--text-secondary), #c0c0c0);
+}
+.tier_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
 
+.tier_name {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
 
+.tier_count {
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'Space Mono', monospace;
+  color: var(--text-secondary);
+}
+.tier_count.positive {
+  color: var(--accent-green);
+}
+.tier_count.negative {
+  color: var(--accent-orange);
+}
 
+.tier_details {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
 
+.tier_stat {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+}
+
+.tier_stat_label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+}
+
+.tier_stat_value {
+  font-size: 18px;
+  font-weight: 700;
+  font-family: 'Space Mono', monospace;
+}
+.tier_stat_value.negative {
+  color: var(--accent-orange);
+}
 
 
 

@@ -224,17 +224,18 @@ input.text_field_input:-webkit-autofill:focus {
 
 }
 
-.sm {
-  padding: 10px 14px;
-  font-size: 13px;
+
+.text_field_input.lg,
+.password_text_field.lg {
+  height: 2.75rem;
 }
-.md {
-  padding: 14px 18px;
-  font-size: 15px;
+.text_field_input.md,
+.password_text_field.md {
+  height: 2.25rem;
 }
-.lg {
-  padding: 18px 22px;
-  font-size: 17px;
+.text_field_input.sm,
+.password_text_field.sm {
+  height: 1.8rem;
 }
 
 
@@ -248,10 +249,10 @@ input.text_field_input:-webkit-autofill:focus {
 .label.lg {
   font-size: 1.7rem;
 }
-.text_field_input.sm {
+/* .text_field_input.sm {
   font-size: 1rem;
   height: 2.5em;
-}
+} */
 @keyframes shake-horizontal {
   0%,
   100% {

@@ -124,9 +124,9 @@ const DepartmentRadarChart = ({ chartData }) => {
               <h3>Department Totals</h3>
             </WEAccordion.Panel.Header>
             <WEAccordion.Panel.Content>
-              {Sort.hourlySales(chartData).map(data => {
+              {Sort.hourlySales(chartData).map((data,index) => {
                 return (
-                  <div key={data.number} className={styles.sub_item}>
+                  <div key={index} className={styles.sub_item}>
                     <span>💵 {data.description}</span>
                     <span>{Format.string(data.total,"currency")}</span>
                   </div>

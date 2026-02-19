@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import StoreIcon from '../assets/icons/StoreIcon';
 import PrimaryButton from '../Components/Buttons/PrimaryButton';
 import FlexRow from '../Components/FlexComponents/FlexRow';
@@ -8,13 +8,16 @@ import Card from '../Views/Templates/Components/Cards/Card';
 import LabelCard from '../Views/Templates/Components/Cards/LabelCard';
 import View from '../Views/Templates/View/View';
 import styles from './modals.module.css';
-import { UPDATE_ACTIVE_STORE } from '../Contexts/actions';
+import { UPDATE_ACTIVE_STORE, UPDATE_STORE_CHANGE } from '../Contexts/actions';
 
 const StoreSelector = ({ close,multiSelect=false,...props }) => {
   const {state,dispatch} = useAppContext();
   const [selected,setSelected] = useState([state.activeStore]);
 
-  const onStoreSelection = (e,id) => {
+  const agentStringRef = useRef(state.agentString);
+
+  const onStoreSelection = (e,id,agentString) => {
+    agentStringRef.current = agentString;
     if (!multiSelect){
       setSelected([id]);
       return;
@@ -31,7 +34,7 @@ const StoreSelector = ({ close,multiSelect=false,...props }) => {
       close();
       return;
     }
-    dispatch({type:UPDATE_ACTIVE_STORE,payload:selected[0]});
+    dispatch({type:UPDATE_STORE_CHANGE,payload:{activeStore:selected[0],agentString:agentStringRef.current}});
     close();
   }
 
@@ -44,14 +47,14 @@ const StoreSelector = ({ close,multiSelect=false,...props }) => {
         </FlexRow>
         {state.stores.map(store => {
           return (
-            <LabelCard key={store.id} active={selected.includes(store.id)} onClick={(e) => onStoreSelection(e,store.id)}>
+            <LabelCard key={store.id} active={selected.includes(store.id)} onClick={(e) => onStoreSelection(e,store.id,store.agentString)}>
               <LabelCard.Icon icon={<StoreIcon size={32} />} />
               <LabelCard.Details text={store.name} subText={`${store.city}, ${store.state} `} />
             </LabelCard>
           )
         })}
         <FlexRow p='1rem 0 0 0'>
-          <PrimaryButton size='lg' onClick={onDoneButtonClick}>Done</PrimaryButton>
+          <PrimaryButton size='lg' onClick={onDoneButtonClick}>Apply</PrimaryButton>
         </FlexRow>
       </Card>
     </div>

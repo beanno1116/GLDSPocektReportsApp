@@ -4,6 +4,15 @@ pdfMake.vfs = pdfFonts.vfs;
 import Format from '../Utils/Format';
 import DateUtility from '../Utils/DateUtils';
 
+pdfMake.fonts = {
+  Roboto: {
+    normal: "Roboto-Regular.ttf",
+    italics: "Roboto-Italic.ttf",
+    bolditalics: "Roboto-MediumItalic.ttf",
+    bold: "Roboto-Medium.ttf"
+  }
+}
+
 
 
 
@@ -11,8 +20,10 @@ const styles = {
   header: {
     marginTop: 5,
     fontSize: 28,
+    bold: true
   },
   subHeading: {
+    font: "Roboto",
     fontSize: 22
   },
   row: {
@@ -125,7 +136,7 @@ function createSalesReport(creator,storeName,dateRange,data,options){
   // pdfMake.createPdf(documentDef).save('StoreSalesReport.pdf');
   // pdfMake.createPdf(documentDef).getDataUrl().then((blob) => {
   //   let tmp = blob;
-  //   debugger;
+  //   
   // },err => {
   //   console.error(err.message);
   // })

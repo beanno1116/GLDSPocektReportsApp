@@ -41,6 +41,7 @@ const queries = [
     },
     adapter(data) {      
       const adaptedData = LocDataAdapter.parse7DayBalanceSheet(data);
+      
       return adaptedData;
     }
   },

@@ -19,9 +19,9 @@ import MonthPicker from './Components/MonthPicker';
 const Header = ({text}) => <div className={styles.date_picker_header}><span>{text}</span></div>
 
 
-const DatePicker = ({ when,close,selected,multiSelect,onChange,monthPicker,...props }) => {
+const DatePicker = ({ when,close,selected,multiSelect,onChange,monthPicker,periodSelector,header,type="day",...props }) => {
   const [selectedDays,setSelectedDays] = useState(selected);
-  const [period,setPeriod] = useState("day");
+  const [period,setPeriod] = useState(type);
 
   
 
@@ -107,8 +107,8 @@ const DatePicker = ({ when,close,selected,multiSelect,onChange,monthPicker,...pr
   return (
     <div className={`${styles.date_picker} ${when ? styles.open : ""}`} ref={filterRef}>
       <FlexColumn width='100%' height='100%'>
-        <Header text={"Date Filter"} />
-        <PeriodSelector onChange={onPeriodChange} />
+        {header && <Header text={"Date Filter"} />}
+        {periodSelector && <PeriodSelector onChange={onPeriodChange} />}
         <FlexRow flex='1' width='100%'>
           {period === "day" && <Month selected={selectedDays} monthHeader dayNameHeader multiSelect />}
           {period === "7day" && <Month selected={selectedDays} monthHeader dayNameHeader weekIncrements/>}

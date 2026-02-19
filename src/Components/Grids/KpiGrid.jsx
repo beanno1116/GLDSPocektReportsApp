@@ -2,10 +2,13 @@ import Format from '../../Utils/Format';
 import MetricCard from '../../Views/Templates/Components/Cards/MetricCard';
 import compareIcon from '../../assets/images/compareIcon.png';
 import dateRange from '../../assets/images/dateRange.png';
+import calendarDay from '../../assets/images/calendarDay.png';
 import styles from './grids.module.css';
+import { useCallback } from 'react';
 
 const pngIcons = {
   compare: <img className={styles.action_img} src={compareIcon} />,
+  day: <img className={styles.action_img} src={calendarDay} />,
   range: <img className={styles.action_img} src={dateRange} />
 }
 
@@ -71,14 +74,10 @@ const SummaryGridItem = ({icon,label,value,subValue,change,type="shortNumber",op
   )
 }
 
-const ActionGridItem = ({icon,label,onClick}) => {
-
-  const onGritItemClick = (e) => {
-    onClick && onClick(e);
-  }
+const ActionGridItem = ({action,icon,label,onClick}) => {
 
   return (
-    <div className={styles.action_card} onClick={onGritItemClick}>
+    <div data-action={action} className={styles.action_card} onClick={onClick(action)}>
       <div className={styles.action_icon}>{icon}</div>
       <div className={styles.action_label}>{label}</div>
     </div>
@@ -98,9 +97,9 @@ const ButtonGridItem = ({icon,label,onClick}) => {
   )
 }
 
-const KpiGrid = ({ children }) => {
+const KpiGrid = ({ m="0 0 1.5rem 0",p="0",g="1rem",children }) => {
   return (
-    <div className={styles.kpi_grid}>
+    <div className={styles.kpi_grid} style={{margin:m,padding:p,gap:g}}>
       {children}
     </div>
   );

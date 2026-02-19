@@ -121,7 +121,6 @@ const loyaltyStatsTileData = (statSelector,baseStatSelector) => {
       tileArray.push({
         title: "Spending",
         format: "shortCurrency",
-        property: "total",
         value: customerStat.total,
         delta: Calculate.percentChange(baseCustomerStat.total,customerStat.total)
       })
@@ -129,8 +128,7 @@ const loyaltyStatsTileData = (statSelector,baseStatSelector) => {
     if (itemStat.quantity !== 0){
       tileArray.push({
         title: "Items",
-        format: "shortNumber",
-        property: "quantity",
+        format: "intFormat",
         value: itemStat.quantity,
         delta: Calculate.percentChange(baseItemStat.quantity,itemStat.quantity)
       })

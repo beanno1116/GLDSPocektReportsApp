@@ -1,6 +1,5 @@
 
 import { useState } from 'react';
-import PlainUserIcon from '../../assets/icons/PlainUserIcon';
 import FlexRow from '../../Components/FlexComponents/FlexRow';
 import TextField from '../../Components/Inputs/TextField';
 import WECheckbox from '../../Components/Inputs/WECheckbox/WECheckbox';
@@ -9,19 +8,10 @@ import useAppContext from '../../hooks/useAppContext';
 import useWEForm from '../../hooks/useWEForm';
 import User from '../../Models/User';
 import ManageUserStoreList from '../Components/ManageUserStoreList/ManageUserStoreList';
-import styles from './addUserForm.module.css';
-import Button from '../../Components/Buttons/Button';
-import IconButton from '../../Components/Buttons/IconButton';
-import XIcon from '../../assets/icons/XIcon';
 import { useAuth } from '../../hooks/useAuth';
 import { useApiClient } from '../../Api/Api';
 import { loader } from '../../Components/Loader/LoaderModal';
-import Heading from '../../Components/Labels/Heading';
-import BGImageAddUser from './Components/BGImageAddUser';
 import PrimaryButton from '../../Components/Buttons/PrimaryButton';
-import KpiGrid from '../../Components/Grids/KpiGrid';
-import SectionTitle from '../../Views/Templates/View/Components/SectionTitle';
-import Card from '../../Views/Templates/Components/Cards/Card';
 import FlexColumn from '../../Components/FlexComponents/FlexColumn';
 import TabView from '../../Components/TabView/TabView';
 import AddUserConfirmPanel from './Components/AddUserConfirmPanel';

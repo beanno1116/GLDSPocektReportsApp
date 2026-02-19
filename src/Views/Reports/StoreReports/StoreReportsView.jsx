@@ -30,12 +30,15 @@ import useNavigateView from '../../../hooks/useNavigateView';
 import DateRangeLabel from './Components/DateRangeLabel';
 import Show from '../../../Components/Show/Show';
 import useGlobalDate from '../../../hooks/useGlobalDate';
+import useAppContext from '../../../hooks/useAppContext';
+import NoDataView from '../../Templates/View/NoDataView';
 
 
 
 
 
 const useStoreReportsView = () => {
+  const {state,dispatch} = useAppContext();
   const api = useApiClient();
   const navigate = useNavigateView();
   const queryClient = useQueryClient();
@@ -49,13 +52,13 @@ const useStoreReportsView = () => {
 
   
   const results = useQueries({
-    queries: viewQueries(dateRanges,["dfdd44e8-be22-43ef-8313-95f2d1904566"]).map(query => ({
+    queries: viewQueries(dateRanges,[state.agentString]).map(query => ({
       queryKey: query.key,
       queryFn: async () => {   
         
         const paramObj = {
           action: query.action,
-          agentString: "dfdd44e8-be22-43ef-8313-95f2d1904566",
+          agentString: state.agentString,
           posFields: query.dateRange
         }  
         const response = await api.post("data",paramObj,{...api.headers.applicationJson});
@@ -76,7 +79,7 @@ const useStoreReportsView = () => {
         isFetching: results.some((result) => result.isFetching),
         isError: results.some(r => r.isError),
         refetchAll: () => {
-          viewQueries(dateRanges,["dfdd44e8-be22-43ef-8313-95f2d1904566"]).forEach(query => {
+          viewQueries(dateRanges,[state.agentString]).forEach(query => {
             queryClient.invalidateQueries({queryKey:query.key})
           })
         }
@@ -89,6 +92,7 @@ const useStoreReportsView = () => {
   },[navigate])
 
   const showModalView = useCallback((route) => (e) => {
+    debugger;
     viewRef.current = route;
     toggleModal();
   },[toggleModal])
@@ -225,12 +229,19 @@ const StoreReportsView = ({ ...props }) => {
   
   const {coupon,sales,tax,exceptions,loyalty,markdowns,transaction} = viewAdapter(results.viewData[0],results.viewData[1]);
   const weekData = results.viewData[2];
+  
+  console.log("weekData");
+  console.log(results.viewData[3]);
 
 
   
   const onViewAllClick = (e,action) => {
     e.stopPropagation();
     navigate(action,{viewTransition:true});
+  }
+
+  const onActionItemClick = (action) => {
+
   }
 
   return (
@@ -250,7 +261,7 @@ const StoreReportsView = ({ ...props }) => {
 
         {/* Store sales KPI grid */}
         <View.SectionHeader m='.5rem 0' title={"Sales"} viewAll={onViewAllClick} action="/report/stores/sales"/>
-        <Show when={sales.length > 0} fallback={<div>No data found!</div>}>
+        <Show when={sales.length > 0} fallback={<NoDataView dataName={"sales"} />}>
           <KpiGrid>
             {sales.map(stat => {
               return (
@@ -267,7 +278,7 @@ const StoreReportsView = ({ ...props }) => {
      
 
         <View.SectionHeader m='.5rem 0' title={"Markdowns"} viewAll={onViewAllClick} action="/report/stores/sales"/>
-        <Show when={markdowns?.length && markdowns.length > 0} fallback={<div>No data found!</div>}>
+        <Show when={markdowns?.length && markdowns.length > 0} fallback={<NoDataView dataName={"markdowns"} />}>
           {
             markdowns?.map(item => {
               return (
@@ -281,7 +292,7 @@ const StoreReportsView = ({ ...props }) => {
 
         {/* Store loyalty KPI grid */}
         <View.SectionHeader m='.5rem 0' title={"Loyalty"} viewAll={onViewAllClick} action="/report/stores/loyalty"/>
-        <Show when={loyalty?.length && loyalty.length > 0} fallback={<div>No data found!</div>}>
+        <Show when={loyalty?.length && loyalty.length > 0} fallback={<NoDataView dataName={"loyalty"} />}>
           <KpiGrid>
             {loyalty.length === 0 && <div>No data found!</div>}
             {
@@ -296,7 +307,7 @@ const StoreReportsView = ({ ...props }) => {
 
         {/* Store coupon totals list  */}
         <View.SectionHeader m='.5rem 0' title={"Coupons"} />
-        <Show when={coupon.length > 1} fallback={<div>No data found!</div>}>
+        <Show when={coupon.length > 1} fallback={<NoDataView dataName={"coupons"} />}>
         {
           coupon?.map(item => {
             return (
@@ -310,13 +321,13 @@ const StoreReportsView = ({ ...props }) => {
         {/* Store report safe and drawer buttons  */}
         <View.SectionTitle m='1rem 0 .5rem 0'>Safe & Drawer</View.SectionTitle>
         <KpiGrid>
-          <KpiGrid.ActionItem icon={<SolidSafeIcon size={32} />} label={"Safe Report"} />
-          <KpiGrid.ActionItem icon={<DrawerIcon size={32} />} label={"Drawer Report"} />
+          <KpiGrid.ActionItem icon={<SolidSafeIcon size={32} />} label={"Safe Report"} action="/report/stores/safe" onClick={onNavbarClick}/>
+          <KpiGrid.ActionItem icon={<DrawerIcon size={32} />} label={"Drawer Report"} action="drawer" onClick={onNavbarClick}/>
         </KpiGrid>
 
         {/* Store taxes totals list  */}
         <View.SectionHeader m='.5rem 0' title={"Taxes"} />
-        <Show when={tax && tax.length > 0} fallback={<div>No data found!</div>}>
+        <Show when={tax && tax.length > 0} fallback={<NoDataView dataName={"taxes"} />}>
           {
             tax?.map(item => {
               return (
@@ -329,7 +340,7 @@ const StoreReportsView = ({ ...props }) => {
 
         {/* Store exceptions KPI grid */}
         <View.SectionHeader m='.5rem 0' title={"Exceptions"} />
-        <Show when={exceptions?.length && exceptions.length > 0} fallback={<div>No data found!</div>}>
+        <Show when={exceptions?.length && exceptions.length > 0} fallback={<NoDataView dataName={"exceptions"} />}>
           <KpiGrid>
             {
               exceptions?.map(item => {
@@ -343,8 +354,8 @@ const StoreReportsView = ({ ...props }) => {
         </Show>
 
         {/* Store transactions KPI grid */}
-        <View.SectionHeader title={"Transactions"} />
-        <Show when={transaction?.length && transaction.length > 0} fallback={<div>No data found!</div>}>
+        <View.SectionHeader m='.5rem 0' title={"Transactions"} />
+        <Show when={transaction?.length && transaction.length > 0} fallback={<NoDataView dataName={"transaction"} />}>
           <KpiGrid>
             {
               transaction?.map(item => {
