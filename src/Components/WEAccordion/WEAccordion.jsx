@@ -8,7 +8,7 @@ import AccordionPanel from './components/AccordionPanel';
 
 
 
-const WEAccordion = ({ children,...props }) => {
+const WEAccordion = ({ m="0",p="0",children,...props }) => {
  
 
   const elementRef = useRef(null);
@@ -63,7 +63,7 @@ const WEAccordion = ({ children,...props }) => {
   }
 
   return (
-    <div ref={elementRef} className={styles.accordion} onClick={e => accordionClickEvent(e)}>
+    <div ref={elementRef} className={styles.accordion} style={{margin:m,padding:p}} onClick={e => accordionClickEvent(e)}>
       {children}
     </div>
   );

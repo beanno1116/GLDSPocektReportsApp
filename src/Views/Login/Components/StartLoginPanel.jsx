@@ -1,7 +1,8 @@
 
 import styles from '../loginView.module.css';
 import logo from '../../../assets/images/pocketReportLogo.png';
-import buttonStyles from '../../../Components/Buttons/button.module.css';
+import PrimaryButton from '../../../Components/Buttons/PrimaryButton';
+import OutlineButton from '../../../Components/Buttons/OutlineButton';
 
 const StartLoginPanel = ({ when,onPanelButtonClick }) => {
 
@@ -23,15 +24,15 @@ const StartLoginPanel = ({ when,onPanelButtonClick }) => {
         </div>
         
         <p className={styles.login_view_p}>
-          Store data in your pocket is seconds away!
+          Own Your Store’s Performance from your pocket.
         </p>
 
       </div>
 
 
       <div className={styles.login_view_button_panel}>
-        <button className={buttonStyles.button} type='button' onClick={onShowLoginPanelButtonClick}>Login</button>
-        <button className={`${buttonStyles.button} ${buttonStyles.secondary}`} type='button' onClick={onShowRegistrationPanelButtonClick}>Register</button>
+        <PrimaryButton onClick={onShowLoginPanelButtonClick} size='lg'>Login</PrimaryButton>
+        <OutlineButton action={"/manage/users"} size='lg' onClick={onShowRegistrationPanelButtonClick}>Register</OutlineButton>
       </div>
 
       <div></div>

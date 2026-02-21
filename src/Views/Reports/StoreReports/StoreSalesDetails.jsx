@@ -33,6 +33,7 @@ import SalesTrendsWidget from "./SalesDetailsView/Components/SalesTrendsWidget";
 import SalesDetailsWidget from "./SalesDetailsView/Components/SalesDetailsWidget";
 import useGlobalDate from "../../../hooks/useGlobalDate";
 import SalesHourlyReportBuilder from "../Forms/SalesHourlyReportBuilder";
+import useAppContext from "../../../hooks/useAppContext";
 
 
 const data = [
@@ -122,20 +123,21 @@ const BarChartView = () => {
 
 
 const useStoreSalesDetailsView = () => {
+  const {state,dispatch} = useAppContext()
   const navigate = useNavigate();
   const api = useApiClient();
   const queryClient = useQueryClient();
-  const {dateRanges,setDateRanges} = useGlobalDate(DateUtility.calculateDateRange(new Date(),"today"));
+  const {dateRanges,setDateRanges} = useGlobalDate();
 
 
   const results = useQueries({
-    queries: viewQueries(dateRanges,["dfdd44e8-be22-43ef-8313-95f2d1904566"]).map(query => ({
+    queries: viewQueries(dateRanges,[state.agentString]).map(query => ({
       queryKey: query.key,
       queryFn: async () => {   
         
         const paramObj = {
           action: query.action,
-          agentString: "dfdd44e8-be22-43ef-8313-95f2d1904566",
+          agentString: state.agentString,
           posFields: query.dateRange
         }  
         const response = await api.post("data",paramObj,{...api.headers.applicationJson});
@@ -296,7 +298,7 @@ const StoreSalesDetails = ({ ...props }) => {
           <PrimaryButton action="hourly" onClick={onCreateButtonClick("hourly")}>Create Hourly Report</PrimaryButton>
         </SalesTrendsWidget>
 
-        <TenderSalesWidget tenderData={balanceSheet.Tendered}>
+        <TenderSalesWidget tenderData={balanceSheet.tendered}>
           <PrimaryButton action="tender" onClick={onCreateButtonClick("tender")}>Create Tender Report</PrimaryButton>
         </TenderSalesWidget>
         
@@ -324,7 +326,7 @@ const StoreSalesDetails = ({ ...props }) => {
       </View.BottomNav>
 
       <WEModal config={{showCloseButton:false}} isOpen={modalState} toggle={() => toggleModal()}>
-        <ModalViewManager view={viewRef.current} views={subViews} close={toggleModal} data={{hourlyData,balanceSheet,departmentSales}}/>
+        <ModalViewManager view={viewRef.current} views={subViews} close={toggleModal} data={{hourlyData,balanceSheet,departmentSales,sevenDayTotalSales}}/>
       </WEModal>
 
     </View>

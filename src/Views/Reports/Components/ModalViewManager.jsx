@@ -23,11 +23,11 @@ const ModalViewManager = ({ view,views,data,close }) => {
     // 
     switch (view) {
       case "sales":
-        return <View data={data.balanceSheet.Sales} close={close}/>
+        return <View data={data.balanceSheet.sales} close={close}/>
       case "hourly":
         return <View data={data.hourlyData} close={close} />
       case "tender":
-        return <View data={data.balanceSheet.Tendered} close={close} />
+        return <View data={data.balanceSheet.tendered} close={close} />
       case "balance":
         return <div>Create Balance Sheet <button onClick={(e) => close()}>Close</button></div>
       case "store":
@@ -35,7 +35,7 @@ const ModalViewManager = ({ view,views,data,close }) => {
       case "stores":
         return <View close={close} />
       default:
-        return <SalesReportBuilder data={data.balanceSheet.Sales} close={close}/>
+        return <SalesReportBuilder data={data.balanceSheet.sales} close={close}/>
     }
   }
 

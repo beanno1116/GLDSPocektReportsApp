@@ -8,17 +8,23 @@ import HomeIcon from '../../assets/icons/HomeIcon';
 import AddNewUserIcon from '../../assets/icons/AddNewUserIcon';
 import AddUserPanel from './Components/AddUserPanel';
 import { useState } from 'react';
+import { useAuth } from '../../hooks/useAuth';
+import Show from '../../Components/Show/Show';
+import useAppContext from '../../hooks/useAppContext';
 
 const ManageUserView = ({ ...props }) => {
   const navigate = useNavigate();
-    const [showFormPanel,setShowFormPanel] = useState(false);
+  const { state } = useAppContext();
+  const auth = useAuth();
+  const authUser = auth.getAuthUser();
+  const [showFormPanel,setShowFormPanel] = useState(false);
 
-  const onBottomNavClick = (e,action) => {
+  const onBottomNavClick = (action) => (e) => {
     if (action === "add"){
       setShowFormPanel(true);
       return;
     }
-    navigate("/",{ viewTransition: true });
+    navigate(action,{ viewTransition: true });
   }
 
   const closeFormPanel = (e) => {
@@ -30,15 +36,20 @@ const ManageUserView = ({ ...props }) => {
       <AddUserPanel when={showFormPanel} close={closeFormPanel} />
       <View.Header title={"Manage Users"} />
 
+      <Show when={authUser.isAdmin}>
+        <AccountUserDetails total={state.seats} used={state.users.length} />
+      </Show>
       
-      <AccountUserDetails total={10} used={5} />
+      
 
       
       <CurrentUserDetails />
 
-      <View.SectionTitle>Users</View.SectionTitle>
+      <Show when={authUser.isAdmin}>
+        <View.SectionTitle>Users</View.SectionTitle>
+        <UsersDetail />
+      </Show>
 
-      <UsersDetail />
 
       <View.BottomNav>
         <BottomNav.Button onClick={onBottomNavClick} action={"/"} icon={<HomeIcon size={32} />} label="Home" />

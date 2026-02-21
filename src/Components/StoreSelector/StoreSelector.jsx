@@ -4,9 +4,9 @@ import ScrollSelector from '../ScrollSelector/ScrollSelector';
 
 const StoreSelector = ({ stores=[],activeStore,onClick }) => {
 
-  const handleSelection = useCallback((storeId) => (e) => {
+  const handleSelection = useCallback((storeId,agentString) => (e) => {
     if (activeStore === storeId) return;
-    onClick && onClick(e,storeId);
+    onClick && onClick(e,storeId,agentString);
   },[activeStore,onClick])
 
   return (
@@ -18,7 +18,7 @@ const StoreSelector = ({ stores=[],activeStore,onClick }) => {
             id={store.id} 
             active={activeStore === store.id ? true : false} 
             text={store.name} 
-            onClick={handleSelection(store.id)} 
+            onClick={handleSelection(store.id,store.agentString)} 
           />
         )
       })}

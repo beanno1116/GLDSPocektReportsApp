@@ -12,7 +12,7 @@ const formatHourlySales = (salesObj,baseSalesObj) => {
       const totalSalesArr = [];
       baseObj.totalSales.forEach(baseSale => {
         const {hour} = baseSale;
-        const index = obj.totalSales.findIndex(sale => sale.hour === hour);
+        const index = obj?.totalSales ? obj.totalSales.findIndex(sale => sale.hour === hour) : -1;
         if (index === -1){
           totalSalesArr.push({
             hour,
@@ -56,7 +56,7 @@ const formatHourlySales = (salesObj,baseSalesObj) => {
       const totalSalesArr = [];
       baseObj.items.forEach(baseSale => {
         const {hour} = baseSale;
-        const index = obj.items.findIndex(sale => sale.hour === hour);
+        const index = obj?.items ? obj.items.findIndex(sale => sale.hour === hour) : -1;
         if (index === -1){
           totalSalesArr.push({
             hour,
@@ -100,7 +100,7 @@ const formatHourlySales = (salesObj,baseSalesObj) => {
       const totalSalesArr = [];
       baseObj.totalSales.forEach(baseSale => {
         const {hour} = baseSale;
-        const index = obj.totalSales.findIndex(sale => sale.hour === hour);
+        const index = obj?.totalSales ? obj.totalSales.findIndex(sale => sale.hour === hour) : -1;
         if (index === -1){
           totalSalesArr.push({
             hour,
@@ -144,7 +144,7 @@ const formatHourlySales = (salesObj,baseSalesObj) => {
       const totalSalesArr = [];
       baseObj.totalSales.forEach(baseSale => {
         const {hour} = baseSale;
-        const index = obj.totalSales.findIndex(sale => sale.hour === hour);
+        const index = obj.totalSales ? obj.totalSales.findIndex(sale => sale.hour === hour) : -1;
         if (index === -1){
           totalSalesArr.push({
             hour,
@@ -243,7 +243,7 @@ const salesViewAdapter = (data) => {
   try {
     if (!Array.isArray(data) || !data) return new Error("data parameter not of type Array or undefined");
 
-
+    
     const hourlySales = data[0];
     const baseHourlySales = data[1];
     const departmentTotals = data[2];

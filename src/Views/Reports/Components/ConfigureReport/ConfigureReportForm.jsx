@@ -90,7 +90,7 @@ const ConfigureReportForm = ({ data,close,...props }) => {
       end: endDate
     }
     dateRangeRef.current = rangeObj;
-    debugger
+    
     
     
   }

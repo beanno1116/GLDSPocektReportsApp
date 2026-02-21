@@ -1,12 +1,12 @@
 
 
 class StatRecord {
+  day = "";
   description = "";
   hour = "";
-  day = "";
   #group = "";
   #lookup = "";
-  number = "";
+  number = "";  
   #periodEnd = "";
   #periodStart = "";
   quantity = 0;
@@ -15,16 +15,17 @@ class StatRecord {
 
   constructor(recordObj){
     if (recordObj){
-      this.description = recordObj?.description || "";
-      this.#group = recordObj?.group || "";
-      this.quantity = recordObj?.quantity || 0;
-      this.weight = recordObj?.weight || 0.00;
-      this.total = recordObj?.total || 0.00;
-      this.hour = recordObj?.hour || "";
       this.day = recordObj?.day || "";
+      this.description = recordObj?.description || "";
+      this.hour = recordObj?.hour || "";
+      this.#group = recordObj?.group || "";
       this.#lookup = recordObj?.lookup || "";
-      this.#periodStart = recordObj?.periodStart || "";
+      this.number = recordObj?.number || "";
       this.#periodEnd = recordObj?.periodEnd || "";
+      this.#periodStart = recordObj?.periodStart || "";
+      this.quantity = recordObj?.quantity || 0;
+      this.total = recordObj?.total || 0.00;
+      this.weight = recordObj?.weight || 0.00;
     }
   }
 

@@ -12,9 +12,9 @@ const Label = ({text,size="md"}) => {
   )
 }
 
-const Card = ({ full=false,m="0 0 1.5rem 0",width="100%",accent="",children  }) => {
+const Card = ({ full=false,m="0 0 1.5rem 0",p="1rem",width="100%",accent="",overflow="hidden",children  }) => {
   return (
-    <div className={`${styles.card} ${accent !== "" ? styles[`accent_${accent}`] : ""} ${full ? styles.card_full : ""}` } style={{margin:m,width}}>
+    <div className={`${styles.card} ${accent !== "" ? styles[`accent_${accent}`] : ""} ${full ? styles.card_full : ""}` } style={{margin:m,padding:p,overflow,width}}>
       {children}
     </div>
   );

@@ -1,6 +1,9 @@
 
 class SortUtility {
 
+  DESC = "desc";
+  ASC = "asc";
+
   hourlySales(sales,direction){
     try {
       if (!Array.isArray(sales)) throw new TypeError("parameter sales not of type array");

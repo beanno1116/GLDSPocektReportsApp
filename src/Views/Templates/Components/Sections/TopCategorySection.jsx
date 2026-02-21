@@ -36,7 +36,7 @@ const CategorySectionItem = ({name,subtitle="",value,delta="",...props}) => {
 }
 
 
-const TopCategorySection = ({ title,children }) => {
+const TopCategorySection = ({ title,children,m="0" }) => {
   const count = Children.count(children);
   
   if (count <= 1){
@@ -51,7 +51,7 @@ const TopCategorySection = ({ title,children }) => {
     )
   }
   return (
-    <div className={styles.category_section}>
+    <div className={styles.category_section} style={{margin:m}}>
        <div className={styles.section_title}>{title}</div>
        {children}
     </div>

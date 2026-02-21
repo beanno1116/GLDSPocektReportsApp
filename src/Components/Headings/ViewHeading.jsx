@@ -42,7 +42,7 @@ const ViewHeading = ({ title,subtitle,onClick,...props }) => {
         <OutlineCalendarIcon size={30} />
       </button>
       {/* <DatePicker when={isOpen} onChange={onDateChange} close={() => setIsOpen(false)} selected={[]} multiSelect/> */}
-      <DatePicker when={isOpen} onChange={onDateChange} close={() => setIsOpen(false)} selected={[]}  monthPicker/>
+      <DatePicker when={isOpen} onChange={onDateChange} close={() => setIsOpen(false)} selected={[]}  monthPicker header periodSelector/>
         
     </div>
   );

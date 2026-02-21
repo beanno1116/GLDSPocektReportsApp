@@ -134,6 +134,18 @@ class FilterObj {
       console.error(error.message);
     }
   }
+
+  authorizedStores(stores=[],storeIds=[]){
+    try {
+      if (stores.length === 0 || storeIds.length === 0) throw new Error("Unable to filter null or undefined values");
+      const storeIdsSet = new Set(storeIds);
+      const filteredStores = stores.filter(store => storeIdsSet.has(store.id));
+      return stores.filter(store => storeIdsSet.has(store.id));
+    } catch (error) {
+      console.error(error.message);
+      return [];
+    }
+  }
 }
 
 const Filter = new FilterObj();

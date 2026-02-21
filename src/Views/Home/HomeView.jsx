@@ -6,101 +6,56 @@ import View from '../Templates/View/View';
 
 import StoreIcon from '../../assets/icons/StoreIcon';
 import SettingsIcon from '../../assets/icons/SettingsIcon';
-import ManageUsersIcon from '../../assets/icons/ManageUsersIcon';
-import HomeIcon from '../../assets/icons/HomeIcon';
+import SolidUserSettingIcon from '../../assets/icons/SolidUserSettingIcon';
+import SolidReportIcon from '../../assets/icons/SolidReportIcon';
+
 
 import styles from './homeView.module.css';
 import KpiGrid from '../../Components/Grids/KpiGrid';
 import ScrollView from '../../Components/ScrollView/ScrollView';
-import SolidReportIcon from '../../assets/icons/SolidReportIcon';
-import { UPDATE_ACTIVE_STORE } from '../../Contexts/actions';
+import { UPDATE_STORE_CHANGE } from '../../Contexts/actions';
 import { useNavigate } from 'react-router';
-import Mutate from '../../Utils/Mutate';
 import Format from '../../Utils/Format';
 import { take } from '../../Utils/Utils';
 import { useQueries } from '@tanstack/react-query';
 import { useApiClient } from '../../Api/Api';
-import SolidUserSettingIcon from '../../assets/icons/SolidUserSettingIcon';
 import TopCategorySection from '../Templates/Components/Sections/TopCategorySection';
-import DateUtility from '../../Utils/DateUtils';
-import LocDataAdapter from '../../Models/LocReportAdapter';
 import FullScreenLoader from '../../Components/Loader/FullScreenLoader';
 import StoreSelector from '../../Components/StoreSelector/StoreSelector';
 import Filter from '../../Utils/Filter';
+import viewQueries from '../../Api/Queries/HomeViewQueries';
+import viewAdapter from './Adapters/ViewDataAdapter';
+import ErrorView from '../Templates/View/ErrorView';
+import FlexRow from '../../Components/FlexComponents/FlexRow';
+import Error from '../../Utils/Errors';
+import ErrorCard from '../Templates/Components/Cards/ErrorCard';
 
 
 
 let renderCount = 0;
 
 
-const homeViewQueries = [
-  {
-    action: "Stats",
-    key: `stats_${Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1))}`,
-    posFields: {
-      startDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1)),
-      endDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1))
-    },
-    adapter(data) {      
-      const adaptedData = LocDataAdapter.parseStoreStatsData(data);
-      return adaptedData;
-    }
-  },
-  {
-    action: "Stats",
-    key: `stats_${Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),2))}`,
-    posFields: {
-      startDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),2)),
-      endDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),2))
-    },
-    adapter(data) {      
-      const adaptedData = LocDataAdapter.parseStoreStatsData(data);
-      return adaptedData;
-    }
-  },
-  {
-    action: "DepartmentTotals",
-    key: `dept_totals_${Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1))}`,
-    posFields: {
-      startDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1)),
-      endDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1))
-    },
-    adapter(data){
-      const adaptedData = Mutate.departmentTotals(data);
-      return adaptedData;
-    }
-  },
-  {
-    action: "DepartmentTotals",
-    key: `dept_totals_comp_${Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),2))}`,
-    posFields: {
-      startDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),2)),
-      endDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),2))
-    },
-    adapter(data){
-      const adaptedData = Mutate.departmentTotals(data);
-      return adaptedData;
-    }
-  }
-]
 
 const useHomeView = () => {
   const {state,dispatch} = useContext(AppContext);
   const api = useApiClient();
   const navigate = useNavigate();
   const results = useQueries({
-    queries: homeViewQueries.map(query => ({
-      queryKey: [`${query.action}_${query.key}`,"dfdd44e8-be22-43ef-8313-95f2d1904566"],
+    queries: viewQueries().map(query => ({
+      queryKey: [`${query.key}`,state.agentString],
       queryFn: async () => {       
         const paramObj = {
           action: query.action,
-          agentString: "dfdd44e8-be22-43ef-8313-95f2d1904566",
-          posFields: query.posFields
+          agentString: state.agentString,
+          posFields: query.dateRange
         }  
         const response = await api.post("data",paramObj,{...api.headers.applicationJson}); 
 
         if (response.success){
           const adaptedData = query.adapter(response.data);
+          if (!adaptedData){
+            return [];
+          }
           
           return adaptedData;
         }  
@@ -128,8 +83,8 @@ const useHomeView = () => {
   }
 
 
-  const onStoreSelected = useCallback((e,storeId) => {
-    dispatch({type:UPDATE_ACTIVE_STORE,payload:storeId});    
+  const onStoreSelected = useCallback((e,storeId,storeAgent) => {
+    dispatch({type:UPDATE_STORE_CHANGE,payload:{activeStore:storeId,agentString:storeAgent}});    
   },[dispatch])
   
   let storeContext = getStoreContext(state);
@@ -168,12 +123,14 @@ const HomeView = () => {
   }
   
   if (isError){
+    const error = Error.requestError(Filter.storeById(state.stores,state.activeStore)?.name)
     return (
-      <div>ERROR!!</div>
+      <ErrorView title={error.title} message={error.message} code={error.code}/>
     )
   }
   
-  const {stats,exceptions,departments} = LocDataAdapter.parseHomeViewData(viewData);
+  const {stats,exceptions,departments} = viewAdapter(viewData);
+
   
   return (
     <View>
@@ -187,11 +144,11 @@ const HomeView = () => {
       <ScrollView>
 
         {/* Store sale stats */}
-        <View.SectionTitle m='0 0 .5rem 0'>General</View.SectionTitle>
-        <KpiGrid>
+        <View.SectionTitle  m='2rem 0 .5rem 0'>General</View.SectionTitle>
+        <KpiGrid m='0 0 2rem 0'>
           {stats.map(stat => {
             return (
-              <KpiGrid.Item title={stat.title} value={stat.value} subValue={`${stat.delta}`} type={stat.format} />              
+              <KpiGrid.Item key={`${stat.title}_${stat.value}`} title={stat.title} value={stat.value} subValue={`${stat.delta}`} format={stat.format} />              
             )
           })}
         </KpiGrid>
@@ -223,7 +180,7 @@ const HomeView = () => {
         </div>
 
         {/* Top department sales */}
-        <TopCategorySection title={"Top Departments"}>
+        <TopCategorySection m='2rem 0 .5rem 0' title={"Top Departments"}>
           {[...take(5,departments)].map(cat => {
             return (
               <TopCategorySection.Item 
@@ -236,18 +193,16 @@ const HomeView = () => {
           })}          
         </TopCategorySection>
 
-        <View.SectionTitle m='0'>Exceptions</View.SectionTitle>
+        <View.SectionTitle m='2rem 0 .5rem 0'>Exceptions</View.SectionTitle>
 
         {/* Exception totals stats */}
-        <KpiGrid>
+        <KpiGrid m='0'>
           {exceptions.map(exception => {
             return (
-              <KpiGrid.Item title={exception.title} value={Format.string(parseInt(exception.value),Format.NUMBER_FORMAT)} subValue={exception.delta} opposite={true} />              
+              <KpiGrid.Item key={`${exception.title}_${exception.value}`} title={exception.title} value={parseInt(exception.value)} format={Format.INTEGER_FORMAT} subValue={exception.delta} opposite={true} />              
             )
           })}
-        </KpiGrid>
-
-        <div style={{height:"75px",width:"100%"}}></div>
+        </KpiGrid>        
 
       </ScrollView>
 

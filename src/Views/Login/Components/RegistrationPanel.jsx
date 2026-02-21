@@ -1,20 +1,18 @@
 
 import styles from '../loginView.module.css';
-import buttonStyles from '../../../Components/Buttons/button.module.css';
 import FlexColumn from '../../../Components/FlexComponents/FlexColumn';
 import { loader } from '../../../Components/Loader/LoaderModal';
 import TextField from '../../../Components/Inputs/TextField';
-import LinkButton from '../../../Components/Buttons/LinkButton';
 import PasswordTextField from '../../../Components/Inputs/PasswordTextField';
-import { useNavigate } from 'react-router';
-import { useRef, useState } from 'react';
-
-// import Api, { headers } from '../../../Api/Api';
 import useWEForm from '../../../hooks/useWEForm';
 import { useApiClient } from '../../../Api/Api';
 import { useAuth, useAuthActions } from '../../../hooks/useAuth';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import useAppContext from '../../../hooks/useAppContext';
+import PrimaryButton from '../../../Components/Buttons/PrimaryButton';
+import OutlineButton from '../../../Components/Buttons/OutlineButton';
+import Filter from '../../../Utils/Filter';
+import useNavigateView from '../../../hooks/useNavigateView';
 
 const initialFormData = {
     userName: "",
@@ -36,18 +34,34 @@ const initialFormData = {
   }
 }
 
-const parseGetOrganizationResponse = (response) => {
+const parseGetOrganizationResponse = (resData,authorizedStores) => {
   try {
-    // const organization = new Organization(response.data);
+    if (!resData) throw new Error("Response data cannot be null or undefined!");
 
-    const {id,stores,users,seats} = response.data;        
+    const {id,stores,users,seats} = resData;  
+
+    if (authorizedStores.length > 0){
+      const autStoreId = authorizedStores[0];
+      const initialStore = Filter.storeById(stores,autStoreId);
+      const authdStores = Filter.authorizedStores(stores,authorizedStores);
+      return {
+        activeStore: initialStore.id,
+        agentString: initialStore.agentString,
+        didInit: true,
+        organization: id,
+        seats,        
+        stores:authdStores,
+        users: users,
+      }
+    }
+    
     return {
       activeStore: 0,
       agentString: "",
-      didInit: true,
+      didInit: false,
       organization: id,
       seats,
-      stores:stores,
+      stores:[],
       users: users,
     }
   } catch (error) {
@@ -63,7 +77,7 @@ const useRegistrationPanel = (navigation) => {
   const localStorage = useLocalStorage();
   const {dispatch} = useAppContext();
   const {registerFormInput,resetForm,onSubmit} = useWEForm(initialFormData);
-  const navigate = useNavigate();
+  const navigate = useNavigateView();
 
   const handleLoginResponse = async (response) => {
     if (response){  
@@ -72,23 +86,14 @@ const useRegistrationPanel = (navigation) => {
       const loginDataResponse = await api.get("organizations",{params:{userId:authUser.id,token:auth.token}});
 
       if (loginDataResponse.success){
-        
-        const payloadData = parseGetOrganizationResponse(loginDataResponse);
-
-
-        if (authUser.stores.length > 1){
-          navigate("/stores/selector");
-        }else{
-          let store = authUser.stores[0];
-          payloadData.agentString = store.agentString;
-          payloadData.activeStore = store.id;
-          navigate("/");
-        }
+        const payloadData = parseGetOrganizationResponse(loginDataResponse.data,authUser.stores);
         localStorage.set("org",JSON.stringify(payloadData));
-        
-        dispatch({action:"all",payload:payloadData});
+        dispatch({type:"all",payload:payloadData});
+        navigate("/");
+        loader.loaded();
+        return;
       }
-      loader.loaded();      
+      // loader.loaded();      
       return;
     }
     throw new TypeError("Invalid response data");
@@ -149,8 +154,8 @@ const RegistrationPanel = ({ when,navigation }) => {
       </FlexColumn>
 
       <div className={styles.login_view_button_panel}>
-        <button className={buttonStyles.button} type='button' onClick={(e) => onSubmit(e,onLoginButtonClick)}>Register</button>
-        <button className={`${buttonStyles.button} ${buttonStyles.secondary}`} type='button' onClick={onBackButtonClick}>Back</button>
+        <PrimaryButton onClick={(e) => onSubmit(e,onLoginButtonClick)} size='md'>Register</PrimaryButton>
+        <OutlineButton action={"/manage/users"} size='md' onClick={onBackButtonClick}>Back</OutlineButton>
       </div>
 
       <div></div>

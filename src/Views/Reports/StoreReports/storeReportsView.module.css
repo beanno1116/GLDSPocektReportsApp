@@ -178,7 +178,8 @@
 
 
 .dateRangeLabelWrapper {
-  padding: 0 0;
+    display: flex;
+    justify-content: center;
 }
 .dateRangeLableSeperator {
   font-weight: 900;

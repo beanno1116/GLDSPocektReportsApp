@@ -10,6 +10,8 @@ import Sort from '../../../../../Utils/Sort';
 import Format from '../../../../../Utils/Format';
 import styles from '../../storeReportsView.module.css'
 import { useState } from 'react';
+import Show from '../../../../../Components/Show/Show';
+import { salesChartSpans } from '../../../../../AppData/Menu/MenuItems';
 
 const chartDataData = [
   {
@@ -102,7 +104,13 @@ const BarChartView = ({chartData=chartDataData}) => {
 }
 
 const LineChartView = ({chartData}) => {
-  debugger;
+
+  if (!chartData){
+    return (
+      <div>No data found!</div>
+    )
+  }
+  
   return (
     <LineChart
       style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
@@ -124,7 +132,7 @@ const LineChartView = ({chartData}) => {
       {/* <YAxis width="auto" /> */}
       <Tooltip />
       <Legend />
-      <Line type="monotone" name='Hourly Sales' dataKey="base" stroke="#00ff88ad" fill='#00ff88' strokeWidth={3} isAnimationActive={true} />
+      <Line type="monotone" name='Hourly Sales' dataKey="current" stroke="#00ff88ad" fill='#00ff88' strokeWidth={3} isAnimationActive={true} />
     </LineChart>
   )
 }
@@ -141,9 +149,10 @@ const SalesDetailsWidget = ({ reportData,balanceSheet,chartData,children }) => {
   }
 
   const renderChartView = (dataType) => {
+    
     switch (dataType.toLowerCase()) {
       case "today":
-        return <LineChartView chartData={hourlyData.totalSales.data} />
+        return <LineChartView chartData={hourlyData?.totalSales?.data} />
       case "week":
         return <BarChartView chartData={chartData} />
       case "month":
@@ -159,37 +168,39 @@ const SalesDetailsWidget = ({ reportData,balanceSheet,chartData,children }) => {
   return (
     <>
       <View.SectionTitle id="details" m='.5rem 0'>Sales Details</View.SectionTitle>
-      <TrendCard>
-        <FlexRow p="0 0 1rem 0">
-          <FlexRow hAlign="space-between" vAlign="center" p="0 0 0 .5rem">
-            <span style={{fontSize:"18px",fontWeight:"700"}}>Total Sales</span>
-            <SplitButton label={"Today"} items={["Today","Week","Month","YTD"]} mode="select" onSelection={onTypeChange}/>
+      <Show when={balanceSheet?.sales} fallback={<div>No data found!</div>}>
+        <TrendCard>
+          <FlexRow p="0 0 1.5rem 0">
+            <FlexRow hAlign="space-between" vAlign="center" p="0 0 0 .5rem">
+              <span style={{fontSize:"18px",fontWeight:"700"}}>Total Sales</span>
+              <SplitButton label={"Today"} items={salesChartSpans} mode="select" onSelection={onTypeChange}/>
+            </FlexRow>
           </FlexRow>
-        </FlexRow>
-        {renderChartView(dataType)}
-        {/* <BarChartView chartData={chartData} /> */}
-        <WEAccordion>
-          <WEAccordion.Panel>
-            <WEAccordion.Panel.Header>
-              <h3>View Sales Totals</h3>
-            </WEAccordion.Panel.Header>
-            <WEAccordion.Panel.Content>
-              {balanceSheet?.Sales && <div>No data found!</div>}
-              {balanceSheet?.Sales && Sort.bySales(balanceSheet.Sales).map(sale => {
-                return (
-                  <div key={sale.description} className={styles.sub_item}>
-                    <span>💵 {sale.description}</span>
-                    <span>{Format.string(sale.total,"currency")}</span>
-                  </div>
-                )
-              })}
-            </WEAccordion.Panel.Content>
-          </WEAccordion.Panel>
-        </WEAccordion>
-        <FlexRow p="1rem 0 0 0">
-          {children}
-        </FlexRow>
-      </TrendCard>
+          {renderChartView(dataType)}
+          {/* <BarChartView chartData={chartData} /> */}
+          <WEAccordion m='.5rem 0 0 0'>
+            <WEAccordion.Panel>
+              <WEAccordion.Panel.Header>
+                <h3>Store Sales Totals</h3>
+              </WEAccordion.Panel.Header>
+              <WEAccordion.Panel.Content>
+                {!balanceSheet?.sales && <div>No data found!</div>}
+                {balanceSheet?.sales && Sort.bySales(balanceSheet.sales).map(sale => {
+                  return (
+                    <div key={sale.description} className={styles.sub_item}>
+                      <span>💵 {sale.description}</span>
+                      <span>{Format.string(sale.total,"currency")}</span>
+                    </div>
+                  )
+                })}
+              </WEAccordion.Panel.Content>
+            </WEAccordion.Panel>
+          </WEAccordion>
+          <FlexRow p="1rem 0 0 0">
+            {children}
+          </FlexRow>
+        </TrendCard>
+      </Show>
     </>
   );
 }
