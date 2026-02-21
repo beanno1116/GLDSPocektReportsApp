@@ -1,30 +1,17 @@
 
+import OutlineButton from '../../../Components/Buttons/OutlineButton';
+import PrimaryButton from '../../../Components/Buttons/PrimaryButton';
+import FlexRow from '../../../Components/FlexComponents/FlexRow';
+import Show from '../../../Components/Show/Show';
+import ErrorCard from '../Components/Cards/ErrorCard';
 import View from './View';
 import styles from './view.module.css';
 
-const ErrorView = ({ ...props }) => {
+const ErrorView = ({ title,message,code,type }) => {
   return (
-    <div class="error-screen">
-      <div class="error-icon">❌</div>
-      <div class="error-title">Something Went Wrong</div>
-      <div class="error-message">
-          We encountered an unexpected error while processing your request. Please try again or contact support if the problem persists.
-      </div>
-      <div class="error-code">
-          <span>Error Code:</span>
-          <span>ERR_500</span>
-      </div>
-      <div class="error-actions">
-          <button class="error-btn error-btn-primary" onclick="alert('Retry clicked')">
-              <span>🔄</span>
-              <span>Try Again</span>
-          </button>
-          <button class="error-btn error-btn-secondary" onclick="alert('Go back clicked')">
-              <span>←</span>
-              <span>Go Back</span>
-          </button>
-      </div>
-    </div>
+    <FlexRow height='100%' width='100%' p='1rem' vAlign='center' hAlign='center'>
+      <ErrorCard title={title} message={message} code={code} type={type} />
+    </FlexRow>
   );
 }
 

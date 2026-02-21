@@ -106,17 +106,17 @@ const couponMapping = {
   }
 }
 const taxMapping = {
-  "tax1": {
+  "tax": {
     key: "tax",
     name: "Tax",
     group: "tax"
   },
-  "taxable1": {
+  "taxable": {
     key: "taxable",
     name: "Taxable",
     group: "tax"
   },
-  "taxexempt1": {
+  "taxexempt": {
     key: "taxExempt1",
     name: "Tax Exempt 1",
     group: "tax"
@@ -256,6 +256,7 @@ class LocReportAdapter {
     try {
 
       if (!Array.isArray(data)) throw new TypeError("data not of type array");
+      
       // New Map to collect the stat group objects while parsing
       const stateGroupMap = new Map();
       // Iterating through the data to parse the store stats from LOC POS
@@ -263,11 +264,12 @@ class LocReportAdapter {
 
         const {description,quantity,weight,total,group} = row;
 
-        const lookup = Format.toCamelCase(description);
+        const lookup = Format.toCamelCase(description.replace(" 1",""));
 
         // Use the row object description as a key to find a mapping removing the 
         // spaces and making it lowercase
-        const mapKey = removeAllSpaces(description.toLowerCase());
+        const mapKey = removeAllSpaces(description.replace(" 1","").toLowerCase());
+
 
         /*
           Get mapping for stat. If mapping does not 
@@ -278,7 +280,7 @@ class LocReportAdapter {
         
         let statGroup = mapping.group; // stat group from mapping
         let statKey =  mapping?.key ? mapping.key : lookup; // stat key from mapping
-        let statName = mapping?.name ? Format.toCapitalized(mapping.name) : Format.toCapitalized(description); // stat name from mapping
+        let statName = mapping?.name ? Format.toCapitalized(mapping.name) : Format.toCapitalized(description.replace(" 1","")); // stat name from mapping
         let statGroupArr = [];
 
         // Create a new StatRecord object
@@ -501,7 +503,7 @@ class LocReportAdapter {
         const {description} = row;
         let group = row.group.toLowerCase();
         if (row.group.toLowerCase() === "information"){
-          group = "Sales"
+          group = "sales"
         }
 
         group = removeAllSpaces(group);

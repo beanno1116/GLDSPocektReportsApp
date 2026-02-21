@@ -2,38 +2,127 @@
 import SettingsIcon from '../../../assets/icons/SettingsIcon';
 import View from '../../Templates/View/View';
 import ScrollView from '../../../Components/ScrollView/ScrollView';
-import KpiGrid from '../../../Components/Grids/KpiGrid';
-import TopCategorySection from '../../Templates/Components/Sections/TopCategorySection';
-import SolidSafeIcon from '../../../assets/icons/SolidSafeIcon';
-import DrawerIcon from '../../../assets/icons/DrawerIcon';
-import Format from '../../../Utils/Format';
 import DateUtility from '../../../Utils/DateUtils';
 import { useApiClient } from '../../../Api/Api';
 import { useQueries, useQueryClient } from '@tanstack/react-query';
 import FullScreenLoader from '../../../Components/Loader/FullScreenLoader';
 import SolidReportIcon from '../../../assets/icons/SolidReportIcon';
-import DollarSignIcon from '../../../assets/icons/DollarSignIcon';
-import ChartTabView from './Components/ChartTabView';
 import { useCallback, useRef, useState } from 'react';
 import RefreshIndicator from '../../../Components/Loader/RefreshIndicator';
 import WEModal from '../../../Components/WEModal/WEModal';
 import useModal from '../../../Components/WEModal/hooks/useModal';
 import PeriodSelector from '../../../Components/PeriodSelector/PeriodSelector';
-import PerentSignIcon from '../../../assets/icons/PercentSignIcon';
 import ViewModalManager from './Components/ViewModalManager';
 import { viewAdapter } from './viewDataAdapter';
 import StoreIcon from '../../../assets/icons/StoreIcon';
-import SecondaryButton from '../../../Components/Buttons/SecondaryButton';
 import ViewHeading from '../../../Components/Headings/ViewHeading';
 import { viewQueries } from '../../../Api/Queries/StoreReportsViewQueries';
 import useNavigateView from '../../../hooks/useNavigateView';
 import DateRangeLabel from './Components/DateRangeLabel';
-import Show from '../../../Components/Show/Show';
 import useGlobalDate from '../../../hooks/useGlobalDate';
 import useAppContext from '../../../hooks/useAppContext';
-import NoDataView from '../../Templates/View/NoDataView';
+import SaleTotalsBarChart from './Components/Widgets/SaleTotalsBarChart';
+import SalesKpiGrid from './Components/Widgets/SalesKpiGrid';
+import MarkdownTotals from './Components/Widgets/MarkdownTotals';
+import LoyaltyTotals from './Components/Widgets/LoyaltyTotals';
+import CouponTotals from './Components/Widgets/CouponTotals';
+import TaxTotals from './Components/Widgets/TaxTotals';
+import ExceptionTotals from './Components/Widgets/ExceptionTotals';
+import TransactionTotals from './Components/Widgets/TransactionTotals';
+import ButtonGrid from './Components/Widgets/ButtonGrid';
+import ToolGrid from './Components/Widgets/ToolGrid';
 
 
+const reportWidgets = [
+  {
+    id: 1,
+    order: 1,
+    title: "This Week",
+    source: "weekData",
+    link: "SalesTotalsBarChart",
+    name: 'SalesTotalsBarChart',
+    Widget: SaleTotalsBarChart,
+  },
+  {
+    id: 2,
+    order: 2,
+    title: "Sales",
+    source: "salesData",
+    link: "SalesTotals",
+    name: 'SalesKpiGrid',
+    Widget: SalesKpiGrid,
+  },
+  {
+    id: 3,
+    order: 3,
+    title: "Markdowns",
+    source: "markdownData",
+    link: "MarkdownTotals",
+    name: 'MarkdownTotals',
+    Widget: MarkdownTotals,
+  },
+  {
+    id: 4,
+    order: 4,
+    title: "Safe & Drawer",
+    link: "SafeDrawer",
+    name: 'ButtonGrid',
+    Widget: ButtonGrid,
+  },
+  {
+    id: 5,
+    order: 5,
+    title: "Loyalty",
+    source: "loyaltyData",
+    link: "LoyaltyTotals",
+    name: 'LoyaltyTotals',
+    Widget: LoyaltyTotals,
+  },
+  {
+    id: 6,
+    order: 6,
+    title: "Coupons",
+    source: "couponData",
+    link: "CouponTotals",
+    name: 'CouponTotals',
+    Widget: CouponTotals,
+  },
+  {
+    id: 8,
+    order: 8,
+    title: "Exceptions",
+    source: "exceptionData",
+    link: "ExceptionTotals",
+    name: 'ExceptionTotals',
+    Widget: ExceptionTotals,
+  },
+  {
+    id: 7,
+    order: 7,
+    title: "Taxes",
+    source: "taxData",
+    link: "TaxTotals",
+    name: 'TaxTotals',
+    Widget: TaxTotals,
+  },
+  {
+    id: 9,
+    order: 9,
+    title: "Transactions",
+    source: "transactionData",
+    link: "TransactionTotals",
+    name: 'TransactionTotals',
+    Widget: TransactionTotals,
+  },
+  {
+    id: 10,
+    order: 10,
+    title: "Report Tools",
+    link: "ReportTools",
+    name: 'ToolGrid',
+    Widget: ToolGrid,
+  }
+]
 
 
 
@@ -43,7 +132,8 @@ const useStoreReportsView = () => {
   const navigate = useNavigateView();
   const queryClient = useQueryClient();
   const {modalState,toggleModal} = useModal();
-  const {dateRanges,setDateRanges,getDateRange} = useGlobalDate(DateUtility.calculateDateRange(new Date(),"today"));
+  const {dateRanges,setDateRanges,getDateRange} = useGlobalDate();
+  // const {dateRanges,setDateRanges,getDateRange} = useGlobalDate(DateUtility.calculateDateRange(new Date(),"today"));
   
 
   const dateLockRef = useRef(false);
@@ -92,7 +182,7 @@ const useStoreReportsView = () => {
   },[navigate])
 
   const showModalView = useCallback((route) => (e) => {
-    debugger;
+    
     viewRef.current = route;
     toggleModal();
   },[toggleModal])
@@ -226,15 +316,12 @@ const StoreReportsView = ({ ...props }) => {
     )
   }
 
-  
-  const {coupon,sales,tax,exceptions,loyalty,markdowns,transaction} = viewAdapter(results.viewData[0],results.viewData[1]);
-  const weekData = results.viewData[2];
-  
-  console.log("weekData");
-  console.log(results.viewData[3]);
+
+  const viewData = viewAdapter(results.viewData[0],results.viewData[1],results.viewData[2]);
 
 
-  
+
+
   const onViewAllClick = (e,action) => {
     e.stopPropagation();
     navigate(action,{viewTransition:true});
@@ -252,129 +339,17 @@ const StoreReportsView = ({ ...props }) => {
 
       <PeriodSelector currentPeriod={period} onClick={onPeriodChange}/>
 
-      <DateRangeLabel start={dateRange.startDate} end={dateRange.endDate}/>
+      <DateRangeLabel start={dateRange.startDate} end={dateRange.endDate} m='1rem 0 0 0'/>
 
       <ScrollView>
 
-        {/* Store sales chart */}
-        <ChartTabView chartData={weekData} />
-
-        {/* Store sales KPI grid */}
-        <View.SectionHeader m='.5rem 0' title={"Sales"} viewAll={onViewAllClick} action="/report/stores/sales"/>
-        <Show when={sales.length > 0} fallback={<NoDataView dataName={"sales"} />}>
-          <KpiGrid>
-            {sales.map(stat => {
-              return (
-                <KpiGrid.SummaryItem 
-                  icon={stat.format === "percentage" ? <PerentSignIcon size={20} /> : <DollarSignIcon size={24} />} 
-                  label={stat.title} 
-                  value={stat.value} 
-                  type={stat.format} 
-                  subValue={stat.delta}/>
-                )
-              })}
-          </KpiGrid>
-        </Show>
-     
-
-        <View.SectionHeader m='.5rem 0' title={"Markdowns"} viewAll={onViewAllClick} action="/report/stores/sales"/>
-        <Show when={markdowns?.length && markdowns.length > 0} fallback={<NoDataView dataName={"markdowns"} />}>
-          {
-            markdowns?.map(item => {
-              return (
-                <TopCategorySection.Item name={item.title} subtitle={`${item.quantity} items`} delta={Format.string(item.delta,"percentage")} value={Format.string(item.value,item.format)} />
-              )
-            })
-          }
-        </Show>
-        
-        
-
-        {/* Store loyalty KPI grid */}
-        <View.SectionHeader m='.5rem 0' title={"Loyalty"} viewAll={onViewAllClick} action="/report/stores/loyalty"/>
-        <Show when={loyalty?.length && loyalty.length > 0} fallback={<NoDataView dataName={"loyalty"} />}>
-          <KpiGrid>
-            {loyalty.length === 0 && <div>No data found!</div>}
-            {
-              loyalty.map(item => {
-                return (
-                  <KpiGrid.Item title={item.title} value={item.value} subValue={item.delta} format={item.format} type={item.format} />
-                )
-              })
-            }
-          </KpiGrid>
-        </Show>
-
-        {/* Store coupon totals list  */}
-        <View.SectionHeader m='.5rem 0' title={"Coupons"} />
-        <Show when={coupon.length > 1} fallback={<NoDataView dataName={"coupons"} />}>
-        {
-          coupon?.map(item => {
-            return (
-              <TopCategorySection.Item name={item.title} subtitle={`${item.quantity} redeemed`} delta={Format.string(item.delta,"percentage")} value={Format.string(item.value,item.format)} />
-            )
-          })
-        }
-        </Show>
-        
-
-        {/* Store report safe and drawer buttons  */}
-        <View.SectionTitle m='1rem 0 .5rem 0'>Safe & Drawer</View.SectionTitle>
-        <KpiGrid>
-          <KpiGrid.ActionItem icon={<SolidSafeIcon size={32} />} label={"Safe Report"} action="/report/stores/safe" onClick={onNavbarClick}/>
-          <KpiGrid.ActionItem icon={<DrawerIcon size={32} />} label={"Drawer Report"} action="drawer" onClick={onNavbarClick}/>
-        </KpiGrid>
-
-        {/* Store taxes totals list  */}
-        <View.SectionHeader m='.5rem 0' title={"Taxes"} />
-        <Show when={tax && tax.length > 0} fallback={<NoDataView dataName={"taxes"} />}>
-          {
-            tax?.map(item => {
-              return (
-                <TopCategorySection.Item name={item.title} subtitle={item.quantity === 0 ? "" : `${item.quantity} items`} delta={Format.string(item.delta,"percentage")} value={Format.string(item.value,item.format)} />
-              )
-            })
-          }
-        </Show>
-
-
-        {/* Store exceptions KPI grid */}
-        <View.SectionHeader m='.5rem 0' title={"Exceptions"} />
-        <Show when={exceptions?.length && exceptions.length > 0} fallback={<NoDataView dataName={"exceptions"} />}>
-          <KpiGrid>
-            {
-              exceptions?.map(item => {
-                return (
-                  <KpiGrid.Item title={item.title} opposite={true} value={item.value} subValue={item.delta} format={item.format} type={item.format} />
-                  // <KpiGrid.Item title={item.title} value={Format.string(item.value,item.format)}/>
-                )
-              })
-            }            
-          </KpiGrid>
-        </Show>
-
-        {/* Store transactions KPI grid */}
-        <View.SectionHeader m='.5rem 0' title={"Transactions"} />
-        <Show when={transaction?.length && transaction.length > 0} fallback={<NoDataView dataName={"transaction"} />}>
-          <KpiGrid>
-            {
-              transaction?.map(item => {
-                return (
-                  <KpiGrid.Item title={item.title} value={item.value} subValue={item.delta} format={item.format} type={item.format} />
-                )
-              })
-            }      
-          </KpiGrid>
-        </Show>
-
-        {/* Store report tool buttons */}
-        <View.SectionTitle m='1rem 0 .5rem 0'>Tools</View.SectionTitle>          
-        <KpiGrid>
-          <SecondaryButton action="summary" onClick={showModalView("summary")}>Summary</SecondaryButton>
-          <SecondaryButton action="targets" onClick={showModalView("targets")}>Targets</SecondaryButton>
-          <SecondaryButton action="alerts" onClick={showModalView("alerts")}>Alerts</SecondaryButton>
-          <SecondaryButton action="saveReport" onClick={showModalView("saveReport")}>Save Report</SecondaryButton>
-        </KpiGrid>
+        {reportWidgets.map(widget => {
+          const Widget = widget.Widget;
+          const source = widget.source;
+          return (
+            <Widget data={viewData[source]} onClick={onViewAllClick} title={widget.title} />
+          )
+        })}
 
       </ScrollView>
 

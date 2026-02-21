@@ -56,6 +56,7 @@ const useUsersDetail = () => {
 
         return (
           <Card.ListItem 
+            key={user.id}
             user={user} 
             icon={user.isAdmin ? <AdminUserIcon size={32} /> : <PlainUserIcon size={32} />}
             onClick={onUserListItemClick}
@@ -112,18 +113,8 @@ const UsersDetail = ({ ...props }) => {
       <ManageUserPanel currentUser={Filter.userById(users,currentUser)} when={showFormPanel} close={closeFormPanel}/>
       <FlexRow flex='1'>
         <ScrollView>
-                  {renderUserListItems()}
-
+          {renderUserListItems()}
         </ScrollView>
-        {/* <Card full={true}>
-          <FlexColumn height='100%'>
-            <FlexRow flex='1'>
-                <div style={{position:"absolute",width:"100%",height:"100%",overflowY:"scroll",padding:"0rem 0"}}>
-                </div>
-            </FlexRow>
-
-          </FlexColumn>
-        </Card> */}
       </FlexRow>
     </>
   );

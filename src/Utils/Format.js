@@ -232,7 +232,7 @@ class FormatUtil {
         if (valueLength < 6 && valueLength > 3){
           return `$${displayNumber}K`
         }
-        return `${displayNumber}`;
+        return `${displayNumber}K`;
       }
     } catch (error) {
       

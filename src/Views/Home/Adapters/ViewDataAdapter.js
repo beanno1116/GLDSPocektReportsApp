@@ -22,7 +22,7 @@ const selectStatGroup = (statObj) => {
 
 const findDepartment = (depts,id) => {
   if (!Array.isArray(depts)) throw new TypeError("depts not of type array");
-  return depts.find(dept => parseInt(dept.departmentId) === parseInt(id));
+  return depts.find(dept => parseInt(dept.number) === parseInt(id));
 }
 
 const parseSalesData = (sales,salesBase) => {
@@ -158,7 +158,7 @@ const parseExceptions = (exceptions,exceptionsBase) => {
     const baseNoSalesStat = baseStatSelector("exception","noSales");
 
     const tileArray = [];
-    debugger
+    
     if (cancelPrevItemStat.quantity !== 0){
       tileArray.push({
         title: "Cancel Prev Item",
@@ -203,8 +203,8 @@ const parseDepartmentData = (departments,departmentsBase) => {
     const departmentArray = [];
 
       departments.forEach((department,index) => {
-        const {departmentId,description,quantity,total,weight} = department;
-        const prevDept = findDepartment(departmentsBase,departmentId);
+        const {number,description,quantity,total,weight} = department;
+        const prevDept = findDepartment(departmentsBase,number);
         let arrObj = {
           description: description,
           quantity: parseInt(quantity),

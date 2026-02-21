@@ -28,7 +28,7 @@ const WEModal = ({ children, isOpen, toggle,config, ...props }) => {
   const modalRef = useRef(null);
 
   const onKeyDownEvent = useCallback((e) => {
-    e.key === "Escape" ? toggle() : ()=>{};
+    // e.key === "Escape" ? toggle() : ()=>{};
   },[toggle])
 
   const onClose = useCallback((e) => {

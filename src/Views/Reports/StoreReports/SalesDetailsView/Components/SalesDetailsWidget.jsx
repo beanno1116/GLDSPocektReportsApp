@@ -149,7 +149,7 @@ const SalesDetailsWidget = ({ reportData,balanceSheet,chartData,children }) => {
   }
 
   const renderChartView = (dataType) => {
-    debugger
+    
     switch (dataType.toLowerCase()) {
       case "today":
         return <LineChartView chartData={hourlyData?.totalSales?.data} />
@@ -168,7 +168,7 @@ const SalesDetailsWidget = ({ reportData,balanceSheet,chartData,children }) => {
   return (
     <>
       <View.SectionTitle id="details" m='.5rem 0'>Sales Details</View.SectionTitle>
-      <Show when={balanceSheet?.Sales} fallback={<div>No data found!</div>}>
+      <Show when={balanceSheet?.sales} fallback={<div>No data found!</div>}>
         <TrendCard>
           <FlexRow p="0 0 1.5rem 0">
             <FlexRow hAlign="space-between" vAlign="center" p="0 0 0 .5rem">
@@ -184,8 +184,8 @@ const SalesDetailsWidget = ({ reportData,balanceSheet,chartData,children }) => {
                 <h3>Store Sales Totals</h3>
               </WEAccordion.Panel.Header>
               <WEAccordion.Panel.Content>
-                {!balanceSheet?.Sales && <div>No data found!</div>}
-                {balanceSheet?.Sales && Sort.bySales(balanceSheet.Sales).map(sale => {
+                {!balanceSheet?.sales && <div>No data found!</div>}
+                {balanceSheet?.sales && Sort.bySales(balanceSheet.sales).map(sale => {
                   return (
                     <div key={sale.description} className={styles.sub_item}>
                       <span>💵 {sale.description}</span>

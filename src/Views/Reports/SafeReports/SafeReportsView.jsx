@@ -23,6 +23,7 @@ import Format from "../../../Utils/Format";
 import WEModal from "../../../Components/WEModal/WEModal";
 import ViewModalManager from "../StoreReports/Components/ViewModalManager";
 import useModal from "../../../Components/WEModal/hooks/useModal";
+import DateRangeLabel from "../StoreReports/Components/DateRangeLabel";
 
 
 const useSafeReportsView = () => {
@@ -73,8 +74,53 @@ const useSafeReportsView = () => {
     navigate(route);
   },[navigate])
 
+  const onReportDateChange = (dates) => {
+
+    if (dates.length === 2){
+      const dateRanges = {
+        base: {
+          startDate: dates[0],
+          endDate: dates[1]
+        },
+        current: {
+          startDate: dates[0],
+          endDate: dates[1]
+        }
+      }
+      setDateRanges(dateRanges);
+      return;
+    }
+    if (dates.length > 2 && dates.length <= 7){
+      const dateRanges = {
+        base: {
+          startDate: DateUtility.setWeekBack(dates[0],1),
+          endDate: DateUtility.setWeekBack(dates[dates.length - 1],1)
+        },
+        current: {
+          startDate: dates[0],
+          endDate: dates[dates.length - 1]
+        }
+      }
+      setDateRanges(dateRanges);
+      return;
+    }
+    const dateRanges = {
+      base: {
+        startDate: DateUtility.setDateBack(dates[0],1),
+        endDate: DateUtility.setDateBack(dates[0],1)
+      },
+      current: {
+        startDate: dates[0],
+        endDate: dates[0]
+      }
+    }
+    setDateRanges(dateRanges);
+  }
+
   return {
+    dateRange: dateRanges.current,
     onNavbarClick,
+    onReportDateChange,
     period: period.current,
     results
   }
@@ -82,13 +128,13 @@ const useSafeReportsView = () => {
 
 
 const SafeReportsView = () => {
-  const {onNavbarClick,period,results} = useSafeReportsView();
+  const {dateRange,onNavbarClick,onReportDateChange,period,results} = useSafeReportsView();
   const {modalState,toggleModal} = useModal();
 
   const viewRef = useRef();
 
   const showModal = useCallback((action) => (e) => {
-    debugger;
+    
     viewRef.current = action;
     toggleModal();
   },[toggleModal])
@@ -120,16 +166,18 @@ const SafeReportsView = () => {
 
   return (
     <View solid={true}>
-      <ViewHeading title={"Safe Report"} onClick={() => {}} />
+      <ViewHeading title={"Safe Report"} onClick={onReportDateChange} />
+
+      <DateRangeLabel start={dateRange.startDate} end={dateRange.endDate}/>
 
       <TierCard title={"💰 Current Status"} expected={Format.string(tmp.expectedTotal,Format.CURRENCY_FORMAT)} ending={Format.string(tmp.endingTotal,Format.CURRENCY_FORMAT)}/>
 
       <View.SectionTitle m='.5rem 0 .5rem 0'>Activity</View.SectionTitle>
       <KpiGrid>
-        <KpiGrid.Item key={`safe_loan`} title={"Loans"} value={tmp.loanTotal} subValue={`${0}`} type={Format.NUMBER_FORMAT} />      
-        <KpiGrid.Item key={`safe_deposits`} title={"Deposits"} value={tmp.depositTotal} subValue={`${0}`} type={Format.SHORT_CURRENCY_FORMAT} />      
-        <KpiGrid.Item key={`safe_pickups`} title={"Pickups"} value={tmp.pickupTotal} subValue={`${0}`} type={Format.SHORT_CURRENCY_FORMAT} />      
-        <KpiGrid.Item key={`safe_received`} title={"Received"} value={tmp.receivedTotal} subValue={`${0}`} type={Format.DECIMAL_FORMAT} />      
+        <KpiGrid.Item key={`safe_loan`} title={"Loans"} expandable={true} value={tmp.loanTotal} subValue={`${0}`} format={Format.NUMBER_FORMAT} />      
+        <KpiGrid.Item key={`safe_deposits`} title={"Deposits"} value={tmp.depositTotal} subValue={`${0}`} format={Format.SHORT_CURRENCY_FORMAT} />      
+        <KpiGrid.Item key={`safe_pickups`} title={"Pickups"} value={tmp.pickupTotal} subValue={`${0}`} format={Format.SHORT_CURRENCY_FORMAT} />      
+        <KpiGrid.Item key={`safe_received`} title={"Received"} value={tmp.receivedTotal} subValue={`${0}`} format={Format.DECIMAL_FORMAT} />      
       </KpiGrid>
       
       <View.BottomNav>

@@ -116,7 +116,6 @@ const loyaltyStatsTileData = (statSelector,baseStatSelector) => {
     const basepointsRedeemedStat = baseStatSelector("loyalty","pointsRedeemed");
 
     const tileArray = [];
-
     if (customerStat.total !== 0.00){
       tileArray.push({
         title: "Spending",
@@ -137,7 +136,6 @@ const loyaltyStatsTileData = (statSelector,baseStatSelector) => {
       tileArray.push({
         title: "Points Given",
         format: "shortNumber",
-        property: "quantity",
         value: pointsGivenStat.quantity,
         delta: Calculate.percentChange(basePointsGivenStat.quantity,pointsGivenStat.quantity)
       })
@@ -145,7 +143,6 @@ const loyaltyStatsTileData = (statSelector,baseStatSelector) => {
         tileArray.push({
         title: "Points Redeemed",
         format: "shortNumber",
-        property: "quantity",
         value: pointsRedeemedStat.quantity,
         delta: Calculate.percentChange(basepointsRedeemedStat.quantity,pointsRedeemedStat.quantity)
       })
@@ -335,7 +332,7 @@ const markDownStatsData = (currentData,baseData) => {
 }
 
 
-export const viewAdapter = (currentData,baseData) => {
+export const viewAdapter = (currentData,baseData,weekData) => {
   try {
     
     // if (!Array.isArray(currentData) || !Array.isArray(baseData)) throw new TypeError("parameter not of type array");
@@ -349,16 +346,17 @@ export const viewAdapter = (currentData,baseData) => {
     const taxListData = taxListItemsData(currentData?.tax,baseData?.tax);
     const markdowns = markDownStatsData(currentData?.markdown,baseData?.markdown);
 
-    const weekData = statSelector()
+    
 
     const viewData = {
-      sales: salesGridData,
-      exceptions: exceptionGridData,
-      loyalty: loyaltyGridData,
-      coupon: couponListData,
-      tax: taxListData,
-      transaction: transactionGridData,
-      markdowns
+      salesData: salesGridData,
+      exceptionData: exceptionGridData,
+      loyaltyData: loyaltyGridData,
+      couponData: couponListData,
+      taxData: taxListData,
+      transactionData: transactionGridData,
+      markdownData: markdowns,
+      weekData: weekData
     }
 
     return viewData;

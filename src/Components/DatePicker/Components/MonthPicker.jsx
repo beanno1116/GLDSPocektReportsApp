@@ -21,7 +21,7 @@ const YearHeading = ({date,onChange}) => {
 
 const MonthButton = ({text,active,selected,onClick}) => {
   return (
-    <button className={`${styles.month_button} ${active && styles.active} ${selected && styles.selected}`} onClick={onClick}>{text}</button>
+    <button data-text={text} className={`${styles.month_button} ${active && styles.active} ${selected && styles.selected}`} onClick={onClick}>{text}</button>
   )
 }
 
@@ -43,13 +43,31 @@ const MonthPicker = ({ selected,date=new Date(),...props }) => {
     }    
   }
 
+  const isActiveMonth = (month) => {
+    const dateObj = DateUtility.monthObj(new Date());
+    const currentDateObj = DateUtility.monthObj(currentDate);
+
+    let test = DateUtility.isSameMonth(new Date(),currentDate);
+    
+    if ((dateObj.number === currentDateObj.number) && (dateObj.year === currentDateObj.year)) {
+      if (currentDateObj.abrv === month){
+        return true;
+      }
+    }
+    return false;
+  }
+
   return (
     <div className={styles.month}>
       <YearHeading date={currentDate} onChange={onYearChange} />
       <div className={styles.month_picker}>
         {DateUtility.getMonthNames("abrv").map((name,index) => {
           return (
-            <MonthButton text={name} selected={selected.filter(s => s.getMonth() === index).length > 0}  active={DateUtility.monthObj(date).abrv === name} onClick={(e) => onMonthButtonClick(index)}/>
+            <MonthButton 
+              text={name} 
+              selected={selected.filter(s => s.getMonth() === index).length > 0}  
+              active={isActiveMonth(name)} 
+              onClick={(e) => onMonthButtonClick(index)} />
           )
         })}
       </div>

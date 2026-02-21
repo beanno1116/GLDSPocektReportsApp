@@ -48,6 +48,7 @@ const ManageUserStoreList = ({ currentUser,onClick,p="1rem 1rem" }) => {
             if (!currentUser){
               return (              
                 <ActionCard 
+                  key={store.id}
                   title={store.name} 
                   cardId={store.id} 
                   subtitle={`${store.city}, ${store.state}`} 
@@ -60,6 +61,7 @@ const ManageUserStoreList = ({ currentUser,onClick,p="1rem 1rem" }) => {
             if (currentUser.stores.includes(store.id)){
               return (
                 <ActionCard 
+                  key={store.id}
                   status={true} 
                   cardId={store.id} 
                   title={store.name} 
@@ -71,6 +73,7 @@ const ManageUserStoreList = ({ currentUser,onClick,p="1rem 1rem" }) => {
             }
             return (
               <ActionCard 
+                key={store.id}
                 title={store.name} 
                 cardId={store.id} 
                 subtitle={`${store.city}, ${store.state}`} 

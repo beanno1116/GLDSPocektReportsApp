@@ -8,7 +8,7 @@ const OtherSalesWidget = ({ balanceSheet,...props }) => {
   
   const renderOtherData = (data) => {
     if (!data) return <div>No data found!</div>
-    debugger;
+    
     const itemDiscounts = data["itemdiscount"] || [];
     const received = data["received"] || [];
     const rbsLynk = data["rbslynkiso"] || [];

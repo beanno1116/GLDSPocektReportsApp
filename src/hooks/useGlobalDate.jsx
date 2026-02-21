@@ -10,6 +10,20 @@ const baseDateRange = {
   endDate: DateUtility.subtractDays(new Date(),1)
 }
 
+const initializeGlobalStore = (gdr) => {
+  if (!gdr) return false;
+  return {
+    base: {
+      startDate: DateUtility.createDate(gdr.base.startDate),
+      endDate: DateUtility.createDate(gdr.base.endDate)
+    },
+    current: {
+      startDate: DateUtility.createDate(gdr.current.startDate),
+      endDate: DateUtility.createDate(gdr.current.endDate)
+    }
+  }
+}
+
 const globalDateStore = {
   setValue(value,key){
     const gdr = JSON.parse(localStorage.getItem("gdr"));
@@ -23,8 +37,12 @@ const globalDateStore = {
     localStorage.setItem("gdr",JSON.stringify(value));
   },
   getValue(key){
-    const gdr = JSON.parse(localStorage.getItem("gdr"));
-    if (!gdr) return {current:currentDateRange,base: baseDateRange};
+    const gdr = initializeGlobalStore(JSON.parse(localStorage.getItem("gdr")));
+    
+    if (!gdr) {
+      this.setValue({current:currentDateRange,base: baseDateRange},"gdr");
+      return {current:currentDateRange,base: baseDateRange};
+    }
     if (Object.keys(gdr).includes(key)){
        return gdr[key]
     }
@@ -48,7 +66,7 @@ const useGlobalDate = (initialRange={...globalDateStore.getValue()}) => {
   return {
     base: dateRanges.base,
     current: dateRanges.current,
-    dateRanges:dateRanges,
+    dateRanges:getDateRange(),
     getDateRange,
     setDateRanges,
   }

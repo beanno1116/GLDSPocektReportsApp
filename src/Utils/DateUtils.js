@@ -49,6 +49,22 @@ const datePeriods = [
   "prevYear"
 ]
 
+const isString = (value) => {
+  if (typeof value === "string" || value instanceof String || Object.prototype.toString.call(value) === '[object String]') {
+    return true;
+  }
+  return false;
+}
+const isArray = (value) => {
+  return Array.isArray(value);
+}
+const isObject = (value) => {
+  if (typeof value === "object" && value !== null && !Array.isArray(value)){
+    return true;
+  }
+  return false;
+}
+
 class DateUtils {
   TODAY_PERIOD = "today";
   WEEK_PERIOD = "week";
@@ -79,6 +95,36 @@ class DateUtils {
     }
   }
 
+  createDate(value){
+    try {
+      if (this.#isInstanceOfDate(value)){
+        return value;
+      }
+      if (isString(value)){
+        let nDate = new Date(value);
+        if (this.#isInstanceOfDate(nDate)){
+          return nDate;
+        }
+      }
+    } catch (error) {
+      
+    }
+  }
+
+  setTime(date=new Date(),time=[]) {
+    try {
+      const dateCopy = new Date(date);
+      if (time.length === 0){
+        dateCopy.setHours(0,0,0,0);
+        return dateCopy;
+      }
+      dateCopy.setHours(time.join(","));
+      return dateCopy;
+    } catch (error) {
+      
+    }
+  }
+
   monthAsString(date=new Date(),abrv=true){
     if (abrv){
       let month = date.getMonth();
@@ -87,12 +133,17 @@ class DateUtils {
 
   }
 
-  isEqual(date1,date2){
+  isEqual(date1,date2,includeTime=false){
     try {
       
-      if (!this.#isInstanceOfDate(date1) || !this.#isInstanceOfDate(date2)) throw new TypeError("paramater is not of type Date");
-      let temp = (date1.getDate() === date2.getDate()) && (date1.getMonth() === date2.getMonth()) && (date1.getFullYear() === date2.getFullYear());
-      return (date1.getDate() === date2.getDate()) && (date1.getMonth() === date2.getMonth()) && (date1.getFullYear() === date2.getFullYear());
+      const date1Copy = this.createDate(date1);
+      const date2Copy = this.createDate(date2);
+      if (!this.#isInstanceOfDate(date1Copy) || !this.#isInstanceOfDate(date2Copy)) throw new TypeError("paramater is not of type Date");
+      let dateEqual = (date1Copy.getDate() === date2Copy.getDate());
+      let monthEqual = (date1Copy.getMonth() === date2Copy.getMonth());
+      let yearEqual = (date1Copy.getFullYear() === date2Copy.getFullYear());
+      let temp = (date1Copy.getDate() === date2Copy.getDate()) && (date1Copy.getMonth() === date2Copy.getMonth()) && (date1Copy.getFullYear() === date2Copy.getFullYear());
+      return (date1Copy.getDate() === date2Copy.getDate()) && (date1Copy.getMonth() === date2Copy.getMonth()) && (date1Copy.getFullYear() === date2Copy.getFullYear());
     } catch (error) {
       console.error(error.message);
     }

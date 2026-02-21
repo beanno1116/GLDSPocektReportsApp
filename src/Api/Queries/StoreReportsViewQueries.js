@@ -49,7 +49,7 @@ const queries = [
 
 export const viewQueries = (dateRanges,keyStrings=[]) => {
   try {
-    // debugger
+    // 
     const queryArray = [];
     for (let i = 0; i < queries.length; i++){
       const query = queries[i];

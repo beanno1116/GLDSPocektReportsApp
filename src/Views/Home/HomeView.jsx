@@ -25,6 +25,10 @@ import StoreSelector from '../../Components/StoreSelector/StoreSelector';
 import Filter from '../../Utils/Filter';
 import viewQueries from '../../Api/Queries/HomeViewQueries';
 import viewAdapter from './Adapters/ViewDataAdapter';
+import ErrorView from '../Templates/View/ErrorView';
+import FlexRow from '../../Components/FlexComponents/FlexRow';
+import Error from '../../Utils/Errors';
+import ErrorCard from '../Templates/Components/Cards/ErrorCard';
 
 
 
@@ -49,6 +53,9 @@ const useHomeView = () => {
 
         if (response.success){
           const adaptedData = query.adapter(response.data);
+          if (!adaptedData){
+            return [];
+          }
           
           return adaptedData;
         }  
@@ -116,8 +123,9 @@ const HomeView = () => {
   }
   
   if (isError){
+    const error = Error.requestError(Filter.storeById(state.stores,state.activeStore)?.name)
     return (
-      <div>ERROR!!</div>
+      <ErrorView title={error.title} message={error.message} code={error.code}/>
     )
   }
   
@@ -136,11 +144,11 @@ const HomeView = () => {
       <ScrollView>
 
         {/* Store sale stats */}
-        <View.SectionTitle m='0 0 .5rem 0'>General</View.SectionTitle>
-        <KpiGrid>
+        <View.SectionTitle  m='2rem 0 .5rem 0'>General</View.SectionTitle>
+        <KpiGrid m='0 0 2rem 0'>
           {stats.map(stat => {
             return (
-              <KpiGrid.Item key={`${stat.title}_${stat.value}`} title={stat.title} value={stat.value} subValue={`${stat.delta}`} type={stat.format} />              
+              <KpiGrid.Item key={`${stat.title}_${stat.value}`} title={stat.title} value={stat.value} subValue={`${stat.delta}`} format={stat.format} />              
             )
           })}
         </KpiGrid>
@@ -172,7 +180,7 @@ const HomeView = () => {
         </div>
 
         {/* Top department sales */}
-        <TopCategorySection title={"Top Departments"}>
+        <TopCategorySection m='2rem 0 .5rem 0' title={"Top Departments"}>
           {[...take(5,departments)].map(cat => {
             return (
               <TopCategorySection.Item 
@@ -185,13 +193,13 @@ const HomeView = () => {
           })}          
         </TopCategorySection>
 
-        <View.SectionTitle m='0'>Exceptions</View.SectionTitle>
+        <View.SectionTitle m='2rem 0 .5rem 0'>Exceptions</View.SectionTitle>
 
         {/* Exception totals stats */}
-        <KpiGrid>
+        <KpiGrid m='0'>
           {exceptions.map(exception => {
             return (
-              <KpiGrid.Item key={`${exception.title}_${exception.value}`} title={exception.title} value={parseInt(exception.value)} type={Format.INTEGER_FORMAT} subValue={exception.delta} opposite={true} />              
+              <KpiGrid.Item key={`${exception.title}_${exception.value}`} title={exception.title} value={parseInt(exception.value)} format={Format.INTEGER_FORMAT} subValue={exception.delta} opposite={true} />              
             )
           })}
         </KpiGrid>        

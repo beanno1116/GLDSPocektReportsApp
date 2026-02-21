@@ -127,7 +127,7 @@ const useStoreSalesDetailsView = () => {
   const navigate = useNavigate();
   const api = useApiClient();
   const queryClient = useQueryClient();
-  const {dateRanges,setDateRanges} = useGlobalDate(DateUtility.calculateDateRange(new Date(),"today"));
+  const {dateRanges,setDateRanges} = useGlobalDate();
 
 
   const results = useQueries({

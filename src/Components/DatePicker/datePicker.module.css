@@ -1,3 +1,7 @@
+.date_picker_container {
+  
+}
+
 .date_picker {
     position: absolute;
   top: calc(100% + .5rem);
@@ -52,18 +56,21 @@
   letter-spacing: -0.5px;
 }
 .month_button {
+  position: relative;
   width: 100%;
   padding: 2rem 0rem;
   border-radius: .75rem;
-    background: rgba(0, 212, 255, 0.15);
-  border-color: rgba(0, 212, 255, 0.3);
+    background: rgba(0, 212, 255, 0.15);  
+  border: 1px solid rgba(0, 212, 255, 0.3);
+    animation: scaleIn 0.6s ease both;
 }
+
 .month_button.active {
 
   background: rgba(0, 212, 255, 0.3);
   border: 1px solid rgba(0, 213, 255, 0.645);;
   color: var(--accent-blue);
-  font-weight: 800;
+  /* font-weight: 800; */
   text-decoration: underline;
 }
 .month_button.selected {
@@ -72,6 +79,18 @@
   border: 1px solid rgba(0, 255, 136, 0.3);
   color: var(--accent-green);
 }
+.month_button:nth-child(1) { animation-delay: 0.1s; }
+.month_button:nth-child(2) { animation-delay: 0.2s; }
+.month_button:nth-child(5) { animation-delay: 0.2s; }
+.month_button:nth-child(3) { animation-delay: 0.3s; }
+.month_button:nth-child(6) { animation-delay: 0.3s; }
+.month_button:nth-child(9) { animation-delay: 0.3s; }
+.month_button:nth-child(4) { animation-delay: 0.4s; }
+.month_button:nth-child(7) { animation-delay: 0.4s; }
+.month_button:nth-child(10) { animation-delay: 0.4s; }
+.month_button:nth-child(8) { animation-delay: 0.5s; }
+.month_button:nth-child(11) { animation-delay: 0.5s; }
+.month_button:nth-child(12) { animation-delay: 0.6s; }
 
 
 
@@ -181,3 +200,7 @@ span.selected::after {
   color: var(--text-secondary);
 }
 
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
