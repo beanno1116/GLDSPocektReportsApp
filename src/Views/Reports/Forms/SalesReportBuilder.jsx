@@ -16,25 +16,60 @@ import Show from '../../../Components/Show/Show';
 import Card from '../../Templates/Components/Cards/Card';
 import KpiGrid from '../../../Components/Grids/KpiGrid';
 import DateRangeView from './Components/DateRangeView';
+import useAppContext from '../../../hooks/useAppContext';
+import useGlobalDate from '../../../hooks/useGlobalDate';
+import ViewHeading from '../../../Components/Headings/ViewHeading';
 
 
-
-
-
-
-const SalesReportBuilder = ({ data,close,...props }) => {
+const useSalesReportBuilder = (data) => {
+  const {state,dispatch} = useAppContext();
   const [currentStep,setCurrentStep] = useState(3);
   const [selectedItems,setSelectedItems] = useState([...data.map(d=>d.lookup)]);
   const [isOpen,setIsOpen] = useState(false);
-  const [dateRange,setDateRange] = useState({
-    startDate: new Date(),
-    endDate: new Date()
-  })
-  
+  const {dateRanges,setDateRanges} = useGlobalDate();
 
-  const reportTypeRef = useRef(null);
+  const onReportDateChange = (dates) => {
 
-
+    if (dates.length === 2){
+      const dateRanges = {
+        base: {
+          startDate: dates[0],
+          endDate: dates[1]
+        },
+        current: {
+          startDate: dates[0],
+          endDate: dates[1]
+        }
+      }
+      setDateRanges(dateRanges);
+      return;
+    }
+    if (dates.length > 2 && dates.length <= 7){
+      const dateRanges = {
+        base: {
+          startDate: DateUtility.setWeekBack(dates[0],1),
+          endDate: DateUtility.setWeekBack(dates[dates.length - 1],1)
+        },
+        current: {
+          startDate: dates[0],
+          endDate: dates[dates.length - 1]
+        }
+      }
+      setDateRanges(dateRanges);
+      return;
+    }
+    const dateRanges = {
+      base: {
+        startDate: DateUtility.setDateBack(dates[0],1),
+        endDate: DateUtility.setDateBack(dates[0],1)
+      },
+      current: {
+        startDate: dates[0],
+        endDate: dates[0]
+      }
+    }
+    setDateRanges(dateRanges);
+  }
 
   const onListItemClick = (e,id) => {
     if (selectedItems.includes(id)) {
@@ -52,6 +87,41 @@ const SalesReportBuilder = ({ data,close,...props }) => {
       setSelectedItems(data.map(item => item.lookup));
     }
   };
+
+  return {
+    currentStep,
+    dateRange: dateRanges.current,
+    dateRanges,
+    isOpen,
+    onListItemClick,
+    onReportDateChange,
+    selectedItems,
+    setCurrentStep,
+    toggleSelectAll
+  }
+}
+
+
+
+
+const SalesReportBuilder = ({ data,close,...props }) => {
+  const {
+    currentStep,
+    dateRange,
+    dateRanges,
+    isOpen,
+    onListItemClick,
+    onReportDateChange,
+    selectedItems,
+    setCurrentStep,
+    toggleSelectAll
+  } = useSalesReportBuilder(data);
+  
+  
+
+  const reportTypeRef = useRef(null);
+
+
 
   const onGenerateButtonClick = (e) => {
     
@@ -116,8 +186,8 @@ const SalesReportBuilder = ({ data,close,...props }) => {
   return (
     <View solid={true}>
 
-      <View.Header showDate={false} title={"Configure Sales Report"} />
-      {reportTypeRef.current && <FlexRow hAlign='space-between'><span>Report type:</span> <span>{reportTypeRef.current}</span></FlexRow>}
+      <ViewHeading title={"Create Sales Report"} onClick={onReportDateChange} />      
+      {/* {reportTypeRef.current && <FlexRow hAlign='space-between'><span>Report type:</span> <span>{reportTypeRef.current}</span></FlexRow>} */}
 
       <FlexRow flex='1' hAlign='center'>
 
@@ -143,48 +213,49 @@ const SalesReportBuilder = ({ data,close,...props }) => {
         
         
       </FlexRow>
-<Show when={currentStep === 3}>
-          <FlexColumn height='100%' g='1rem'>
 
-            {/* Period Selection Row */}
-            <FlexRow hAlign='space-between' vAlign='center'>
+      <Show when={currentStep === 3}>
+        <FlexColumn height='100%'>
 
-              <DateRangeLabel flex={false} start={dateRange.startDate} end={dateRange.endDate} />
-
-              <button className={styles.header_button} onClick={onDatePickerButtonClick}>
-                <OutlineCalendarIcon size={30} />
-              </button>
+          {/* Period Selection Row */}
+          <FlexRow hAlign='center' vAlign='center'>
+            <DateRangeLabel flex={false} start={dateRange.startDate} end={dateRange.endDate} />
 
 
-              <DatePicker when={isOpen} onChange={onDateRangeChange} close={() => setIsOpen(false)} selected={[]}  monthPicker/>
+            {/* <button className={styles.header_button} onClick={onDatePickerButtonClick}>
+              <OutlineCalendarIcon size={30} />
+            </button> */}
 
-            </FlexRow>
 
+            {/* <DatePicker when={isOpen} onChange={onDateRangeChange} close={() => setIsOpen(false)} selected={[]}  monthPicker/> */}
 
-            
+          </FlexRow>
 
-            {/* Report totals selection row */}
-            <FlexColumn width='100%' height='100%'>
-              <View.SectionTitle id="reportActions" m='.5rem 0'>Report Totals</View.SectionTitle>
-              <div style={{position:"absolute",width:"100%",height:"100%"}}>            
-                <List>
-                  <List.Header title="Sales Totals" selected={selectedItems.length} total={data.length} />
-                  <List.SelectAll isAllSelected={isAllSelected} isSomeSelected={isSomeSelected} onClick={toggleSelectAll} />
-                  <List.ScrollView>
-                    {data.map(sale => {
-                      return (
-                        <List.CheckboxListItem id={sale.lookup} title={sale.description} status={selectedItems.includes(sale.lookup) ? true : false} onClick={onListItemClick} />
-                      )
-                    })}
-                  </List.ScrollView>
-                </List>              
-              </div>
-            </FlexColumn>        
-
-          </FlexColumn>
 
           
-        </Show>
+
+          {/* Report totals selection row */}
+          <View.SectionTitle id="details" m="1rem 0 .5rem 0">Add Totals to Report</View.SectionTitle>
+          <FlexColumn width='100%' height='100%'>
+            <div style={{position:"absolute",width:"100%",height:"100%"}}>            
+              <List>
+                <List.Header title="" selected={selectedItems.length} total={data.length} />
+                <List.SelectAll isAllSelected={isAllSelected} isSomeSelected={isSomeSelected} onClick={toggleSelectAll} />
+                <List.ScrollView>
+                  {data.map(sale => {
+                    return (
+                      <List.CheckboxListItem id={sale.lookup} title={sale.description} status={selectedItems.includes(sale.lookup) ? true : false} onClick={onListItemClick} />
+                    )
+                  })}
+                </List.ScrollView>
+              </List>              
+            </div>
+          </FlexColumn>        
+
+        </FlexColumn>
+
+        
+      </Show>
 
       <FlexRow p="1rem 0" g='1rem'>
           <PrimaryButton size='md' action="generate" onClick={onGenerateButtonClick}>Generate</PrimaryButton>

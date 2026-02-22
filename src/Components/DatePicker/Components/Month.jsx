@@ -29,7 +29,7 @@ const DayNameHeader = ({children}) => {
   )
 }
 
-const Month = ({ date=new Date(),selected,monthHeader,dayNameHeader,multiSelect,...props }) => {
+const Month = ({ date=new Date(),selected,monthHeader,dayNameHeader,dayLetterHeader,multiSelect,...props }) => {
   const [currentDate,setCurrentDate] = useState(new Date(date));
 
   const onMonthChange = (action) => {
@@ -65,6 +65,7 @@ const Month = ({ date=new Date(),selected,monthHeader,dayNameHeader,multiSelect,
           month={DateUtility.monthObj(date).number}
           multiSelect={multiSelect}
           selected={selected}
+          size="sm"
         />
       )
 
@@ -96,10 +97,25 @@ const Month = ({ date=new Date(),selected,monthHeader,dayNameHeader,multiSelect,
     )
   }
 
+  const renderDayLetterHeaders = (date) => {
+    return (
+      <DayNameHeader>
+
+        {DateUtility.dayNames.map(name => {
+        return (
+          <div key={name} style={{fontSize:".8rem"}}>{name.slice(0,1)}</div>
+        )
+      })}
+
+      </DayNameHeader>
+    )
+  }
+
   return (
     <div className={styles.month}>
       {monthHeader && <MonthHeader date={currentDate} onChange={onMonthChange} />}
       {dayNameHeader && renderDayNameHeaders()}
+      {dayLetterHeader && renderDayLetterHeaders()}
        <div>
         {renderWeeks(currentDate)}
        </div>

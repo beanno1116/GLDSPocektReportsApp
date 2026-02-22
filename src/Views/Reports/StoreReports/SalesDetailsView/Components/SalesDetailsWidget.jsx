@@ -167,7 +167,7 @@ const SalesDetailsWidget = ({ reportData,balanceSheet,chartData,children }) => {
 
   return (
     <>
-      <View.SectionTitle id="details" m='.5rem 0'>Sales Details</View.SectionTitle>
+      <View.SectionTitle id="details" m="2rem 0 .5rem 0">Sales Details</View.SectionTitle>
       <Show when={balanceSheet?.sales} fallback={<div>No data found!</div>}>
         <TrendCard>
           <FlexRow p="0 0 1.5rem 0">

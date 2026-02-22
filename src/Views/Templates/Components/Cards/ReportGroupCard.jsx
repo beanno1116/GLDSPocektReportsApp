@@ -31,14 +31,14 @@ const ReportGroupCardStat = ({value,label}) => {
 }
 
 
-const ReportGroupCard = ({ group,onClick,children }) => {
+const ReportGroupCard = ({ group,onClick,m="0",children }) => {
 
   const onCardClick = (e,group) => {
     onClick && onClick(group);
   }
 
   return ( 
-    <div className={styles.report_group_card} onClick={e => onCardClick(e,group)}>
+    <div className={styles.report_group_card} onClick={e => onCardClick(e,group)} style={{margin:m}}>
       {children}
     </div>
   );

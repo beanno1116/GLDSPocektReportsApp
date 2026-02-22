@@ -13,13 +13,14 @@ import Month from './Components/Month';
 import { subscribe, unsubscribe } from '../../events';
 import DateUtility from './Helpers/DateUtility';
 import MonthPicker from './Components/MonthPicker';
+import Show from '../Show/Show';
 
 
 
 const Header = ({text}) => <div className={styles.date_picker_header}><span>{text}</span></div>
 
 
-const DatePicker = ({ when,close,selected,multiSelect,onChange,monthPicker,periodSelector,header,type="day",...props }) => {
+const DatePicker = ({ when,close,selected,multiSelect,onChange,monthPicker,dayNameHeader=false,dayLetterHeader=false,periodSelector,header,type="day",showButtons=true,...props }) => {
   const [selectedDays,setSelectedDays] = useState(selected);
   const [period,setPeriod] = useState(type);
 
@@ -110,14 +111,16 @@ const DatePicker = ({ when,close,selected,multiSelect,onChange,monthPicker,perio
         {header && <Header text={"Date Filter"} />}
         {periodSelector && <PeriodSelector onChange={onPeriodChange} />}
         <FlexRow flex='1' width='100%'>
-          {period === "day" && <Month selected={selectedDays} monthHeader dayNameHeader multiSelect />}
-          {period === "7day" && <Month selected={selectedDays} monthHeader dayNameHeader weekIncrements/>}
+          {period === "day" && <Month selected={selectedDays} monthHeader dayLetterHeader={dayLetterHeader} multiSelect />}
+          {period === "7day" && <Month selected={selectedDays} monthHeader dayLetterHeader={dayLetterHeader} dayNameHeader weekIncrements/>}
           {period === "month" && <MonthPicker selected={selectedDays} />}
         </FlexRow>
-        <FlexRow g='1rem'>
-          <PrimaryButton action="apply" onClick={onApplyDateClick}>Apply</PrimaryButton>
-          <SecondaryButton action="cancel" onClick={onApplyDateClick}>Cancel</SecondaryButton>
-        </FlexRow>
+        <Show when={showButtons}>
+          <FlexRow g='1rem'>
+            <PrimaryButton action="apply" onClick={onApplyDateClick}>Apply</PrimaryButton>
+            <SecondaryButton action="cancel" onClick={onApplyDateClick}>Cancel</SecondaryButton>
+          </FlexRow>
+        </Show>
       </FlexColumn>
     </div>
   );

@@ -31,6 +31,11 @@ import ExceptionTotals from './Components/Widgets/ExceptionTotals';
 import TransactionTotals from './Components/Widgets/TransactionTotals';
 import ButtonGrid from './Components/Widgets/ButtonGrid';
 import ToolGrid from './Components/Widgets/ToolGrid';
+import { useSearchParams } from 'react-router';
+import SafeDrawerButtonGrid from './Components/Widgets/SafeDrawerButtonGrid';
+import ReportToolsButtonGrid from './Components/Widgets/ReportTools';
+import useAppSettings from '../../../hooks/useAppSettings';
+import Show from '../../../Components/Show/Show';
 
 
 const reportWidgets = [
@@ -67,7 +72,7 @@ const reportWidgets = [
     title: "Safe & Drawer",
     link: "SafeDrawer",
     name: 'ButtonGrid',
-    Widget: ButtonGrid,
+    Widget: SafeDrawerButtonGrid,
   },
   {
     id: 5,
@@ -97,6 +102,14 @@ const reportWidgets = [
     Widget: ExceptionTotals,
   },
   {
+    id: 10,
+    order: 10,
+    title: "Report Tools",
+    link: "ReportTools",
+    name: 'ReportToolsButtonGrid',
+    Widget: ReportToolsButtonGrid,
+  },
+  {
     id: 7,
     order: 7,
     title: "Taxes",
@@ -115,7 +128,7 @@ const reportWidgets = [
     Widget: TransactionTotals,
   },
   {
-    id: 10,
+    id: 11,
     order: 10,
     title: "Report Tools",
     link: "ReportTools",
@@ -129,10 +142,12 @@ const reportWidgets = [
 const useStoreReportsView = () => {
   const {state,dispatch} = useAppContext();
   const api = useApiClient();
+  const [searchParams,setSearchParams] = useSearchParams();
   const navigate = useNavigateView();
   const queryClient = useQueryClient();
   const {modalState,toggleModal} = useModal();
   const {dateRanges,setDateRanges,getDateRange} = useGlobalDate();
+  const viewSettings = useAppSettings();
   // const {dateRanges,setDateRanges,getDateRange} = useGlobalDate(DateUtility.calculateDateRange(new Date(),"today"));
   
 
@@ -182,14 +197,16 @@ const useStoreReportsView = () => {
   },[navigate])
 
   const showModalView = useCallback((route) => (e) => {
-    
+    setSearchParams({isOpen:true,view:route});
     viewRef.current = route;
     toggleModal();
   },[toggleModal])
 
-  const onDateLockClick = (e,isLocked) => {
-    dateLockRef.current = isLocked;
+  const closeModalView = () => {
+    setSearchParams({});
+    toggleModal();
   }
+
 
   const onDateRangeChange = useCallback((dates) => {
 
@@ -259,19 +276,25 @@ const useStoreReportsView = () => {
    },[setDateRanges])
 
 
+  const onViewAllClick = (e,action) => {
+    e.stopPropagation();
+    navigate(action,{viewTransition:true});
+  }
+
   return {
     dateRange: dateRanges.current,
     modalState,
     modalView: viewRef.current,
     navigate,
-    onDateLockClick,
     onDateRangeChange,
     onNavbarClick,
     onPeriodChange,
+    onViewAllClick,
     period: period.current,
     results,
     showModalView,
-    toggleModal,
+    closeModalView,
+    viewSettings
   }
 }
 
@@ -287,11 +310,14 @@ const StoreReportsView = ({ ...props }) => {
     onDateRangeChange,
     onNavbarClick,
     onPeriodChange,
+    onViewAllClick,
     period,
     results,
     showModalView,
-    toggleModal,
+    closeModalView,
+    viewSettings
   } = useStoreReportsView();
+  
 
   
 
@@ -320,17 +346,6 @@ const StoreReportsView = ({ ...props }) => {
   const viewData = viewAdapter(results.viewData[0],results.viewData[1],results.viewData[2]);
 
 
-
-
-  const onViewAllClick = (e,action) => {
-    e.stopPropagation();
-    navigate(action,{viewTransition:true});
-  }
-
-  const onActionItemClick = (action) => {
-
-  }
-
   return (
     <View>
       <RefreshIndicator when={results.isFetching} />   
@@ -341,17 +356,20 @@ const StoreReportsView = ({ ...props }) => {
 
       <DateRangeLabel start={dateRange.startDate} end={dateRange.endDate} m='1rem 0 0 0'/>
 
-      <ScrollView>
+      <Show when={viewSettings.settings.length > 0} fallback={<div>No report widgets enabled. Select report widgets from the view settings.</div>}>
+        <ScrollView>
 
-        {reportWidgets.map(widget => {
-          const Widget = widget.Widget;
-          const source = widget.source;
-          return (
-            <Widget data={viewData[source]} onClick={onViewAllClick} title={widget.title} />
-          )
-        })}
+          {viewSettings.settings.map(widget => {
+            const Widget = widget.Widget;
+            const source = widget.source;
+            return (
+              <Widget data={viewData[source]} onClick={onViewAllClick} title={widget.title} />
+            )
+          })}
 
-      </ScrollView>
+        </ScrollView>
+      </Show>
+
 
       <View.BottomNav>
         <View.BottomNav.Button action="/report/groups" onClick={onNavbarClick} icon={<SolidReportIcon size={36} />}>Home</View.BottomNav.Button>
@@ -361,8 +379,8 @@ const StoreReportsView = ({ ...props }) => {
         <View.BottomNav.Button action="settings" icon={<SettingsIcon size={32} />} onClick={showModalView}>Settings</View.BottomNav.Button>
       </View.BottomNav>
 
-      <WEModal config={{showCloseButton:false}} isOpen={modalState} toggle={()=> toggleModal()}>
-        <ViewModalManager view={modalView} viewData={""} close={()=>toggleModal()} />
+      <WEModal config={{showCloseButton:false}} isOpen={modalState} toggle={()=> closeModalView()}>
+        <ViewModalManager view={modalView} viewData={""} close={()=>closeModalView()} />
       </WEModal>
     </View>
   );

@@ -73,7 +73,7 @@ const ReportGroupsView = ({ ...props }) => {
       
       <ScrollView>
         
-          <ReportGroupCard onClick={onReportGroupClick("/report/stores")}>
+          <ReportGroupCard m='2rem 0' onClick={onReportGroupClick("/report/stores")}>
             <ReportGroupCard.Header title={"Store Reports"} count={10} icon={<StoreIcon size={36} />} buttonIcon={<SolidGoIcon size={28} />} />
             <ReportGroupCard.Preview>
               <ReportGroupCard.Stat value={"$28K"} label={"Revenue"} />

@@ -8,8 +8,9 @@ import FlexRow from '../FlexComponents/FlexRow';
 import styles from './headings.module.css';
 import DatePicker from '../DatePicker/DatePicker';
 import useAppContext from '../../hooks/useAppContext';
+import Show from '../Show/Show';
 
-const ViewHeading = ({ title,subtitle,onClick,...props }) => {
+const ViewHeading = ({ title,subtitle,onClick,showDatePicker=true,...props }) => {
   const [isOpen,setIsOpen] = useState(false);
   const {state} = useAppContext();
 
@@ -38,11 +39,13 @@ const ViewHeading = ({ title,subtitle,onClick,...props }) => {
         </FlexRow>
         
       </FlexColumn>
-      <button className={styles.header_button} onClick={onHeadingButtonClick}>
-        <OutlineCalendarIcon size={30} />
-      </button>
-      {/* <DatePicker when={isOpen} onChange={onDateChange} close={() => setIsOpen(false)} selected={[]} multiSelect/> */}
-      <DatePicker when={isOpen} onChange={onDateChange} close={() => setIsOpen(false)} selected={[]}  monthPicker header periodSelector/>
+      <Show when={showDatePicker}>
+        <button className={styles.header_button} onClick={onHeadingButtonClick}>
+          <OutlineCalendarIcon size={30} />
+        </button>
+        {/* <DatePicker when={isOpen} onChange={onDateChange} close={() => setIsOpen(false)} selected={[]} multiSelect/> */}
+        <DatePicker when={isOpen} onChange={onDateChange} close={() => setIsOpen(false)} selected={[]}  monthPicker header periodSelector/>
+      </Show>
         
     </div>
   );

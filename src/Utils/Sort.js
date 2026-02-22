@@ -22,6 +22,31 @@ class SortUtility {
       
     }
   }
+  byOrder(items,direction){
+    try {
+      debugger;
+      if (!Array.isArray(items)) throw new Error("items not of type array");
+      const sortedArray = items.sort((a,b) => {
+        
+        if (parseInt(a.order) < parseInt(b.order)){
+          if (direction === "asc"){
+            return -1;
+          }
+          return 1;
+        }
+        if (parseInt(a.order) > parseInt(b.order)){
+          if (direction === "asc"){
+            return 1;
+          }
+          return -1;
+        }
+        return 0;
+      })
+      return sortedArray;
+    } catch (error) {
+      
+    }
+  }
 
   hourlyQuantity(sales,direction){
     try {

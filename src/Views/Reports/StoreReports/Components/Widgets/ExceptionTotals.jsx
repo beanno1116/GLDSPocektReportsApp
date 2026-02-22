@@ -17,7 +17,7 @@ const ExceptionTotals = ({ data,title,onClick }) => {
           {
             data.map(item => {
               return (
-                <KpiGrid.Item type="blue" title={item.title} value={item.value} subValue={item.delta} format={item.format} />
+                <KpiGrid.Item title={item.title} value={item.value} subValue={item.delta} format={item.format} type="pink"/>
               )
             })
           }

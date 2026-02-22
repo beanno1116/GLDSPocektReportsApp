@@ -3,7 +3,7 @@ import styles from '../datePicker.module.css';
 import DateUtility from '../Helpers/DateUtility';
 import Day from './Day';
 
-const Week = ({ startDate,month,selected,showWeekNumber,...props }) => {
+const Week = ({ startDate,month,selected,showWeekNumber,size,...props }) => {
 
   const renderDays = (startDate) => {
     const days = [];
@@ -19,6 +19,7 @@ const Week = ({ startDate,month,selected,showWeekNumber,...props }) => {
           day={currentDay}
           inMonth={currentDay.getMonth() === month}
           selected={selected.length > 0 && selected.filter(s => DateUtility.isEqual(s,currentDay))[0]}
+          size={size}
         />
       )
       i++;

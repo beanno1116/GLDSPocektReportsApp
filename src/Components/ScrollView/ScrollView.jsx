@@ -1,7 +1,7 @@
 
 import styles from './scrollView.module.css';
 
-const ScrollView = ({ type="relative",flex="",direction="y-axis", children }) => {
+const ScrollView = ({ type="relative",flex="",direction="y-axis",bottom="107px", children }) => {
 
   if (type === "absolute"){
     return (
@@ -15,7 +15,7 @@ const ScrollView = ({ type="relative",flex="",direction="y-axis", children }) =>
     <div className={`${styles.scroll_container} ${flex === "" ? "" : styles.flex_1}`}>
       <div className={`${styles.scroll_view} ${direction === "x-axis" ? styles.horizontal_scroll : ""}`}>
         {children}
-        <div style={{height:"107px",width:"100%"}}></div>
+        <div style={{height:bottom,width:"100%"}}></div>
       </div>
     </div>
   );

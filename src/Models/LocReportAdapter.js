@@ -509,7 +509,7 @@ class LocReportAdapter {
         group = removeAllSpaces(group);
 
         const lookup = description === "Coupon Able" ? Format.toCamelCase("couponable") : Format.toCamelCase(description);
-        const desc = description === "Coupon Able" ? removeAllSpaces(Format.toCapitalized("couponable")) : removeAllSpaces(Format.toCapitalized(description));
+        const desc = description === "Coupon Able" ? Format.toCapitalized("couponable") : Format.toCapitalized(description);
 
         const newStatRecord = new StatRecord({...row,description:desc,lookup,group})
 

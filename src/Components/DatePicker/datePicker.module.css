@@ -23,6 +23,12 @@
   cursor: pointer;
    animation: fadeIn 0.8s ease 0.2s both;
    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+   z-index: 999;
+}
+.date_picker:has(.sm) {
+  transform-origin: top;
+  width: 90%;
+  padding: .5rem;
 }
 .date_picker::before {
   content: '';
@@ -198,6 +204,10 @@ span.selected::after {
 }
 .out {
   color: var(--text-secondary);
+}
+
+.sm {
+  font-size: .8rem;
 }
 
 @keyframes scaleIn {

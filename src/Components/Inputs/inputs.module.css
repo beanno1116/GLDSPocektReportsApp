@@ -240,6 +240,30 @@ input.text_field_input:-webkit-autofill:focus {
 
 
 
+.header_button {
+    position: relative;
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 212, 255, 0.2));
+  background: linear-gradient(135deg, rgba(255, 0, 255, 0.482), rgba(169, 85, 247, 0.473));
+  /* filter: blur(5px); */
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+
+
+/* Date input field css styles */
+.date_input_wrapper {
+  position: relative;
+  display: flex;
+  width: 100%;
+}
+
 .label.sm {
   font-size: 1.2rem;
 }
