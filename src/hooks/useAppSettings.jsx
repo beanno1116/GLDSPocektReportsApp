@@ -248,6 +248,10 @@ const settingsStore = {
   }
 }
 
+if (!localStorage.getItem("acf")){
+  localStorage.setItem("acf",JSON.stringify(appSettings));
+}
+
 
 
 const useAppSettings = (settingGroup,settingSubgroup) => {
