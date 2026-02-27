@@ -11,12 +11,15 @@ import ScrollSelector from '../../Components/ScrollSelector/ScrollSelector';
 import useAppContext from '../../hooks/useAppContext';
 import { useApiClient } from '../../Api/Api';
 import { useCallback } from 'react';
+import useGlobalDate from '../../hooks/useGlobalDate';
+import DateUtility from '../../Utils/DateUtils';
 
 
 const useReportGroupsView = () => {
   const {state,dispatch} = useAppContext();
   const api = useApiClient();
   const navigate = useNavigate();
+  useGlobalDate(DateUtility.calculateDateRange(new Date(),"today"));
 
 
   const handleStoreSelction = (e) => {

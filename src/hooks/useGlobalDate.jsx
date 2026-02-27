@@ -52,6 +52,7 @@ const globalDateStore = {
 
 const useGlobalDate = (initialRange={...globalDateStore.getValue()}) => {
   const [dateRanges,setDateRange] = useState(initialRange);
+  const [period,setPeriod] = useState("today");
 
   const setDateRanges = (dateRange,type) => {
     globalDateStore.setValue(dateRange,type);
@@ -63,11 +64,17 @@ const useGlobalDate = (initialRange={...globalDateStore.getValue()}) => {
     return gdr;
   }
 
+  const changePeriod = (period) => {
+    setPeriod(period);
+  }
+
   return {
     base: dateRanges.base,
+    changePeriod,
     current: dateRanges.current,
     dateRanges:getDateRange(),
     getDateRange,
+    period,
     setDateRanges,
   }
 }

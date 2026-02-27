@@ -21,121 +21,17 @@ import useNavigateView from '../../../hooks/useNavigateView';
 import DateRangeLabel from './Components/DateRangeLabel';
 import useGlobalDate from '../../../hooks/useGlobalDate';
 import useAppContext from '../../../hooks/useAppContext';
-import SaleTotalsBarChart from './Components/Widgets/SaleTotalsBarChart';
-import SalesKpiGrid from './Components/Widgets/SalesKpiGrid';
-import MarkdownTotals from './Components/Widgets/MarkdownTotals';
-import LoyaltyTotals from './Components/Widgets/LoyaltyTotals';
-import CouponTotals from './Components/Widgets/CouponTotals';
-import TaxTotals from './Components/Widgets/TaxTotals';
-import ExceptionTotals from './Components/Widgets/ExceptionTotals';
-import TransactionTotals from './Components/Widgets/TransactionTotals';
-import ButtonGrid from './Components/Widgets/ButtonGrid';
-import ToolGrid from './Components/Widgets/ToolGrid';
 import { useSearchParams } from 'react-router';
-import SafeDrawerButtonGrid from './Components/Widgets/SafeDrawerButtonGrid';
-import ReportToolsButtonGrid from './Components/Widgets/ReportTools';
 import useAppSettings from '../../../hooks/useAppSettings';
 import Show from '../../../Components/Show/Show';
+import EmptyStateCard from '../../Templates/Components/Cards/EmptyStateCard';
+import Error from '../../../Utils/Errors';
+import ErrorView from '../../Templates/View/ErrorView';
 
 
-const reportWidgets = [
-  {
-    id: 1,
-    order: 1,
-    title: "This Week",
-    source: "weekData",
-    link: "SalesTotalsBarChart",
-    name: 'SalesTotalsBarChart',
-    Widget: SaleTotalsBarChart,
-  },
-  {
-    id: 2,
-    order: 2,
-    title: "Sales",
-    source: "salesData",
-    link: "SalesTotals",
-    name: 'SalesKpiGrid',
-    Widget: SalesKpiGrid,
-  },
-  {
-    id: 3,
-    order: 3,
-    title: "Markdowns",
-    source: "markdownData",
-    link: "MarkdownTotals",
-    name: 'MarkdownTotals',
-    Widget: MarkdownTotals,
-  },
-  {
-    id: 4,
-    order: 4,
-    title: "Safe & Drawer",
-    link: "SafeDrawer",
-    name: 'ButtonGrid',
-    Widget: SafeDrawerButtonGrid,
-  },
-  {
-    id: 5,
-    order: 5,
-    title: "Loyalty",
-    source: "loyaltyData",
-    link: "LoyaltyTotals",
-    name: 'LoyaltyTotals',
-    Widget: LoyaltyTotals,
-  },
-  {
-    id: 6,
-    order: 6,
-    title: "Coupons",
-    source: "couponData",
-    link: "CouponTotals",
-    name: 'CouponTotals',
-    Widget: CouponTotals,
-  },
-  {
-    id: 8,
-    order: 8,
-    title: "Exceptions",
-    source: "exceptionData",
-    link: "ExceptionTotals",
-    name: 'ExceptionTotals',
-    Widget: ExceptionTotals,
-  },
-  {
-    id: 10,
-    order: 10,
-    title: "Report Tools",
-    link: "ReportTools",
-    name: 'ReportToolsButtonGrid',
-    Widget: ReportToolsButtonGrid,
-  },
-  {
-    id: 7,
-    order: 7,
-    title: "Taxes",
-    source: "taxData",
-    link: "TaxTotals",
-    name: 'TaxTotals',
-    Widget: TaxTotals,
-  },
-  {
-    id: 9,
-    order: 9,
-    title: "Transactions",
-    source: "transactionData",
-    link: "TransactionTotals",
-    name: 'TransactionTotals',
-    Widget: TransactionTotals,
-  },
-  {
-    id: 11,
-    order: 10,
-    title: "Report Tools",
-    link: "ReportTools",
-    name: 'ToolGrid',
-    Widget: ToolGrid,
-  }
-]
+const NO_WIDGET_MESSAGE = "Add widgets from the view settings";
+const NO_WIDGET_TITLE = "No report widgets enabled.";
+
 
 
 
@@ -147,8 +43,9 @@ const useStoreReportsView = () => {
   const queryClient = useQueryClient();
   const {modalState,toggleModal} = useModal();
   const {dateRanges,setDateRanges,getDateRange} = useGlobalDate();
-  const viewSettings = useAppSettings();
-  // const {dateRanges,setDateRanges,getDateRange} = useGlobalDate(DateUtility.calculateDateRange(new Date(),"today"));
+  const {getViewSetting} = useAppSettings("view","storeReports");
+  const reportWidgets = getViewSetting("storeReports","widgets");
+
   
 
   const dateLockRef = useRef(false);
@@ -294,7 +191,7 @@ const useStoreReportsView = () => {
     results,
     showModalView,
     closeModalView,
-    viewSettings
+    reportWidgets
   }
 }
 
@@ -305,8 +202,6 @@ const StoreReportsView = ({ ...props }) => {
     dateRange,
     modalState,
     modalView,
-    navigate,
-    onDateLockClick,
     onDateRangeChange,
     onNavbarClick,
     onPeriodChange,
@@ -315,7 +210,7 @@ const StoreReportsView = ({ ...props }) => {
     results,
     showModalView,
     closeModalView,
-    viewSettings
+    reportWidgets
   } = useStoreReportsView();
   
 
@@ -337,13 +232,14 @@ const StoreReportsView = ({ ...props }) => {
 
 
   if (results.isError){
+    const error = Error.requestError(Filter.storeById(state.stores,state.activeStore)?.name)
     return (
-      <div>ERROR!!</div>
+      <ErrorView title={error.title} message={error.message} code={error.code}/>
     )
   }
 
+  const viewData = viewAdapter(results.viewData);
 
-  const viewData = viewAdapter(results.viewData[0],results.viewData[1],results.viewData[2]);
 
 
   return (
@@ -356,11 +252,11 @@ const StoreReportsView = ({ ...props }) => {
 
       <DateRangeLabel start={dateRange.startDate} end={dateRange.endDate} m='1rem 0 0 0'/>
 
-      <Show when={viewSettings.settings.length > 0} fallback={<div>No report widgets enabled. Select report widgets from the view settings.</div>}>
+      <Show when={reportWidgets.length > 0} fallback={<EmptyStateCard action="/report/stores/settings" title={NO_WIDGET_TITLE} message={NO_WIDGET_MESSAGE} onClick={onNavbarClick}/>}>
         <ScrollView>
 
-          {viewSettings.settings.map(widget => {
-            const Widget = widget.Widget;
+          {reportWidgets.map(widget => {            
+            const Widget = widget.Component;
             const source = widget.source;
             return (
               <Widget data={viewData[source]} onClick={onViewAllClick} title={widget.title} />
@@ -376,7 +272,7 @@ const StoreReportsView = ({ ...props }) => {
         <View.BottomNav.Button>Analytics</View.BottomNav.Button>
         <View.BottomNav.Button action="stores" icon={<StoreIcon size={32}/>} onClick={showModalView}>Stores</View.BottomNav.Button>
         <View.BottomNav.Button>Forcasts</View.BottomNav.Button>
-        <View.BottomNav.Button action="settings" icon={<SettingsIcon size={32} />} onClick={showModalView}>Settings</View.BottomNav.Button>
+        <View.BottomNav.Button action="/report/stores/settings" icon={<SettingsIcon size={32} />} onClick={onNavbarClick}>Settings</View.BottomNav.Button>
       </View.BottomNav>
 
       <WEModal config={{showCloseButton:false}} isOpen={modalState} toggle={()=> closeModalView()}>

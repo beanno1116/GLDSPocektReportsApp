@@ -243,7 +243,7 @@ const salesViewAdapter = (data) => {
   try {
     if (!Array.isArray(data) || !data) return new Error("data parameter not of type Array or undefined");
 
-    
+    debugger
     const hourlySales = data[0];
     const baseHourlySales = data[1];
     const departmentTotals = data[2];

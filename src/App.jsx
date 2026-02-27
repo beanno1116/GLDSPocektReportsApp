@@ -17,6 +17,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import StoreLoyaltyDetails from "./Views/Reports/StoreReports/StoreLoyaltyDetails";
 import StoreSalesDetails from "./Views/Reports/StoreReports/StoreSalesDetails";
 import SafeReportsView from './Views/Reports/SafeReports/SafeReportsView';
+import StoreReportsSettings from './Views/Reports/StoreReports/StoreReportsSettings';
 
 
 const queryClient = new QueryClient({
@@ -66,6 +67,10 @@ const App = () => {
         {
           path: "/report/stores/sales",
           element: <StoreSalesDetails /> 
+        },
+        {
+          path: "/report/stores/settings",
+          element: <StoreReportsSettings />
         },
         {
           path: "/report/groups",

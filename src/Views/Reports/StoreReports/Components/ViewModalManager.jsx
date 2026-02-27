@@ -1,5 +1,5 @@
 import StoreSelector from "../../../../Modals/StoreSelector"
-import SettingsModalView from "../ModalViews/SettingsModalView"
+
 
 
 const SummaryView = ({close}) => {
@@ -30,8 +30,7 @@ const subViews = {
   summary: SummaryView,
   targets: TargetsView,
   alerts: AlertsView,
-  saveReport: SaveReportView,
-  settings: SettingsModalView,
+  saveReport: SaveReportView,  
 }
 
 const ViewModalManager = ({ views=subViews,view,viewData,close }) => {

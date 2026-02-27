@@ -203,7 +203,7 @@ function createSalesTenderReport(creator,storeName,dateRange,data,options){
         styles: styles
   }
 
-  pdfMake.createPdf(documentDef).download('TenderSalesReport.pdf');
+  pdfMake.createPdf(documentDef).print();
 }
 
 export {

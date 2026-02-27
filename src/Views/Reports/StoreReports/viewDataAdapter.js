@@ -3,7 +3,10 @@ import StatRecord from "../../../Models/StatRecord";
 import Calculate from "../../../Utils/Caclulate";
 import Format from "../../../Utils/Format";
 
-
+const findDepartment = (depts,id) => {
+  if (!Array.isArray(depts)) throw new TypeError("depts not of type array");
+  return depts.find(dept => parseInt(dept.number) === parseInt(id));
+}
 
 const selectStatGroup = (statObj) => {
   return (group,statName) => {
@@ -331,11 +334,44 @@ const markDownStatsData = (currentData,baseData) => {
   }
 }
 
-
-export const viewAdapter = (currentData,baseData,weekData) => {
+const parseDepartmentData = (departments,departmentsBase) => {
   try {
-    
+    const departmentArray = [];
+
+      departments.forEach((department,index) => {
+        const {number,description,quantity,total,weight} = department;
+        const prevDept = findDepartment(departmentsBase,number);
+        let arrObj = {
+          description: description,
+          quantity: parseInt(quantity),
+          total: department.total,
+          weight: weight,
+          weightDelta: weight,
+          prevTotal: prevDept ? prevDept.total : 0.00,
+          prevQuantity: prevDept ? prevDept.quantity : 0,
+          prevWeight: prevDept ? prevDept.weight : 0.00,
+          quantityDelta: prevDept ? Calculate.percentChange(prevDept.quantity,quantity) : 0,
+          totalDelta: prevDept ? Calculate.percentChange(prevDept.total,total) : 0.00,
+        }
+        departmentArray.push(arrObj);
+      });
+      return departmentArray;
+  } catch (error) {
+    console.error(error.message);
+    return []
+  }
+}
+
+// export const viewAdapter = (currentData,baseData,weekData,departmentData,baseDepartmentData) => {
+export const viewAdapter = (data) => {
+  try {
     // if (!Array.isArray(currentData) || !Array.isArray(baseData)) throw new TypeError("parameter not of type array");
+    const currentData = data[0]
+    const baseData = data[1];
+    const weekData = data[2]
+    const sevenDayData = data[3];
+    const departmentData = data[4];
+    const baseDepartmentData = data[5];
     const statSelector = selectStatGroup(currentData);
     const baseStatSelector = selectStatGroup(baseData);
     const salesGridData = generalStatsTiles(statSelector,baseStatSelector);
@@ -345,6 +381,7 @@ export const viewAdapter = (currentData,baseData,weekData) => {
     const couponListData = couponListItemsData(currentData?.coupon,baseData?.coupon);
     const taxListData = taxListItemsData(currentData?.tax,baseData?.tax);
     const markdowns = markDownStatsData(currentData?.markdown,baseData?.markdown);
+    const departments = parseDepartmentData(departmentData,baseDepartmentData);
 
     
 
@@ -356,7 +393,9 @@ export const viewAdapter = (currentData,baseData,weekData) => {
       taxData: taxListData,
       transactionData: transactionGridData,
       markdownData: markdowns,
-      weekData: weekData
+      weekData: weekData,
+      sevenDayData,
+      departmentData: departments
     }
 
     return viewData;

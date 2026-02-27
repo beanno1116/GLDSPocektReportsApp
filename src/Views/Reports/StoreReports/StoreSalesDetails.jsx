@@ -35,10 +35,14 @@ import useGlobalDate from "../../../hooks/useGlobalDate";
 import SalesHourlyReportBuilder from "../Forms/SalesHourlyReportBuilder";
 import useAppContext from "../../../hooks/useAppContext";
 import ReportBuilder from "../../ReportBuilder/ReportBuilder";
+import Error from "../../../Utils/Errors";
+import ErrorView from "../../Templates/View/ErrorView";
+import Filter from "../../../Utils/Filter";
 
 
 const subViews = {
-  sales: SalesReportBuilder,
+  // sales: SalesReportBuilder,
+  sales: ReportBuilder,
   hourly: ReportBuilder,
   tender: ReportBuilder,
   balance: ReportBuilder,
@@ -189,12 +193,13 @@ const StoreSalesDetails = ({ ...props }) => {
   }
 
   if (results.isError){
+    const error = Error.requestError(Filter.storeById(state.stores,state.activeStore)?.name)
     return (
-      <div>ERROR!!</div>
+      <ErrorView title={error.title} message={error.message} code={error.code}/>
     )
   }
   const {hourlyData,balanceSheet,departmentSales,sevenDayTotalSales} = salesViewAdapter(results.viewData);
-  // 
+
   
 
 
@@ -252,7 +257,7 @@ const StoreSalesDetails = ({ ...props }) => {
       </View.BottomNav>
 
       <WEModal config={{showCloseButton:false}} isOpen={modalState} toggle={() => toggleModal()}>
-        <ModalViewManager view={viewRef.current} views={subViews} close={toggleModal} data={{hourlyData,balanceSheet,departmentSales,sevenDayTotalSales}}/>
+        <ModalViewManager returnView="/report/stores/sales" view={viewRef.current} views={subViews} close={toggleModal} data={{hourlyData,balanceSheet,departmentSales,sevenDayTotalSales}}/>
       </WEModal>
 
     </View>

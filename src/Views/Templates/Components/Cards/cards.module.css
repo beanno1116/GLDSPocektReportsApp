@@ -665,8 +665,43 @@
 
 
 
-
-
+/* Empty state card css style */
+.empty_state {
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: 24px;
+  padding: 64px 32px;
+  margin: 24px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.empty_state_icon {
+  width: 100px;
+  height: 100px;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  margin-bottom: 24px;
+  opacity: 0.6;
+}
+.empty_state_title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.empty_state_message {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  max-width: 280px;
+}
 
 
 

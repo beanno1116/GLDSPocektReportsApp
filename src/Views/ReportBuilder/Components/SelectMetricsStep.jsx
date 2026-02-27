@@ -66,7 +66,7 @@ const availableMetrics = [
     }
   ];
 
-const SelectMetricsStep = ({ reportConfig,onSelect }) => {
+const SelectMetricsStep = ({ data=[],reportConfig,onSelect }) => {
 
   const setReportConfig = (e) => {
 
@@ -82,7 +82,8 @@ const SelectMetricsStep = ({ reportConfig,onSelect }) => {
 
       {/* Metrics List */}
       <div className={styles.metrics_container} style={{margin:"1.5rem 0 0 0"}}>
-        {availableMetrics.map((category, catIndex) => (
+        {/* {availableMetrics.map((category, catIndex) => ( */}
+        {data.map((category, catIndex) => (
           <div key={catIndex} className={styles.metric_category}>
             <div className={styles.category_header}>
               <div className={styles.category_title}>{category.category}</div>

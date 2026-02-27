@@ -24,7 +24,7 @@ class SortUtility {
   }
   byOrder(items,direction){
     try {
-      debugger;
+      ;
       if (!Array.isArray(items)) throw new Error("items not of type array");
       const sortedArray = items.sort((a,b) => {
         

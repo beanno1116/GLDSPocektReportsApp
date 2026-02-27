@@ -520,6 +520,7 @@ class LocReportAdapter {
           tenderMap.set(group,[newStatRecord]);
         }
       })
+   
       // const t = Object.fromEntries(tenderMap);
       return Object.fromEntries(tenderMap);;
     } catch (error) {

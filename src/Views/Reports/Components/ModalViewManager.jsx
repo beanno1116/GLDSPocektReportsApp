@@ -15,19 +15,19 @@ const style = {
 const ModalViewManager = ({ view,views,data,close }) => {
 
   const renderView = (view) => {
-    let temp = data;
-    let tempView = view;
+
     let View = views[view];
+
     
     // 
     // 
     switch (view) {
       case "sales":
-        return <View data={data.balanceSheet.sales} close={close}/>
+        return <View type={view} close={close}/>
       case "hourly":
-        return <View data={data.hourlyData} close={close} />
+        return <View type={view} data={data.hourlyData} close={close} />
       case "tender":
-        return <View data={data.balanceSheet.tendered} close={close} />
+        return <View type={view} close={close} />
       case "balance":
         return <div>Create Balance Sheet <button onClick={(e) => close()}>Close</button></div>
       case "store":

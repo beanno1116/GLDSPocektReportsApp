@@ -18,65 +18,70 @@ import ReportSummary from './Components/ReportSummary';
 import SelectMetricsStep from './Components/SelectMetricsStep';
 import TextField from '../../Components/Inputs/TextField';
 import SecondaryButton from '../../Components/Buttons/SecondaryButton';
+import { useQueries } from '@tanstack/react-query';
+import useAppContext from '../../hooks/useAppContext';
+import { useApiClient } from '../../Api/Api';
+import { getReportQueries } from '../../Api/Queries/apiQueries';
+import Format from '../../Utils/Format';
+import { createSalesReport, createSalesTenderReport } from '../../Services/ReportPDFServices';
+import Filter from '../../Utils/Filter';
+import { useAuth } from '../../hooks/useAuth';
 
 
 
-const useReportBuilder = () => {
-  const {dateRanges,setDateRanges} = useGlobalDate();
+const useReportBuilder = (type,close) => {
+  const {state,dispatch} = useAppContext();
+  const api = useApiClient();
+  const authUser = useAuth().getAuthUser();
   const [step,setStep] = useState(1);
   const [reportConfig, setReportConfig] = useState({
+    builderType: type,
     reportType: null,
     dateType: null,
-    startDate: '',
-    endDate: '',
-    compareStartDate: '',
-    compareEndDate: '',
+    startDate: Format.toRequestDateFormat(new Date()),
+    endDate: Format.toRequestDateFormat(new Date()),
+    compareStartDate: null,
+    compareEndDate: null,
     selectedMetrics: [],
     reportName: ''
   });
 
-  const onReportDateChange = (dates) => {
+  const results = useQueries({
+    queries: getReportQueries(type,reportConfig,[state.agentString]).map(query => ({
+      queryKey: query.key,
+      queryFn: async () => {   
+        
+        const paramObj = {
+          action: query.action,
+          agentString: state.agentString,
+          posFields: query.dateRange
+        }  
+        const response = await api.post("data",paramObj,{...api.headers.applicationJson});
+        // 
+        if (response.success){
+          const adaptedData = query.adapter(response.data);
+          
+          return adaptedData;
+        }  
+        throw new Error("Newtwork response was unsuccessfull");
+      }      
+    })),
+    combine: (results) => {      
+      return {
+        viewData: results.map(r => r.data),
+        isLoading: results.some(r => r.isLoading),
+        isPending: results.some((result) => result.isPending),
+        isFetching: results.some((result) => result.isFetching),
+        isError: results.some(r => r.isError),
+        refetchAll: () => {
+          viewQueries(dateRanges,["dfdd44e8-be22-43ef-8313-95f2d1904566"]).forEach(query => {
+            queryClient.invalidateQueries({queryKey:query.key})
+          })
+        }
+      };
+    }
+  })
 
-    if (dates.length === 2){
-      const dateRanges = {
-        base: {
-          startDate: dates[0],
-          endDate: dates[1]
-        },
-        current: {
-          startDate: dates[0],
-          endDate: dates[1]
-        }
-      }
-      setDateRanges(dateRanges);
-      return;
-    }
-    if (dates.length > 2 && dates.length <= 7){
-      const dateRanges = {
-        base: {
-          startDate: DateUtility.setWeekBack(dates[0],1),
-          endDate: DateUtility.setWeekBack(dates[dates.length - 1],1)
-        },
-        current: {
-          startDate: dates[0],
-          endDate: dates[dates.length - 1]
-        }
-      }
-      setDateRanges(dateRanges);
-      return;
-    }
-    const dateRanges = {
-      base: {
-        startDate: DateUtility.setDateBack(dates[0],1),
-        endDate: DateUtility.setDateBack(dates[0],1)
-      },
-      current: {
-        startDate: dates[0],
-        endDate: dates[0]
-      }
-    }
-    setDateRanges(dateRanges);
-  }
 
   const onReportTypeSelect = (reportType) => {
     setReportConfig({ ...reportConfig, reportType: reportType });
@@ -88,7 +93,9 @@ const useReportBuilder = () => {
     if (reportConfig.reportType === "range" || reportConfig.reportType === "comparison"){
       return;
     }
-    setStep(3);
+    if (!results.isLoading){
+      setStep(3);
+    }
   }
 
   const toggleMetric = (metricId) => {
@@ -100,6 +107,25 @@ const useReportBuilder = () => {
     }));
   }
 
+  const generateReport = () => {
+    let tmp = reportConfig.selectedMetrics;
+    
+    let reportItems = [];
+    const handleResponse = (response) => {
+
+      if (type === "tender"){
+        reportItems = results.viewData[0].tenders.filter(res => reportConfig.selectedMetrics.includes(res.lookup));
+        createSalesTenderReport(`${authUser.firstName} ${authUser.lastName}`,Filter.storeById(state.stores,state.activeStore).name,{startDate:reportConfig.startDate,endDate:reportConfig.endDate},reportItems);
+      }else if (type === "sales"){
+        reportItems = results.viewData[0].sales.filter(res => reportConfig.selectedMetrics.includes(res.lookup));
+        createSalesReport(`${authUser.firstName} ${authUser.lastName}`,Filter.storeById(state.stores,state.activeStore).name,{startDate:reportConfig.startDate,endDate:reportConfig.endDate},reportItems);
+      }
+      close();
+      
+    }
+    handleResponse();
+    console.log("");
+  }
 
   const selectPopularMetrics = () => {}
 
@@ -107,29 +133,33 @@ const useReportBuilder = () => {
     setStep(step - 1);
   }
   const nextStep = () => {
+    if (step === 2){
+
+    }
     setStep(step + 1);
   }
   
   return {
+    generateReport,
+    handleDateSelection,
+    nextStep,
+    onReportTypeSelect,
     step,
     reportConfig,
-    stepBack,
-    nextStep,
-    setReportConfig,
-    handleDateSelection,
-    onReportTypeSelect,
-    onReportDateChange,
+    results,
     selectPopularMetrics,
-    toggleMetric
+    setReportConfig,
+    stepBack,
+    toggleMetric,
   }
 }
 
-const ReportBuilder = ({ close }) => {
-  const {onReportDateChange,onReportTypeSelect,step,stepBack,nextStep,setReportConfig,handleDateSelection,selectPopularMetrics,toggleMetric,reportConfig} = useReportBuilder();
+const ReportBuilder = ({ type,close }) => {
+  const {generateReport,onReportTypeSelect,step,stepBack,nextStep,setReportConfig,handleDateSelection,selectPopularMetrics,toggleMetric,reportConfig,results} = useReportBuilder(type,close);
   return (
     <View solid={true}>
 
-       <ViewHeading showDatePicker={false} title={"Sales Report Builder"} onClick={onReportDateChange} />
+       <ViewHeading showDatePicker={false} title={`${type} Report Builder`} />
 
        <ProgressBar step={step}/>
 
@@ -150,7 +180,7 @@ const ReportBuilder = ({ close }) => {
           </ScrollView>
         </Show>
 
-        <Show when={step === 3}>
+        <Show when={!results.isLoading && step === 3}>
           <div className={styles.step_header}>
             <div className={styles.step_title}>Select Metrics</div>
             <div className={styles.step_subtitle} style={{margin:"0 0 .5rem 0"}}>
@@ -162,33 +192,32 @@ const ReportBuilder = ({ close }) => {
           </div>
 
           {/* Quick Actions */}
-      <div className={styles.quick_actions}>
-        <button
-          className={styles.quick_action_btn}
-          onClick={selectPopularMetrics}
-        >
-          ⭐ Add Popular Metrics
-        </button>
-        <button
-          className={styles.quick_action_btn}
-          onClick={() => setReportConfig({ ...reportConfig, selectedMetrics: [] })}
-        >
-          🗑️ Clear All
-        </button>
-      </div>
+          <div className={styles.quick_actions}>
+            <button
+              className={styles.quick_action_btn}
+              onClick={selectPopularMetrics}
+            >
+              ⭐ Add Popular Metrics
+            </button>
+            <button
+              className={styles.quick_action_btn}
+              onClick={() => setReportConfig({ ...reportConfig, selectedMetrics: [] })}
+            >
+              🗑️ Clear All
+            </button>
+          </div>
           
           <ScrollView bottom="25px">
 
-            <SelectMetricsStep reportConfig={reportConfig} onSelect={toggleMetric} />
+            <SelectMetricsStep data={results.viewData} reportConfig={reportConfig} onSelect={toggleMetric} />
             <div className={styles.category_title} style={{margin:"1rem 0 .5rem 0",color:"rgb(255, 255, 255)",fontSize:"1rem"}}>Report Name (Optional)</div>
             <TextField placeholder="e.g. Weekly Sales Analysis" />
             <ReportSummary step={step} reportConfig={reportConfig} />
               <FlexRow m='1.25rem 0 .5rem 0'>
-                <PrimaryButton size='lg'>Generate</PrimaryButton>
+                <PrimaryButton size='lg' onClick={generateReport}>Generate</PrimaryButton>
               </FlexRow>
           </ScrollView>
         </Show>
-        
         
         <FlexRow p="1rem 0" g='1rem'>
           <Show when={step === 1}>
@@ -203,6 +232,7 @@ const ReportBuilder = ({ close }) => {
             <SecondaryButton size='md' action="generate" onClick={() => close()}>Cancel</SecondaryButton>
           </Show>
         </FlexRow>
+
        </FlexColumn>
 
     </View>

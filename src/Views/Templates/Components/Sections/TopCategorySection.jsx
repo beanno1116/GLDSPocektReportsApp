@@ -52,7 +52,7 @@ const TopCategorySection = ({ title,children,m="0" }) => {
   }
   return (
     <div className={styles.category_section} style={{margin:m}}>
-       <div className={styles.section_title}>{title}</div>
+       {title && <div className={styles.section_title}>{title}</div>}
        {children}
     </div>
   );

@@ -26,11 +26,11 @@ const DateInput = ({ label,value,onChange }) => {
 
       const {day} = e.detail;
       const now = new Date();
-debugger
+
       const eCopy = {...e,target:{value:Format.toRequestDateFormat(day)}}
 
       tfRef.current.value = Format.toRequestDateFormat(day);
-      debugger;
+
       onChange && onChange(eCopy);
       setIsOpen(false);
       
@@ -50,7 +50,7 @@ debugger
   },[isOpen,onChange,setIsOpen])
 
   const onDateChange = (e) => {
-    debugger;
+    ;
   }
 
   return (

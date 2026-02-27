@@ -45,6 +45,20 @@ export const calculatePercentChange = (value,changeValue) => {
   return ((changeValue - value) / value) * 100;
 }
 
+export const hashString = (string,prefix) => {
+  try {
+    let stringToHash = prefix ? `${prefix}_${string}` : string;
+    let hash = 0;
+    for (let i = 0; i < stringToHash.length; i++){
+      let code = stringToHash.charCodeAt(i);
+      hash = ((hash << 5) - hash) + code;
+      hash = hash & hash;
+    }
+    return Math.abs(hash);
+  } catch (error) {
+    
+  }
+}
 
 
 export const removeAllSpaces = (string) => {

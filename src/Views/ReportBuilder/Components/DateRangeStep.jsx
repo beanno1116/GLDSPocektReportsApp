@@ -35,7 +35,7 @@ const DateRangeStep = ({ reportConfig,nextStep,onChange,updateReportConfig }) =>
 
       <div className={styles.date_section} style={{margin:"1.5rem 0 0 0"}}>
         {reportConfig.reportType === 'day' && (
-          <DateInput  label="Select Date" value={reportConfig.startDate} onChange={(e) => onChange({ startDate: e.target.value })} />
+          <DateInput  label="Select Date" value={reportConfig.startDate} onChange={(e) => onChange({ startDate: e.target.value,endDate:e.target.value })} />
         )}
 
         {reportConfig.reportType === 'range' && (

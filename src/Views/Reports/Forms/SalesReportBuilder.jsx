@@ -19,6 +19,7 @@ import DateRangeView from './Components/DateRangeView';
 import useAppContext from '../../../hooks/useAppContext';
 import useGlobalDate from '../../../hooks/useGlobalDate';
 import ViewHeading from '../../../Components/Headings/ViewHeading';
+import { useAuth } from '../../../hooks/useAuth';
 
 
 const useSalesReportBuilder = (data) => {
@@ -116,7 +117,8 @@ const SalesReportBuilder = ({ data,close,...props }) => {
     setCurrentStep,
     toggleSelectAll
   } = useSalesReportBuilder(data);
-  
+  const auth = useAuth();
+  const authUser = auth.getAuthUser();
   
 
   const reportTypeRef = useRef(null);
@@ -132,7 +134,7 @@ const SalesReportBuilder = ({ data,close,...props }) => {
     const handleResponse = (response) => {
 
       
-      createSalesReport("Ben Klimaszewski","Kings Liquor Test",dateRange,totals);
+      createSalesReport(`${authUser.firstName} ${authUser.lastname}`,"Kings Liquor Test",dateRange,totals);
       
     }
     handleResponse();

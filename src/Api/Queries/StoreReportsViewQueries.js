@@ -45,6 +45,32 @@ const queries = [
       return adaptedData;
     }
   },
+  {
+    action: "DepartmentTotals",
+    type: "current",
+    key: [`DepartmentTotals_current`],
+    posFields: {
+      startDate: Format.toRequestDateFormat(new Date()),
+      endDate: Format.toRequestDateFormat(new Date())
+    },
+    adapter(data) {      
+      const adaptedData = LocDataAdapter.parseDepartmentTotals(data);
+      return adaptedData;
+    }
+  },
+  {
+    action: "DepartmentTotals",
+    type: "base",
+    key: [`DepartmentTotals_base`],
+    posFields: {
+      startDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1)),
+      endDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1))
+    },
+    adapter(data) {      
+      const adaptedData = LocDataAdapter.parseDepartmentTotals(data);
+      return adaptedData;
+    }
+  },
 ]
 
 export const viewQueries = (dateRanges,keyStrings=[]) => {

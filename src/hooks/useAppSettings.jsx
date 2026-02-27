@@ -1,223 +1,35 @@
-import { sub } from "motion/react-client";
-import SaleTotalsBarChart from "../Views/Reports/StoreReports/Components/Widgets/SaleTotalsBarChart";
-import SalesKpiGrid from "../Views/Reports/StoreReports/Components/Widgets/SalesKpiGrid";
-import MarkdownTotals from "../Views/Reports/StoreReports/Components/Widgets/MarkdownTotals";
-import SafeDrawerButtonGrid from "../Views/Reports/StoreReports/Components/Widgets/SafeDrawerButtonGrid";
-import LoyaltyTotals from "../Views/Reports/StoreReports/Components/Widgets/LoyaltyTotals";
-import CouponTotals from "../Views/Reports/StoreReports/Components/Widgets/CouponTotals";
-import ExceptionTotals from "../Views/Reports/StoreReports/Components/Widgets/ExceptionTotals";
-import ReportToolsButtonGrid from "../Views/Reports/StoreReports/Components/Widgets/ReportTools";
-import TaxTotals from "../Views/Reports/StoreReports/Components/Widgets/TaxTotals";
-import TransactionTotals from "../Views/Reports/StoreReports/Components/Widgets/TransactionTotals";
-import ToolGrid from "../Views/Reports/StoreReports/Components/Widgets/ToolGrid";
+import { reportWidgets, widgetComponenets } from "../Components/Widgets/widgets";
+import { hashString } from "../Utils/Utils";
+import { useAuth } from "./useAuth";
 
-const widgets = {
-  SalesTotalsBarChart: SaleTotalsBarChart,
-  SalesKpiGrid: SalesKpiGrid,
-  MarkdownTotals: MarkdownTotals,
-  ButtonGrid: SafeDrawerButtonGrid,
-  LoyaltyTotals: LoyaltyTotals,
-  CouponTotals: CouponTotals,
-  ExceptionTotals: ExceptionTotals,
-  ReportToolsButtonGrid: ReportToolsButtonGrid,
-  TaxTotals: TaxTotals,
-  TransactionTotals: TransactionTotals,
-  ToolGrid: ToolGrid
-}
 
-const reportWidgets = [
+
+/*
   {
-    id: 1,
-    order: 1,
-    title: "This Week",
-    source: "weekData",
-    link: "SalesTotalsBarChart",
-    name: 'SalesTotalsBarChart',
-    Widget: SaleTotalsBarChart,
-  },
-  {
-    id: 2,
-    order: 2,
-    title: "Sales",
-    source: "salesData",
-    link: "SalesTotals",
-    name: 'SalesKpiGrid',
-    Widget: SalesKpiGrid,
-  },
-  {
-    id: 3,
-    order: 3,
-    title: "Markdowns",
-    source: "markdownData",
-    link: "MarkdownTotals",
-    name: 'MarkdownTotals',
-    Widget: MarkdownTotals,
-  },
-  {
-    id: 4,
-    order: 4,
-    title: "Safe & Drawer",
-    link: "SafeDrawer",
-    name: 'ButtonGrid',
-    Widget: SafeDrawerButtonGrid,
-  },
-  {
-    id: 5,
-    order: 5,
-    title: "Loyalty",
-    source: "loyaltyData",
-    link: "LoyaltyTotals",
-    name: 'LoyaltyTotals',
-    Widget: LoyaltyTotals,
-  },
-  {
-    id: 6,
-    order: 6,
-    title: "Coupons",
-    source: "couponData",
-    link: "CouponTotals",
-    name: 'CouponTotals',
-    Widget: CouponTotals,
-  },
-  {
-    id: 8,
-    order: 8,
-    title: "Exceptions",
-    source: "exceptionData",
-    link: "ExceptionTotals",
-    name: 'ExceptionTotals',
-    Widget: ExceptionTotals,
-  },
-  {
-    id: 10,
-    order: 10,
-    title: "Report Tools",
-    link: "ReportTools",
-    name: 'ReportToolsButtonGrid',
-    Widget: ReportToolsButtonGrid,
-  },
-  {
-    id: 7,
-    order: 7,
-    title: "Taxes",
-    source: "taxData",
-    link: "TaxTotals",
-    name: 'TaxTotals',
-    Widget: TaxTotals,
-  },
-  {
-    id: 9,
-    order: 9,
-    title: "Transactions",
-    source: "transactionData",
-    link: "TransactionTotals",
-    name: 'TransactionTotals',
-    Widget: TransactionTotals,
-  },
-  {
-    id: 11,
-    order: 10,
-    title: "Report Tools",
-    link: "ReportTools",
-    name: 'ToolGrid',
-    Widget: ToolGrid,
+    acf: {
+      hash: {
+        view: {
+          storeReports: {
+            widgets: reportWidgets,
+            widgetOrder: [],
+            alerts: [],
+            faqs: []
+          }
+        }
+      }
+    }
   }
-]
+*/
+
+const VIEW_SETTING_GROUP = "view";
+
+const STORE_REPORTS_VIEW_SETTING = "storeReports";
 
 
 const appSettings = {
-  viewSettings: {
+  view: {
       storeReports: {
-        widgets: [
-          {
-            id: 1,
-            order: 1,
-            title: "This Week",
-            source: "weekData",
-            link: "SalesTotalsBarChart",
-            name: 'SalesTotalsBarChart',
-
-          },
-          {
-            id: 2,
-            order: 2,
-            title: "Sales",
-            source: "salesData",
-            link: "SalesTotals",
-            name: 'SalesKpiGrid',
-
-          },
-          {
-            id: 3,
-            order: 3,
-            title: "Markdowns",
-            source: "markdownData",
-            link: "MarkdownTotals",
-            name: 'MarkdownTotals',
-
-          },
-          {
-            id: 4,
-            order: 4,
-            title: "Safe & Drawer",
-            link: "SafeDrawer",
-            name: 'ButtonGrid',
-
-          },
-          {
-            id: 5,
-            order: 5,
-            title: "Loyalty",
-            source: "loyaltyData",
-            link: "LoyaltyTotals",
-            name: 'LoyaltyTotals',
-
-          },
-          {
-            id: 6,
-            order: 6,
-            title: "Coupons",
-            source: "couponData",
-            link: "CouponTotals",
-            name: 'CouponTotals',
-
-          },
-          {
-            id: 8,
-            order: 8,
-            title: "Exceptions",
-            source: "exceptionData",
-            link: "ExceptionTotals",
-            name: 'ExceptionTotals',
-
-          },
-          {
-            id: 7,
-            order: 7,
-            title: "Taxes",
-            source: "taxData",
-            link: "TaxTotals",
-            name: 'TaxTotals',
-
-          },
-          {
-            id: 9,
-            order: 9,
-            title: "Transactions",
-            source: "transactionData",
-            link: "TransactionTotals",
-            name: 'TransactionTotals',
-
-          },
-          {
-            id: 10,
-            order: 10,
-            title: "Report Tools",
-            link: "ReportTools",
-            name: 'ToolGrid',
-
-          }
-        ],
+        widgets: reportWidgets,
         widgetOrder: [],
         alerts: [],
         faqs: []
@@ -229,40 +41,67 @@ const settingsStore = {
   init(){
     
   },
-  getValue(group,subgroup,key){
-    const settings = JSON.parse(localStorage.getItem("acf"));
+  hashKey(key){
+    return hashString(key,"uvs");
+  },
+  getValue(group,subgroup,setting,key){
+    const settingKey = this.hashKey(key);
+    const settings = JSON.parse(localStorage.getItem(settingKey));
     if (settings){
       const settingsGroup = settings[group];
       const settingsSubgoup = settingsGroup[subgroup];
-      return settingsSubgoup[key];
+      return settingsSubgoup[setting];
     }
     return appSettings;
   },
-  setValue(group,subgroup,key,value){    
+  setValue(group,subgroup,setting,key,value){
+    const settingKey = this.hashKey(key);
     const settingsGroup = appSettings[group];
     const settingsSubgoup = settingsGroup[subgroup];
-    settingsSubgoup[key] = [...value];
-    
-    debugger;
-    localStorage.setItem("acf",JSON.stringify(appSettings));
+    settingsSubgoup[setting] = [...value];
+    localStorage.setItem(settingKey,JSON.stringify(appSettings));
   }
 }
 
-if (!localStorage.getItem("acf")){
-  localStorage.setItem("acf",JSON.stringify(appSettings));
+const initializeAppSettings = (key) => {
+  const settingsKey = settingsStore.hashKey(key);
+  if (!localStorage.getItem(settingsKey)){
+    localStorage.setItem(settingsKey,JSON.stringify(appSettings));
+  }
 }
 
 
-
 const useAppSettings = (settingGroup,settingSubgroup) => {
-  let temp = appSettings.viewSettings.storeReports;
+  const auth = useAuth();
+  const authUser = auth.getAuthUser();
+  
+  initializeAppSettings(authUser.id);
+
+  const getAppSetting = () => {
+
+  }
+  const updateAppSetting = () => {
+
+  }
+
+
+  const getViewSetting = (view,setting="") => {
+    const viewSetting = settingsStore.getValue(VIEW_SETTING_GROUP,view,setting,authUser.id);
+    if (setting === "widgets"){
+      return viewSetting.map(w => ({...w,Component:widgetComponenets[w.name]}));
+    }
+    return viewSetting;
+  }
+  const updateViewSetting = (view,setting="",value) => {
+    settingsStore.setValue(VIEW_SETTING_GROUP,view,setting,authUser.id,value);
+  }
+
 
   return {
-    updateSettings: settingsStore.setValue,
-    settings: settingsStore.getValue("viewSettings","storeReports","widgets").map(s => ({
-      ...s,
-      Widget: widgets[s.name]
-    }))
+    getAppSetting,
+    updateAppSetting,
+    getViewSetting,
+    updateViewSetting,
   }
 }
 
