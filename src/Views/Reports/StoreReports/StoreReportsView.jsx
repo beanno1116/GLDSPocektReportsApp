@@ -27,6 +27,7 @@ import Show from '../../../Components/Show/Show';
 import EmptyStateCard from '../../Templates/Components/Cards/EmptyStateCard';
 import Error from '../../../Utils/Errors';
 import ErrorView from '../../Templates/View/ErrorView';
+import Filter from '../../../Utils/Filter';
 
 
 const NO_WIDGET_MESSAGE = "Add widgets from the view settings";
@@ -232,9 +233,9 @@ const StoreReportsView = ({ ...props }) => {
 
 
   if (results.isError){
-    const error = Error.requestError(Filter.storeById(state.stores,state.activeStore)?.name)
+    // const error = Error.requestError(Filter.storeById(state.stores,state.activeStore)?.name)
     return (
-      <ErrorView title={error.title} message={error.message} code={error.code}/>
+      <ErrorView title={"Unkown Error"} message={"An Unknown error has occurred"} code={"0013"}/>
     )
   }
 

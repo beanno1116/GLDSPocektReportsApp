@@ -71,6 +71,8 @@
 
 
 
+
+
 /* .card:hover {
   border-color: var(--accent-green);
   box-shadow: 0 12px 40px rgba(0, 255, 136, 0.15);
@@ -454,17 +456,18 @@
 
 
 
-
-
 /* Metric Card css styles */
-.metric_card {
-  background: var(--bg-card);
+.metric_card {  
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
   border: 2px solid var(--border-color);
   border-radius: 18px;
-  padding: 20px;
-  position: relative;
+  background: var(--bg-card);
   overflow: hidden;
-  transition: all 0.3s ease;
+  animation: fadeIn 0.8s ease 0.2s both;
 }
 .metric_card::before {
   content: '';
@@ -473,42 +476,76 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+  /* background: linear-gradient(90deg, var(--accent-green), var(--accent-blue)); */
 }
-.metric_icon {
-  font-size: 28px;
-  margin-bottom: 12px;
+.card_metric_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .metric_label {
-  font-size: 12px;
-  color: var(--text-secondary);
+  font-size: 1rem;
+  color: var(--text-primary);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1.2px;
   font-weight: 600;
-  margin-bottom: 8px;
+}
+.metric_icon {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 212, 255, 0.2));
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+.metric_title {
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
 }
 .metric_value {
-  font-size: 32px;
-  font-weight: 800;
-  font-family: 'Space Mono', monospace;
+  font-size: 1.75rem;
+  font-weight: 700;
   line-height: 1;
-  margin-bottom: 8px;
+  background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.card_metric_footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .metric_change {
-  font-size: 13px;
+  font-family: 'Space Mono', monospace;
+  font-size: 14px;
   font-weight: 700;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
 }
 .metric_change.positive {
   color: var(--accent-green);
+  background: rgba(0, 255, 136, 0.1);
 }
 .metric_change.negative {
   color: var(--accent-orange);
+  background: rgba(255, 107, 53, 0.1);
 }
 .metric_change.neutral {
   color: var(--text-secondary);
+}
+.card_metric_period {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-family: 'Space Mono', monospace;
 }
 
 
@@ -522,6 +559,7 @@
   margin-bottom: 1rem;
   position: relative;
   overflow: hidden;
+  animation: fadeIn 0.8s ease 0.2s both;
 }
 .tier_card::before {
   content: '';
@@ -532,13 +570,16 @@
   height: 3px;
   background: linear-gradient(90deg, var(--accent-yellow), var(--accent-orange));
 }
-.tier_card.platinum::before {
+.tier_card.platinum::before,
+.metric_card.platinum::before {
   background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
 }
-.tier_card.gold::before {
+.tier_card.gold::before,
+.metric_card.gold::before {
   background: linear-gradient(90deg, var(--accent-yellow), var(--accent-orange));
 }
-.tier_card.silver::before {
+.tier_card.silver::before,
+.metric_card.silver::before {
   background: linear-gradient(90deg, var(--text-secondary), #c0c0c0);
 }
 .tier_header {
@@ -596,6 +637,158 @@
 .tier_stat_value.negative {
   color: var(--accent-orange);
 }
+
+
+
+
+/* Financial card css styles */
+.financial_card {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+background: #1a2035;
+  border-radius: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+  border-radius: 1rem;
+  width: 66vw;
+  height: 100%;
+  background: rgba(0, 213, 255, 0.085);
+    background: linear-gradient(135deg, rgb(from var(--accent-green) r g b / 0.1), rgb(from var(--accent-blue) r g b / 0.1));
+  scroll-snap-align: center;
+}
+.financial_card.over {
+  background: linear-gradient(135deg, rgb(from var(--accent-green) r g b / 0.2), rgb(from var(--accent-blue) r g b / 0.1));
+}
+.financial_card.short {
+  background: linear-gradient(135deg, rgb(from var(--accent-orange) r g b / 0.2), rgb(from var(--accent-orange) r g b / 0.1));
+}
+.financial_card.balanced {
+  background: linear-gradient(135deg, rgb(from var(--accent-blue) r g b / 0.2), rgb(from var(--accent-blue) r g b / 0.1));
+}
+.financial_card.pink {
+    background: linear-gradient(90deg, rgb(from var(--accent-purple) r g b / 0.1), rgb(from var(--accent-pink) r g b / 0.1));
+}
+.financial_card.blue {
+    background: linear-gradient(90deg, rgb(from var(--accent-blue) r g b / 0.1), rgb(from var(--accent-green) r g b / 0.1));
+}
+.financial_card.green {
+    background: linear-gradient(90deg, rgb(from var(--accent-green) r g b / 0.1), rgb(from var(--accent-blue) r g b / 0.1));
+}
+.financial_card.platinum {
+    background: linear-gradient(90deg, rgb(from var(--accent-blue) r g b / 0.1), rgb(from var(--accent-purple) r g b / 0.1));
+}
+.financial_card.gold {
+    background: linear-gradient(90deg, rgb(from var(--accent-yellow) r g b / 0.1), rgb(from var(--accent-orange) r g b / 0.1));
+}
+.financial_card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+}
+.financial_card.over::before {
+  background: linear-gradient(90deg, var(--accent-green), hsl(from var(--accent-green) h 99% 28% / .9));
+}
+.financial_card.short::before {
+  background: linear-gradient(90deg, var(--accent-orange), hsl(from var(--accent-orange) h 99% 28% / .9));
+}
+.financial_card.balanced::before {
+  background: linear-gradient(90deg, var(--accent-blue), hsl(from var(--accent-blue) h 99% 28% / .9));
+}
+
+.card_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 1rem 1rem 0 0;
+  background: #141a3d;
+}
+
+.card_title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.card_status {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .75rem;
+  font-weight: 700;
+  padding-bottom: 3px;
+}
+
+.card_body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 0 1rem;
+  flex: 1;
+}
+.card_body_list {
+  flex: 1;
+  padding: 1rem;
+}
+
+.card_main_value {
+  text-align: center;
+  /* margin-bottom: 16px; */
+  padding-bottom: 16px;
+  border-bottom: 1px solid #2a3463;
+}
+
+.card_main_label {
+  font-size: 1rem;
+  color: var(--text-primary);
+  letter-spacing: 1px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.card_main_amount {
+  font-size: 1.5rem;
+  font-weight: 800;
+  font-family: 'Space Mono', monospace;
+}
+
+.card_values {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card_value_item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+.card_value_media_item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  padding: .75rem 0;
+}
+
+.card_value_label {
+  color: var(--text-secondary);
+  letter-spacing: .5px;
+}
+
+.card_value_amount {
+  font-weight: 700;
+  font-family: 'Space Mono', monospace;
+}
+
+
+
 
 
 /* Error card css styles */
@@ -809,6 +1002,50 @@
   font-weight: 700;
   margin-bottom: 4px;
 }
+
+
+
+.tier_card.platinum::before,
+.metric_card.platinum::before,
+.financial_card.platinum::before {
+  background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+}
+.tier_card.gold::before,
+.metric_card.gold::before,
+.financial_card.gold::before {
+  background: linear-gradient(90deg, var(--accent-yellow), var(--accent-orange));
+}
+.tier_card.silver::before,
+.metric_card.silver::before,
+.financial_card.silver::before {
+  background: linear-gradient(90deg, var(--text-secondary), #c0c0c0);
+}
+.tier_card.green::before,
+.metric_card.green::before,
+.financial_card.green::before {
+  background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+}
+.tier_card.blue::before,
+.metric_card.blue::before,
+.financial_card.blue::before {
+  background: linear-gradient(90deg, var(--accent-blue),var(--accent-green));
+}
+.tier_card.pink::before,
+.metric_card.pink::before,
+.financial_card.pink::before {
+  background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink));
+}
+.tier_card.error::before,
+.metric_card.error::before,
+.financial_card.error::before {
+  background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink));
+}
+
+
+
+
+
+
 .md {
   font-size: 1.25rem;
 }

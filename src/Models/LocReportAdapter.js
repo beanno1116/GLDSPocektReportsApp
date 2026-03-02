@@ -3,6 +3,7 @@ import StatRecord from "./StatRecord";
 import Format from "../Utils/Format";
 import Sort from "../Utils/Sort";
 
+const defaultGroups = ["tendered","revenue","buying","loyalty","plus","exceptions","statistics","received","inventory","expected","safedeposit","safeending","safeovershort","overshort","pickup","safeexpected"]
 
 const salesMapping = {
   "totalsales": {
@@ -59,6 +60,18 @@ const salesMapping = {
     key: "bottleSales",
     name: "Bottole Sales",
     group: "sales"
+  },
+  "buypass": {
+    group: "bank"
+  },
+  "information": {
+    group: "sales"
+  },
+  "poschecks": {
+    group: "backups"
+  },
+  "indrawer": {
+    group: "drawer"
   }
 }
 const loyaltyMapping = {
@@ -221,15 +234,18 @@ const markdownMapping = {
   },
 }
 
-const getMapping = (key) => {
+const getMapping = (key,key2) => {
   const mappings = {...salesMapping,...loyaltyMapping,...couponMapping,...taxMapping,...exceptionMapping,...transactionMapping,...discountMapping,...markdownMapping};
-  const map = mappings[key];
+  let map = mappings[key];
   if (map === undefined){
-    return {
-      group: "others"
+    map = mappings[key2];
+    if (map === undefined){
+      return {
+        group: "others"
+      }
     }
   }  
-  return mappings[key]
+  return map;
 }
 
 
@@ -246,6 +262,36 @@ const parseStat = (statCollection,stat) => {
     // return objCopy;
   } catch (error) {
     console.error(error.message);
+  }
+}
+
+const sanatizeDescription = (string="") => {
+  try {
+    if (string === "") return string;
+    const lowerCaseString = string.replace(/[\/,._\-;'""]/g, ' ')
+    .toLowerCase()
+    .replace("dwr ","")
+    .replace("rev ","")
+    .replace("s s o ","")
+    .replace("s o ","")
+    .replace("exp ","")
+    .replace("s dep ","")
+    .replace("s exp ","")
+    .replace("s end","")
+    .replace("pkup ","")
+    .trim();
+    return Format.toCapitalized(lowerCaseString);
+  } catch (error) {
+    
+  }
+}
+
+const parseGroup = (string="") => {
+  try {
+    if (string === "") return string;
+    return removeAllSpaces(string.replace(/[\/,._\-;'""]/g, ' ').toLowerCase());
+  } catch (error) {
+    
   }
 }
 
@@ -311,6 +357,7 @@ class LocReportAdapter {
       
     } catch (error) {
       console.error(error.message);
+      return [];
     }
   }
 
@@ -489,6 +536,7 @@ class LocReportAdapter {
       return retTotalsArr;
     } catch (error) {
       console.error(`[ERROR] [LocReportReportAdapter] [parseDepartmentTotals] - ${error.message}`);
+      return [];
     }
   }
 
@@ -500,16 +548,20 @@ class LocReportAdapter {
       const tenderMap = new Map();
       
       data.forEach(row => {
-        const {description} = row;
-        let group = row.group.toLowerCase();
-        if (row.group.toLowerCase() === "information"){
-          group = "sales"
+        const {description,group:tgroup} = row;
+        let mapping = {
+          group: parseGroup(row.group)
+        };
+
+        if (!defaultGroups.includes(parseGroup(row.group))){
+          const mapKey = removeAllSpaces(description.replace(" 1","").toLowerCase());
+          mapping = getMapping(mapKey,parseGroup(row.group));
         }
 
-        group = removeAllSpaces(group);
-
-        const lookup = description === "Coupon Able" ? Format.toCamelCase("couponable") : Format.toCamelCase(description);
-        const desc = description === "Coupon Able" ? Format.toCapitalized("couponable") : Format.toCapitalized(description);
+        let lookup = Format.toCamelCase(sanatizeDescription(description));
+        let group = removeAllSpaces(mapping.group.toLowerCase());
+        let desc = description === "Coupon Able" ? sanatizeDescription("Couponable") : sanatizeDescription(description);
+        
 
         const newStatRecord = new StatRecord({...row,description:desc,lookup,group})
 
@@ -644,6 +696,7 @@ class LocReportAdapter {
       }
     } catch (error) {
       console.error(error.message);
+      return [];
     }
   }
 

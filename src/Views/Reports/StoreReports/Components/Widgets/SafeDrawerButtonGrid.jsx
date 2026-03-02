@@ -22,8 +22,229 @@ const SafeDrawerButtonGrid = ({title,onClick }) => {
     <>
       <View.SectionTitle id="SafeDrawer" m='2rem 0 .5rem 0'>{title}</View.SectionTitle>
       <KpiGrid m="0">
-        <KpiGrid.ActionItem icon={<TargetIcon size={32} />} label={"Safe Report"} action="/report/stores/safe" onClick={onClick}/>
-        <KpiGrid.ActionItem icon={<DrwrIcon size={32} />} label={"Drawer Report"} action="drawer" onClick={onClick}/>
+        <KpiGrid.ActionItem icon={<svg fill="none" height="48" width="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2a3d8f"/>
+      <stop offset="40%" stop-color="#1a2456"/>
+      <stop offset="100%" stop-color="#0f1540"/>
+    </linearGradient>
+    <radialGradient id="glowTL" cx="18%" cy="18%" r="58%">
+      <stop offset="0%" stop-color="#00ff88" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#00ff88" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowBR" cx="82%" cy="84%" r="52%">
+      <stop offset="0%" stop-color="#a855f7" stop-opacity="0.26"/>
+      <stop offset="100%" stop-color="#a855f7" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowTR" cx="82%" cy="16%" r="45%">
+      <stop offset="0%" stop-color="#00d4ff" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#00d4ff" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="safeBody" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1e2f6e"/>
+      <stop offset="100%" stop-color="#0f1540"/>
+    </linearGradient>
+    <radialGradient id="dialOuter" cx="40%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#2a3d8f"/>
+      <stop offset="100%" stop-color="#0f1540"/>
+    </radialGradient>
+    <radialGradient id="dialInner" cx="38%" cy="32%" r="70%">
+      <stop offset="0%" stop-color="#00ff88"/>
+      <stop offset="50%" stop-color="#00d4ff"/>
+      <stop offset="100%" stop-color="#a855f7"/>
+    </radialGradient>
+    <linearGradient id="handleGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ff6b35"/>
+      <stop offset="100%" stop-color="#ff00ff"/>
+    </linearGradient>
+    <linearGradient id="seamGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#00ff88" stop-opacity="0.7"/>
+      <stop offset="50%" stop-color="#00d4ff" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#a855f7" stop-opacity="0.7"/>
+    </linearGradient>
+    <linearGradient id="boltGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#a855f7"/>
+      <stop offset="100%" stop-color="#00d4ff"/>
+    </linearGradient>
+    <linearGradient id="borderGrad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00ff88" stop-opacity="0.55"/>
+      <stop offset="50%" stop-color="#3a4a80" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#a855f7" stop-opacity="0.5"/>
+    </linearGradient>
+    <linearGradient id="safeBorder" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#00ff88" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#a855f7" stop-opacity="0.6"/>
+    </linearGradient>
+
+    <filter id="glowDial" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowHandle" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="1.8" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowSeam" x="-80%" y="-20%" width="260%" height="140%">
+      <feGaussianBlur stdDeviation="1" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowBolt" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="1.4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowBody" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur stdDeviation="1.2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <path d="M24 2 C36 2,46 6,46 24 C46 42,36 46,24 46 C12 46,2 42,2 24 C2 6,12 2,24 2 Z" fill="url(#bgGrad)"/>
+  <path d="M24 2 C36 2,46 6,46 24 C46 42,36 46,24 46 C12 46,2 42,2 24 C2 6,12 2,24 2 Z" fill="url(#glowTL)"/>
+  <path d="M24 2 C36 2,46 6,46 24 C46 42,36 46,24 46 C12 46,2 42,2 24 C2 6,12 2,24 2 Z" fill="url(#glowBR)"/>
+  <path d="M24 2 C36 2,46 6,46 24 C46 42,36 46,24 46 C12 46,2 42,2 24 C2 6,12 2,24 2 Z" fill="url(#glowTR)"/>
+  <path d="M24 2 C36 2,46 6,46 24 C46 42,36 46,24 46 C12 46,2 42,2 24 C2 6,12 2,24 2 Z" stroke="url(#borderGrad)" stroke-width="1" fill="none"/>
+
+  <rect x="13" y="13" width="22" height="22" rx="2.5" fill="url(#safeBody)" stroke="url(#safeBorder)" stroke-width="1.2" filter="url(#glowBody)"/>
+
+  <line x1="21.5" y1="14.5" x2="21.5" y2="33.5" stroke="url(#seamGrad)" stroke-width="1" stroke-linecap="round" filter="url(#glowSeam)"/>
+
+  <circle cx="16.5" cy="17" r="1.5" fill="url(#boltGrad)" filter="url(#glowBolt)"/>
+  <circle cx="16.5" cy="31" r="1.5" fill="url(#boltGrad)" filter="url(#glowBolt)"/>
+  <circle cx="31.5" cy="17" r="1.5" fill="url(#boltGrad)" filter="url(#glowBolt)"/>
+  <circle cx="31.5" cy="31" r="1.5" fill="url(#boltGrad)" filter="url(#glowBolt)"/>
+
+  <circle cx="27.5" cy="24" r="5.5" fill="url(#dialOuter)" stroke="#2a3463" stroke-width="0.9"/>
+  <line x1="27.5" y1="19.2" x2="27.5" y2="20.5" stroke="#00ff88" stroke-width="1" stroke-linecap="round" opacity="0.8"/>
+  <line x1="27.5" y1="27.5" x2="27.5" y2="28.8" stroke="#a855f7" stroke-width="1" stroke-linecap="round" opacity="0.8"/>
+  <line x1="22.7" y1="24" x2="24" y2="24" stroke="#ff6b35" stroke-width="1" stroke-linecap="round" opacity="0.8"/>
+  <line x1="31" y1="24" x2="32.3" y2="24" stroke="#00d4ff" stroke-width="1" stroke-linecap="round" opacity="0.8"/>
+  <circle cx="27.5" cy="24" r="3" fill="#0a0e27" stroke="#2a3463" stroke-width="0.75"/>
+  <circle cx="27.5" cy="24" r="1.5" fill="url(#dialInner)" filter="url(#glowDial)"/>
+  <line x1="27.5" y1="24" x2="27.5" y2="21.8" stroke="#ffffff" stroke-width="0.9" stroke-linecap="round" opacity="0.9"/>
+
+  <rect x="16" y="22" width="3.5" height="4" rx="1.75" fill="url(#handleGrad)" filter="url(#glowHandle)"/>
+
+  <rect x="15.5" y="35.5" width="3.5" height="1.8" rx="0.9" fill="#2a3463"/>
+  <rect x="29" y="35.5" width="3.5" height="1.8" rx="0.9" fill="#2a3463"/>
+</svg>} label={"Safe Report"} action="/report/stores/safe" onClick={onClick}/>
+        <KpiGrid.ActionItem icon={<svg fill="none" height="48" width="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2a3d8f"/>
+      <stop offset="40%" stop-color="#1a2456"/>
+      <stop offset="100%" stop-color="#0f1540"/>
+    </linearGradient>
+    <radialGradient id="glowTL" cx="18%" cy="18%" r="58%">
+      <stop offset="0%" stop-color="#00ff88" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#00ff88" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowBR" cx="82%" cy="84%" r="52%">
+      <stop offset="0%" stop-color="#a855f7" stop-opacity="0.26"/>
+      <stop offset="100%" stop-color="#a855f7" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowTR" cx="82%" cy="16%" r="45%">
+      <stop offset="0%" stop-color="#00d4ff" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#00d4ff" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="drawerTop" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1e2f6e"/>
+      <stop offset="100%" stop-color="#0f1540"/>
+    </linearGradient>
+    <linearGradient id="drawerFront" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a2456"/>
+      <stop offset="100%" stop-color="#0d1233"/>
+    </linearGradient>
+
+    <linearGradient id="bill1" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#00ff88"/>
+      <stop offset="100%" stop-color="#00d4ff"/>
+    </linearGradient>
+    <linearGradient id="bill2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ff6b35"/>
+      <stop offset="100%" stop-color="#ff00ff"/>
+    </linearGradient>
+    <linearGradient id="bill3" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#a855f7"/>
+      <stop offset="100%" stop-color="#00d4ff"/>
+    </linearGradient>
+
+    <radialGradient id="coinGrad" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#ffd700"/>
+      <stop offset="100%" stop-color="#ff6b35"/>
+    </radialGradient>
+
+    <linearGradient id="handleGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#00ff88"/>
+      <stop offset="100%" stop-color="#00d4ff"/>
+    </linearGradient>
+    <linearGradient id="dollarGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#00ff88"/>
+      <stop offset="100%" stop-color="#00d4ff"/>
+    </linearGradient>
+
+    <linearGradient id="borderGrad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00ff88" stop-opacity="0.55"/>
+      <stop offset="50%" stop-color="#3a4a80" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#a855f7" stop-opacity="0.5"/>
+    </linearGradient>
+    <linearGradient id="bodyBorder" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#00ff88" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#a855f7" stop-opacity="0.45"/>
+    </linearGradient>
+
+    <filter id="glowBill" x="-40%" y="-120%" width="180%" height="340%">
+      <feGaussianBlur stdDeviation="1.8" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowCoin" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="1.8" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowHandle" x="-60%" y="-120%" width="220%" height="340%">
+      <feGaussianBlur stdDeviation="2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowBody" x="-8%" y="-8%" width="116%" height="116%">
+      <feGaussianBlur stdDeviation="1.2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowDollar" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <path d="M24 2 C36 2,46 6,46 24 C46 42,36 46,24 46 C12 46,2 42,2 24 C2 6,12 2,24 2 Z" fill="url(#bgGrad)"/>
+  <path d="M24 2 C36 2,46 6,46 24 C46 42,36 46,24 46 C12 46,2 42,2 24 C2 6,12 2,24 2 Z" fill="url(#glowTL)"/>
+  <path d="M24 2 C36 2,46 6,46 24 C46 42,36 46,24 46 C12 46,2 42,2 24 C2 6,12 2,24 2 Z" fill="url(#glowBR)"/>
+  <path d="M24 2 C36 2,46 6,46 24 C46 42,36 46,24 46 C12 46,2 42,2 24 C2 6,12 2,24 2 Z" fill="url(#glowTR)"/>
+  <path d="M24 2 C36 2,46 6,46 24 C46 42,36 46,24 46 C12 46,2 42,2 24 C2 6,12 2,24 2 Z" stroke="url(#borderGrad)" stroke-width="1" fill="none"/>
+
+  <rect x="15" y="13" width="4" height="8" rx="1" fill="url(#bill1)" filter="url(#glowBill)" opacity="0.9"/>
+  <rect x="21.5" y="14.5" width="4" height="6.5" rx="1" fill="url(#bill2)" filter="url(#glowBill)" opacity="0.9"/>
+  <rect x="28" y="13.5" width="4" height="7.5" rx="1" fill="url(#bill3)" filter="url(#glowBill)" opacity="0.9"/>
+
+  <rect x="13" y="21" width="22" height="2.5" rx="1.25" fill="url(#drawerTop)" stroke="url(#bodyBorder)" stroke-width="1"/>
+
+  <rect x="13" y="23.5" width="22" height="11" rx="2" fill="url(#drawerFront)" stroke="url(#bodyBorder)" stroke-width="1.1" filter="url(#glowBody)"/>
+
+  <circle cx="18" cy="29" r="2.4" fill="url(#coinGrad)" filter="url(#glowCoin)"/>
+  <circle cx="18" cy="29" r="0.9" fill="#0a0e27"/>
+
+  <text x="24.5" y="32" font-family="monospace" font-size="8" font-weight="bold"
+    fill="url(#dollarGrad)" filter="url(#glowDollar)"
+    text-anchor="middle">$</text>
+
+  <circle cx="31" cy="27.5" r="1.5" fill="#0a0e27" stroke="#2a3463" stroke-width="0.75"/>
+  <rect x="30.4" y="27.5" width="1.2" height="2" rx="0.4" fill="#0a0e27" stroke="#2a3463" stroke-width="0.5"/>
+
+  <rect x="20.5" y="35" width="7" height="2.2" rx="1.1" fill="url(#handleGrad)" filter="url(#glowHandle)"/>
+
+  <rect x="12" y="37.5" width="24" height="2" rx="1" fill="url(#drawerTop)" stroke="url(#bodyBorder)" stroke-width="0.75"/>
+</svg>} label={"Drawer Report"} action="/report/stores/drawer" onClick={onClick}/>
       </KpiGrid>
     </>
   );

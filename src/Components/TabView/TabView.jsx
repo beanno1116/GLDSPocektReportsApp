@@ -2,40 +2,67 @@
 import { useState } from 'react';
 import styles from './tabView.module.css';
 
-const TabView = ({ tabs=[],defaultTab=0,getTab,renderTabView }) => {
+const icons = {
+  summary: "🖥️",
+  media: "💲",
+  top: "🔝"
+}
+
+
+const IconTab = ({icon,active=false,onClick,children}) => {
+  return (
+    <button className={`${styles.tab_btn_icon} ${active && styles.active}`} onClick={onClick}>
+      <span className={styles.btn_icon}>{icons[icon]}</span>
+      {children}
+    </button>
+  )
+}
+
+const DefaultTab = ({active=false,icon,onClick,children}) => {
+  return (              
+    <button className={`${styles.tab_nav_btn} ${active && styles.active}`} onClick={onClick}>
+      {children}
+    </button>
+  )
+}
+
+const TabView = ({ tabs=[],defaultTab=0,getTab,renderTabView,tabType="default",height="unset",m="1rem 0", p="0" }) => {
   const [currentIndex,setCurrentIndex] = useState(tabs[defaultTab]);
 
   const onTabClick = (e,tab) => {
-    let temp = tab;
     setCurrentIndex(tab);
     
   }
 
+  const renderTab = (tabType) => {
+    switch (tabType) {
+      case "icon":
+        return IconTab;
+      default:
+        return DefaultTab;
+    }
+  }
+
 
   return (
-    <div className={styles.tab_card}>
+    <div className={styles.tab_card} style={{margin:m,padding:p,height:height}}>
 
        <div className={styles.tab_card_nav}>
         {tabs.map((tab,index) => {
+          const Tab = renderTab(tabType,tab);
           
           if (tab === currentIndex){
-            return (              
-              <button 
-                key={`${tab}_tab_btn_${index}`} 
-                className={`${styles.tab_nav_btn} ${styles.active}`}
-                onClick={e => onTabClick(e, tab)}>
-                  {getTab(tab)}              
-              </button>
+            return (
+              <Tab key={`${tab}_tab_btn_${index}`} icon={tab} active={true} onClick={e => onTabClick(e, tab)}>
+                {getTab(tab)}
+              </Tab>
             )
           }
           return (
-            <button 
-              key={`${tab}_tab_btn_${index}`} 
-              className={`${styles.tab_nav_btn}`}
-              onClick={e => onTabClick(e, tab)}>
-                {getTab(tab)}              
-            </button>
-          )
+              <Tab key={`${tab}_tab_btn_${index}`} icon={tab} onClick={e => onTabClick(e, tab)}>
+                {getTab(tab)}
+              </Tab>
+            )
         })}        
        </div>
 

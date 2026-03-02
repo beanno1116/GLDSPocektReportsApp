@@ -1,7 +1,8 @@
 
 import styles from './cards.module.css';
 
-const TierCard = ({ title,expected,ending,...props }) => {
+
+const CompareDetails = ({ leftValue,rightValue }) => {
 
   const renderValue = (value) => {
     if (value.includes("-")){
@@ -10,33 +11,44 @@ const TierCard = ({ title,expected,ending,...props }) => {
     return <div className={`${styles.tier_stat_value}`}>{value}</div>
   }
 
+  return (
+    <div className={styles.tier_details}>
+      <div className={styles.tier_stat}>
+        <div className={styles.tier_stat_label}>Expected</div>
+        {renderValue(leftValue)}
+        {/* <div className={styles.tier_stat_value}>{expected}</div> */}
+      </div>
+      <div className={styles.tier_stat}>
+        <div className={styles.tier_stat_label}>Ending</div>
+        {renderValue(rightValue)}
+        {/* <div className={styles.tier_stat_value}>{ending}</div> */}
+      </div>
+    </div>
+  )
+}
+
+const TierCard = ({ title,leftValue,rightValue,children,m="0",p="0" }) => {
+
+  
+
   const renderStatus = () => {
-    if (expected === ending) {
+    if (leftValue === rightValue) {
       return <div className={`${styles.tier_count} ${styles.positive}`}>Balanced</div>
     }
     return <div className={styles.tier_count}>Discrepency</div>
   }
 
   return (
-    <div className={`${styles.tier_card} ${styles.platinum}`}>
+    <div className={`${styles.tier_card} ${styles.platinum}`} style={{margin:m,padding:p}}>
       <div className={styles.tier_header}>
         <div className={styles.tier_name}>{title}</div>
         {renderStatus()}
       </div>
-      <div className={styles.tier_details}>
-        <div className={styles.tier_stat}>
-          <div className={styles.tier_stat_label}>Expected</div>
-          {renderValue(expected)}
-          {/* <div className={styles.tier_stat_value}>{expected}</div> */}
-        </div>
-        <div className={styles.tier_stat}>
-          <div className={styles.tier_stat_label}>Ending</div>
-          {renderValue(ending)}
-          {/* <div className={styles.tier_stat_value}>{ending}</div> */}
-        </div>
-      </div>
+      {children}
   </div>
   );
 }
+
+TierCard.CompareDetails = CompareDetails;
 
 export default TierCard;

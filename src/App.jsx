@@ -18,6 +18,7 @@ import StoreLoyaltyDetails from "./Views/Reports/StoreReports/StoreLoyaltyDetail
 import StoreSalesDetails from "./Views/Reports/StoreReports/StoreSalesDetails";
 import SafeReportsView from './Views/Reports/SafeReports/SafeReportsView';
 import StoreReportsSettings from './Views/Reports/StoreReports/StoreReportsSettings';
+import DrawerReportView from './Views/Reports/DrawerReports/DrawerReportView';
 
 
 const queryClient = new QueryClient({
@@ -59,6 +60,10 @@ const App = () => {
         {
           path: "/report/stores/safe",
           element: <SafeReportsView />
+        },
+        {
+          path: "/report/stores/drawer",
+          element: <DrawerReportView />
         },
         {
           path: "/report/stores/loyalty",

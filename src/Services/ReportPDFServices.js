@@ -22,6 +22,7 @@ const styles = {
     fontSize: 28,
     bold: true
   },
+  tableHeader: { bold: true, color: 'white', fontSize: 11 },
   subHeading: {
     font: "Roboto",
     fontSize: 22
@@ -65,11 +66,7 @@ const styles = {
 const LETTER_WIDTH = 595.28;
 
 const drawLine = (width,stroke=1) => {
-  return {
-    svg: `<svg width="${width}" height="${stroke}">z
-            <line x1="0" y1="0" x2="${width}" y2="0" stroke="black" stroke-width="${stroke}"/>
-          </svg>`
-  }
+  return { canvas: [{ type: 'line', x1: 0, y1: 5, x2: width, y2: 5, lineWidth: 1.5, lineColor: '#3182ce' }], margin: [0, 0, 0, 20] }
 }
 
 const generateDateRange = (dateRange) => {
@@ -89,22 +86,28 @@ const generateDateRange = (dateRange) => {
 function createSalesReport(creator,storeName,dateRange,data,options){
 
   const generateRows = () => {
-    return data.map(row => {
-      return [
-        {
-          text:row.description,
-          style: "row"
-        },
-        {
-          text:Format.string(parseInt(row.quantity),Format.NUMBER_FORMAT),
-          style: "rowNumber"
-        },
-        {
-          text:Format.string(row.total,Format.CURRENCY_FORMAT),
-          style: "rowCurrency"
-        }
+    const tableBody = [// header row
+      [
+        { text: 'Description', style: 'tableHeader' },
+        { text: 'Quantity',    style: 'tableHeader', alignment: 'center' },
+        { text: 'Total',       style: 'tableHeader', alignment: 'right'  }
       ]
-    })
+    ];
+    data.forEach(item => {
+      tableBody.push([
+        { text: item.description },
+        { text: Format.string(parseInt(item.quantity),Format.NUMBER_FORMAT), alignment: 'center' },
+        { text: Format.string(item.total,Format.CURRENCY_FORMAT), alignment: 'right' }
+      ]);
+    });
+    // // Grand total row
+    // tableBody.push([
+    //   { text: 'Grand Total', colSpan: 2, bold: true,fontSize:16, fillColor: '#dbeafe', color: '#1e40af' },
+    //   {},
+    //   { text: Format.string(Format.string(data.reduce((acc,cur) => {
+    //                return acc + cur.total;},0.00)),Format.CURRENCY_FORMAT),fontSize:16, bold: true, alignment: 'right', fillColor: '#dbeafe', color: '#1e40af' }
+    // ]);
+    return tableBody
   }
 
   const documentDef = {
@@ -118,11 +121,22 @@ function createSalesReport(creator,storeName,dateRange,data,options){
           generateDateRange(dateRange),
           drawLine(LETTER_WIDTH - 20),
           {
-            margin: [5,0,5,0],
-            layout: "noBorders",
+            // margin: [5,0,5,0],
+            layout: "headerLineOnly",
             table: {
-              widths: ['*','auto','auto'],
+              headerRows: 1,
+              widths: ['*', 80, 100],
               body: generateRows()
+            },
+            layout: {
+              fillColor: (rowIndex) => rowIndex === 0 ? '#2d3748' : (rowIndex % 2 === 0 ? '#f7fafc' : null),
+              hLineWidth: () => 0,
+              vLineWidth: () => 0,
+              hLineColor: () => '#e2e8f0',
+              paddingLeft: () => 5,
+              paddingRight: () => 5,
+              paddingTop: () => 8,
+              paddingBottom: () => 8,
             }
           },
           drawLine(LETTER_WIDTH - 20)
@@ -143,23 +157,30 @@ function createSalesReport(creator,storeName,dateRange,data,options){
 }
 
 function createSalesTenderReport(creator,storeName,dateRange,data,options){
+
   const generateRows = () => {
-    return data.map(row => {
-      return [
-        {
-          text:row.description,
-          style: "row"
-        },
-        {
-          text:Format.string(parseInt(row.quantity),Format.NUMBER_FORMAT),
-          style: "rowNumber"
-        },
-        {
-          text:Format.string(row.total,Format.CURRENCY_FORMAT),
-          style: "rowCurrency"
-        }
+    const tableBody = [// header row
+      [
+        { text: 'Description', style: 'tableHeader' },
+        { text: 'Quantity',    style: 'tableHeader', alignment: 'center' },
+        { text: 'Total',       style: 'tableHeader', alignment: 'right'  }
       ]
-    })
+    ];
+    data.forEach(item => {
+      tableBody.push([
+        { text: item.description },
+        { text: Format.string(parseInt(item.quantity),Format.NUMBER_FORMAT), alignment: 'center' },
+        { text: Format.string(item.total,Format.CURRENCY_FORMAT), alignment: 'right' }
+      ]);
+    });
+    // Grand total row
+    tableBody.push([
+      { text: 'Grand Total', colSpan: 2, bold: true,fontSize:16, fillColor: '#dbeafe', color: '#1e40af' },
+      {},
+      { text: Format.string(Format.string(data.reduce((acc,cur) => {
+                   return acc + cur.total;},0.00)),Format.CURRENCY_FORMAT),fontSize:16, bold: true, alignment: 'right', fillColor: '#dbeafe', color: '#1e40af' }
+    ]);
+    return tableBody
   }
 
   const documentDef = {
@@ -173,38 +194,93 @@ function createSalesTenderReport(creator,storeName,dateRange,data,options){
           generateDateRange(dateRange),
           drawLine(LETTER_WIDTH - 20),
           {
-            margin: [5,0,5,0],
+            // margin: [5,0,5,0],
             layout: "headerLineOnly",
             table: {
-              widths: ['*','auto','auto'],
+              headerRows: 1,
+              widths: ['*', 80, 100],
               body: generateRows()
+            },
+            layout: {
+              fillColor: (rowIndex) => rowIndex === 0 ? '#2d3748' : (rowIndex % 2 === 0 ? '#f7fafc' : null),
+              hLineWidth: () => 0,
+              vLineWidth: () => 0,
+              hLineColor: () => '#e2e8f0',
+              paddingLeft: () => 10,
+              paddingRight: () => 10,
+              paddingTop: () => 8,
+              paddingBottom: () => 8,
             }
           },
-          drawLine(LETTER_WIDTH - 20),
-          {
-            columns: [
-              {
-                fontSize:18,
-                bold: true,
-                text: "Total"
-              },
-              {
-                fontSize:18,
-                bold: true,
-                alignment: "right",
-                text: Format.string(data.reduce((acc,cur) => {
-                  return acc + cur.total;
-                },0.00),Format.CURRENCY_FORMAT)
-              },
-            ]
-          }
-          
         ],
         styles: styles
   }
 
   pdfMake.createPdf(documentDef).print();
 }
+// function createSalesTenderReport(creator,storeName,dateRange,data,options){
+//   const generateRows = () => {
+//     return data.map(row => {
+//       return [
+//         {
+//           text:row.description,
+//           style: "row"
+//         },
+//         {
+//           text:Format.string(parseInt(row.quantity),Format.NUMBER_FORMAT),
+//           style: "rowNumber"
+//         },
+//         {
+//           text:Format.string(row.total,Format.CURRENCY_FORMAT),
+//           style: "rowCurrency"
+//         }
+//       ]
+//     })
+//   }
+
+//   const documentDef = {
+//     pageSize: 'LETTER',
+//     pageMargins: [ 20, 20, 20, 20 ],
+//     header: {marginTop:5,text: `Generated by: ${creator} with GLDS Pocket Reports`,fontSize:10,alignment:'center'},
+//         footer: {text: `Generated on: 02/06/2026`,style:'footer'},
+//         content: [
+//           {text: "Tender Sales Report",style:'header'},
+//           {text: storeName,style:'subHeading'},
+//           generateDateRange(dateRange),
+//           drawLine(LETTER_WIDTH - 20),
+//           {
+//             margin: [5,0,5,0],
+//             layout: "headerLineOnly",
+//             table: {
+//               widths: ['*','auto','auto'],
+//               body: generateRows()
+//             }
+//           },
+//           drawLine(LETTER_WIDTH - 20),
+//           {
+//             columns: [
+//               {
+//                 fontSize:18,
+//                 bold: true,
+//                 text: "Total"
+//               },
+//               {
+//                 fontSize:18,
+//                 bold: true,
+//                 alignment: "right",
+//                 text: Format.string(data.reduce((acc,cur) => {
+//                   return acc + cur.total;
+//                 },0.00),Format.CURRENCY_FORMAT)
+//               },
+//             ]
+//           }
+          
+//         ],
+//         styles: styles
+//   }
+
+//   pdfMake.createPdf(documentDef).print();
+// }
 
 export {
   createSalesReport,

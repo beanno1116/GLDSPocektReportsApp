@@ -60,7 +60,7 @@ const DepartmentRadialBarChart = ({ chartData }) => {
       cx="30%"
       barSize={14}
       data={data}>
-        <RadialBar label={{position:'insideStart',fill:'#fff'}} background dataKey={"uv"} />
+        <RadialBar activeShape={false} label={{position:'insideStart',fill:'#fff'}} background dataKey={"uv"} />
         {/* <Legend iconSize={10} layout="vertical" verticalAlign="middle" wrapperStyle={style} /> */}
         <Tooltip />
       </RadialBarChart>

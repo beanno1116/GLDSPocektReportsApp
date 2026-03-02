@@ -31,7 +31,7 @@ const RadialBarChartView = ({ chartData }) => {
           fill: COLORS[index]
         }
       })
-  debugger
+  
   return (
     <>
       <RadialBarChart

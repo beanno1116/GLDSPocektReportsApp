@@ -14,6 +14,7 @@ import useAppSettings from '../../../hooks/useAppSettings';
 import Sort from '../../../Utils/Sort';
 import { reportWidgets } from '../../../Components/Widgets/widgets';
 import useNavigateView from '../../../hooks/useNavigateView';
+import useAppContext from '../../../hooks/useAppContext';
 
 
 
@@ -21,6 +22,7 @@ const StoreReportsSettings = () => {
   const {getViewSetting,updateViewSetting} = useAppSettings("view","storeReports");
   const settingWidgets = getViewSetting("storeReports","widgets");
   const [selectedItems,setSelectedItems] = useState([...settingWidgets.map(d=>d.id)]);
+  const {state} = useAppContext();
   const navigate = useNavigateView();
 
   const closeAndSave = useCallback((e) => {
@@ -136,6 +138,9 @@ const StoreReportsSettings = () => {
             </WEAccordion.Panel>
           </WEAccordion>
         </Card>
+
+        {state.organization === "2" && (<a href='https://gldspocketreports.com/tools/' style={{color:"snow"}}>Barcode Scanner</a>)}
+
       </ScrollView>
 
       

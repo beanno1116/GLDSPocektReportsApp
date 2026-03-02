@@ -144,6 +144,55 @@ class SortUtility {
       console.error(error.message);
     }
   }
+  byPickup(safeTenders,direction="desc"){
+    try {
+      if (!Array.isArray(safeTenders)) throw new TypeError("parameter sales not of type array");
+      const sortedSales = safeTenders.sort((a,b) => {
+        
+        if (a.pickup < b.pickup){
+          if (direction === "asc"){
+            return -1;
+          }
+          return 1;
+        }
+        if (a.pickup > b.pickup){
+          if (direction === "asc"){
+            return 1;
+          }
+          return -1;
+        }
+        return 0;
+      })
+      return sortedSales;
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+  byDeposit(safeTenders,direction="desc"){
+    try {
+      if (!Array.isArray(safeTenders)) throw new TypeError("parameter sales not of type array");
+      const sortedSales = safeTenders.sort((a,b) => {
+        
+        if (a.deposit < b.deposit){
+          if (direction === "asc"){
+            return -1;
+          }
+          return 1;
+        }
+        if (a.deposit > b.deposit){
+          if (direction === "asc"){
+            return 1;
+          }
+          return -1;
+        }
+        return 0;
+      })
+      return sortedSales;
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+  
 }
 
 const Sort = new SortUtility();

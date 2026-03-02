@@ -9,8 +9,8 @@ const queries = [
     type: "current",
     key: `BalanceSheet_current`,
     posFields: {
-      startDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1)),
-      endDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1))
+      startDate: Format.toRequestDateFormat(new Date()),
+      endDate: Format.toRequestDateFormat(new Date())
     },
     adapter(data) {      
       const adaptedData = LocDataAdapter.parseBalanceSheet(data);
@@ -22,8 +22,8 @@ const queries = [
     type: "base",
     key: `BalanceSheet_base`,
     posFields: {
-      startDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1)),
-      endDate: Format.toRequestDateFormat(DateUtility.setDateBack(new Date(),1))
+      startDate: Format.toRequestDateFormat(new Date()),
+      endDate: Format.toRequestDateFormat(new Date())
     },
     adapter(data) {      
       const adaptedData = LocDataAdapter.parseBalanceSheet(data);

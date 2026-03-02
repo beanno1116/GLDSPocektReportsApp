@@ -89,6 +89,47 @@
   background-origin: border-box;
   background-clip: padding-box, border-box;
 }
+.btn_outline.over {
+  
+  background-image: 
+  linear-gradient(var(--bg-card), var(--bg-card)),
+  linear-gradient(135deg, rgb(from var(--accent-green) r g b / .4), rgb(from var(--accent-blue) r g b / .2));
+}
+.btn_outline.short {
+  background-image: 
+  linear-gradient(var(--bg-card), var(--bg-card)),
+  linear-gradient(135deg, rgb(from var(--accent-orange) r g b / 0.4), rgb(from var(--accent-orange) r g b / 0.2));
+}
+.btn_outline.balanced {
+  background-image: 
+  linear-gradient(var(--bg-card), var(--bg-card)),
+  linear-gradient(135deg, rgb(from var(--accent-blue) r g b / 0.4), rgb(from var(--accent-blue) r g b / 0.2));
+}
+.btn_outline.platinum {
+  background-image: 
+  linear-gradient(var(--bg-card), var(--bg-card)),
+  linear-gradient(135deg, rgb(from var(--accent-blue) r g b / 0.4), rgb(from var(--accent-purple) r g b / 0.2));
+} 
+.btn_outline.pink {
+  background-image: 
+  linear-gradient(var(--bg-card), var(--bg-card)),
+  linear-gradient(135deg, rgb(from var(--accent-purple) r g b / 0.4), rgb(from var(--accent-pink) r g b / 0.2));
+} 
+.btn_outline.blue {
+  background-image: 
+  linear-gradient(var(--bg-card), var(--bg-card)),
+  linear-gradient(135deg, rgb(from var(--accent-blue) r g b / 0.4), rgb(from var(--accent-green) r g b / 0.2));
+} 
+.btn_outline.green {
+  background-image: 
+  linear-gradient(var(--bg-card), var(--bg-card)),
+  linear-gradient(135deg, rgb(from var(--accent-green) r g b / 0.4), rgb(from var(--accent-blue) r g b / 0.2));
+} 
+.btn_outline.gold {
+  background-image: 
+  linear-gradient(var(--bg-card), var(--bg-card)),
+  linear-gradient(135deg, rgb(from var(--accent-yellow) r g b / 0.4), rgb(from var(--accent-orange) r g b / 0.2));
+} 
 .btn_outline:hover {
   background-image: 
     linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 212, 255, 0.1)),
@@ -576,5 +617,6 @@ gap: .5rem;
 .sm {
   font-size: 1rem;
   padding: .5rem;
+  border-radius: 1rem;
   /* font-weight: 500; */
 }

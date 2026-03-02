@@ -44,7 +44,7 @@ const KpiGridItem = ({title,value,type,format,subValue=0,expandable=false,opposi
   }
   
   return (
-    <div className={`${styles.kpi_card} ${expanded ? styles.expanded : ""} ${type ? styles[type] : ""}`} onClick={onGridItemClick}>
+    <div className={`${styles.kpi_card} ${type ? styles[type] : ""}`} onClick={onGridItemClick}>
       <div className={styles.kpi_label}>{title}</div>
       <div className={`${styles.kpi_value} ${isValueNegative ? styles.negative : styles.positive}`}>{`${Format.string(value,format)}`}</div>
       {parseInt(subValue) !== 0 && <div className={`${styles.kpi_change} ${renderClassName(isSubValueNegative)}`}>{`${renderArrow(isSubValueNegative)} ${parseInt(subValue)}`}%</div>}

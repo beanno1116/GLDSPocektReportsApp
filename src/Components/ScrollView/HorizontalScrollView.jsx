@@ -1,10 +1,10 @@
 
 import styles from './scrollView.module.css';
 
-const HorizontalScrollView = ({ children }) => {
+const HorizontalScrollView = ({ height="auto",children }) => {
   return (
 
-      <div className={`${styles.horizontal_scroll}`}>
+      <div className={`${styles.horizontal_scroll}`} style={{height:height}}>
         {children}
       </div>
   );

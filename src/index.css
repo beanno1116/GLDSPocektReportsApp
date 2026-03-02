@@ -203,3 +203,29 @@ body::before {
     font-size: 14px;
   }   
 }
+
+.recharts-pie * {
+  outline: none !important;
+}
+
+/* More general CSS that might also work */
+svg:focus,
+g:focus,
+path:focus {
+  outline: none !important;
+}
+.recharts-layer:focus {
+  outline: none !important;
+}
+
+/* Specifically for Radial Bar components if the above fails */
+.recharts-radial-bar:focus,
+.recharts-sector:focus,
+.recharts-radial-bar-chart:focus {
+  outline: none !important;
+}
+
+/* Or to target the entire chart wrapper */
+.recharts-wrapper *:focus {
+  outline: none !important;
+}

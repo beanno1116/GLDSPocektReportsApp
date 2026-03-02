@@ -28,25 +28,32 @@
   transition: opacity 0.3s ease;
 }
 
-.kpi_card.platinum::before {
+.kpi_card.platinum::before,
+.kpi_card.expanded.platinum::before {
   background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
 }
-.kpi_card.gold::before {
+.kpi_card.gold::before,
+.kpi_card.expanded.gold::before {
   background: linear-gradient(90deg, var(--accent-yellow), var(--accent-orange));
 }
-.kpi_card.silver::before {
+.kpi_card.silver::before,
+.kpi_card.expanded.silver::before {
   background: linear-gradient(90deg, var(--text-secondary), #c0c0c0);
 }
-.kpi_card.green::before {
+.kpi_card.green::before,
+.kpi_card.expanded.green::before {
   background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
 }
-.kpi_card.blue::before {
+.kpi_card.blue::before,
+.kpi_card.expanded.blue::before {
   background: linear-gradient(90deg, var(--accent-blue),var(--accent-green));
 }
-.kpi_card.pink::before {
+.kpi_card.pink::before,
+.kpi_card.expanded.pink::before {
   background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink));
 }
-.kpi_card.error::before {
+.kpi_card.error::before,
+.kpi_card.expanded.error::before {
   background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink));
 }
 
@@ -185,8 +192,8 @@
 .action_card:nth-child(4) { animation-delay: 0.4s; }
 
 .action_icon {
-  width: 4rem;
-  height: 4rem;
+  width: 5rem;
+  height: 5rem;
   /* background: linear-gradient(135deg, var(--accent-green), var(--accent-blue)); */
   /* background: linear-gradient(135deg, rgba(255, 0, 255, 0.482), rgba(169, 85, 247, 0.473)); */
   background-color: transparent;
@@ -197,8 +204,8 @@
   font-size: 28px;
 }
 .action_icon svg {
-  width: 3.75rem;
-  height: 3.75rem;
+  width: 5rem;
+  height: 5rem;
 }
 .action_img {
     width: 60px;

@@ -1,38 +1,31 @@
-import { useCallback, useRef } from "react";
+import { useQueries, useQueryClient } from "@tanstack/react-query";
+import { useApiClient } from "../../../Api/Api";
 import BackIcon from "../../../assets/icons/BackIcon";
 import SettingsIcon from "../../../assets/icons/SettingsIcon";
 import SolidDownloadIcon from "../../../assets/icons/SolidDownloadIcon";
 import StoreIcon from "../../../assets/icons/StoreIcon";
 import ViewHeading from "../../../Components/Headings/ViewHeading";
-import View from "../../Templates/View/View";
-import useNavigateView from "../../../hooks/useNavigateView";
-import viewQueries from "../../../Api/Queries/SafeReportViewQueries";
-import useAppContext from "../../../hooks/useAppContext";
-import { useApiClient } from "../../../Api/Api";
-import useGlobalDate from "../../../hooks/useGlobalDate";
-import DateUtility from "../../../Utils/DateUtils";
-import { useQueries, useQueryClient } from "@tanstack/react-query";
-import TierCard from "../../Templates/Components/Cards/TierCard";
-import safeReportViewDataAdapter from "./Adapters/SafeReportViewDataAdapter";
-import KpiGrid from "../../../Components/Grids/KpiGrid";
-import Format from "../../../Utils/Format";
 import WEModal from "../../../Components/WEModal/WEModal";
-import ViewModalManager from "../StoreReports/Components/ViewModalManager";
-import useModal from "../../../Components/WEModal/hooks/useModal";
+import useAppContext from "../../../hooks/useAppContext";
+import useNavigateView from "../../../hooks/useNavigateView";
+import Format from "../../../Utils/Format";
+import View from "../../Templates/View/View";
 import DateRangeLabel from "../StoreReports/Components/DateRangeLabel";
+import ViewModalManager from "../StoreReports/Components/ViewModalManager";
+import useGlobalDate from "../../../hooks/useGlobalDate";
+import viewQueries from "../../../Api/Queries/SafeReportViewQueries";
+import DateUtility from "../../../Utils/DateUtils";
+import { useCallback, useRef } from "react";
 import LoadingView from "./Components/LoadingView";
 import ErrorView from "./Components/ErrorView";
-import ActivityGrid from "./Components/ActivityGrid";
-import FinancialListItem from "../../../Components/Lists/Components/FinancialListItem";
+import useModal from "../../../Components/WEModal/hooks/useModal";
+import drawerReportViewDataAdapter from "./Adapters/drawerReportViewAdapter";
+import MetricCard from "../../Templates/Components/Cards/MetricCard";
 import ScrollView from "../../../Components/ScrollView/ScrollView";
-import SearchField from "../../../Components/Inputs/SearchField";
-import FlexColumn from "../../../Components/FlexComponents/FlexColumn";
-import Sort from "../../../Utils/Sort";
-import SafeReportTabView from "./Components/SafeReportTabView";
+import DrawerReportTabView from "./Components/DrawerReportTabView";
 import ReportToolsButtonGrid from "../StoreReports/Components/Widgets/ReportTools";
 
-
-const useSafeReportsView = () => {
+const useDrawerReportView = () => {
   const {state,dispatch} = useAppContext();
   const api = useApiClient();
   const navigate = useNavigateView();
@@ -132,9 +125,8 @@ const useSafeReportsView = () => {
   }
 }
 
-
-const SafeReportsView = () => {
-  const {dateRange,onNavbarClick,onReportDateChange,period,results} = useSafeReportsView();
+const DrawerReportView = () => {
+  const {dateRange,onNavbarClick,onReportDateChange,period,results} = useDrawerReportView();
   const {modalState,toggleModal} = useModal();
 
   const viewRef = useRef();
@@ -147,7 +139,7 @@ const SafeReportsView = () => {
 
   if (results.isFetching){
     return (
-      <LoadingView text={"Safe"} />
+      <LoadingView text={"Drawer"} />
     )
   }
   
@@ -161,54 +153,41 @@ const SafeReportsView = () => {
 
 
   const viewData = results.viewData;
-  const safeData = safeReportViewDataAdapter(viewData);
-  debugger;
+  const drawerData = drawerReportViewDataAdapter(viewData);
 
-  const onClick = (e) => {
+  const onClick =(e) =>{
 
   }
 
   return (
     <View solid={true}>
-      <ViewHeading title={"Safe Report"} onClick={onReportDateChange} />
+      <ViewHeading title={"Drawer Report"} onClick={onReportDateChange} />
 
       <DateRangeLabel start={dateRange.startDate} end={dateRange.endDate}/>
 
       <ScrollView>
+        <MetricCard m="2rem 0" accent="platinum">
+        <MetricCard.Header title={"Top Tender"} icon={"💰"} />
+        <MetricCard.Title text={drawerData.topTender.description} />
+        <MetricCard.Value value={Format.string(drawerData.topTender.total,Format.CURRENCY_FORMAT)} />
+        <MetricCard.Footer delta={"15%"} period={"vs last week"} />
+      </MetricCard>
 
-        <TierCard title={"💰 Current Status"} leftValue={Format.string(safeData.expectedTotal,Format.CURRENCY_FORMAT)} rightValue={Format.string(safeData.endingTotal,Format.CURRENCY_FORMAT)} m="2.5rem 0 1rem 0" p="1.25rem">
-          <TierCard.CompareDetails leftValue={Format.string(safeData.expectedTotal,Format.CURRENCY_FORMAT)} rightValue={Format.string(safeData.endingTotal,Format.CURRENCY_FORMAT)} />
-        </TierCard>
-
-
-        <View.SectionTitle m='1.75rem 0 .5rem 0'>Media</View.SectionTitle>
-        <SafeReportTabView safeData={safeData} />
+      
+        <View.SectionTitle m='0rem 0 .5rem 0'>Lanes</View.SectionTitle>
+        <DrawerReportTabView />
+   
+        <View.SectionTitle m='1.75rem 0 .5rem 0'>Store</View.SectionTitle>
+        
 
         <ReportToolsButtonGrid title={"Report Tools"} onClick={onClick} />
-
+        
       </ScrollView>
 
+      
 
-      {/* <ActivityGrid gridData={safeData} />
 
-      <FlexColumn flex="1" width="100%">
-
-        <View.SectionTitle m='1rem 0 .5rem 0'>Safe Media</View.SectionTitle>
-        <SearchField placeholder="Search for safe media" />
-        <ScrollView>
-          {Sort.byPickup(safeData.tenderSafeDetails).filter(t => t.pickup || t.deposit || t.loan).map(tender => {
-            return (
-              <FinancialListItem header={<FinancialListItem.Title text={tender.description} overShort={tender.overShort} />}>
-                <FinancialListItem.Value label={"Pickup"} value={tender.pickup} format={tender.format}/>
-                <FinancialListItem.Value label={"Deposit"} value={tender.deposit} format={tender.format} />
-                <FinancialListItem.Value label={"Loan"} value={tender.loan} format={tender.format} />
-              </FinancialListItem>
-            )
-          })}
-        </ScrollView>
-
-      </FlexColumn> */}
-
+   
       
       <View.BottomNav>
         <View.BottomNav.Button action="/report/stores" onClick={onNavbarClick} icon={<BackIcon size={36} />}>Back</View.BottomNav.Button>
@@ -225,4 +204,4 @@ const SafeReportsView = () => {
   );
 }
 
-export default SafeReportsView;
+export default DrawerReportView;

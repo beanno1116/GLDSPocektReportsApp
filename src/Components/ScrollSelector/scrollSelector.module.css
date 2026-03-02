@@ -69,3 +69,78 @@
   border: 1px solid rgba(0, 255, 136, 0.975);
   color: var(--accent-green);
 }
+
+
+
+/* Scroll Metric css styles */
+.scroll_metric {
+  position: relative;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 20px;
+    position: relative;
+    animation: scaleIn 0.6s ease both;    
+}
+.scroll_metric::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+.scroll_metric.platinum::before {
+  background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+}
+.scroll_metric.gold::before {
+  background: linear-gradient(90deg, var(--accent-yellow), var(--accent-orange));
+}
+.scroll_metric.silver::before {
+  background: linear-gradient(90deg, var(--text-secondary), #c0c0c0);
+}
+.scroll_metric.green::before {
+  background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+}
+.scroll_metric.blue::before {
+  background: linear-gradient(90deg, var(--accent-blue),var(--accent-green));
+}
+.scroll_metric.pink::before {
+  background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink));
+}
+.scroll_metric.error::before {
+  background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink));
+}
+.scroll_metric:active {
+    transform: scale(0.98);
+}
+
+.scroll_metric_label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.scroll_metric_value {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.scroll_metric_change {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
